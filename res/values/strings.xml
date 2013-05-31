@@ -8,5 +8,7 @@
     <string name="set_timer_text">Set</string>
     <string name="title_activity_timer">TimerActivity</string>
     <string name="timer">000</string>
+    <string name="stop_button_text">Stop</string>
+    <string name="restart_button_text">Restart</string>
 
 </resources>

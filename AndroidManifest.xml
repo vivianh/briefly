@@ -22,6 +22,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.venmo.scrum_timer.TimerActivity"
+            android:label="@string/title_activity_timer" >
+        </activity>
     </application>
 
 </manifest>
