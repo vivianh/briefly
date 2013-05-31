@@ -9,6 +9,8 @@ import android.widget.EditText;
 
 public class StartActivity extends Activity {
 
+	public final static String TIME_INPUT = "000";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -22,22 +24,14 @@ public class StartActivity extends Activity {
 		return true;
 	}
 
-	private void setTimer(View view) {
-	/*
-		Intent setTimerIntent = new Intent();
-		EditText editText = (EditText) findViewById(R.id.time_input);
+	// this should be public!!! ??? ask
+	public void setTimer(View view) {
+		Intent setTimerIntent = new Intent(this, TimerActivity.class);
+		EditText editText = (EditText)findViewById(R.id.time_input);
 		String time_input = editText.getText().toString();
+		// is this the only way to pass strings with intents? ask
+		setTimerIntent.putExtra(TIME_INPUT, time_input);
 		startActivity(setTimerIntent);
-	*/
-		
-		/*
-		Intent intent = new Intent(this, DisplayMessageActivity.class);
-    	EditText editText = (EditText) findViewById(R.id.edit_message);
-    	String message = editText.getText().toString();
-    	intent.putExtra(EXTRA_MESSAGE, message);
-    	startActivity(intent);
-		*/
-		
 	}
 	
 }
