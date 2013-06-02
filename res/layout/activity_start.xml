@@ -10,7 +10,8 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="fill_parent"
+        android:id="@+id/usernameLayout" >
 	    <EditText
 	        android:id="@+id/time_input"
 	        android:layout_height="wrap_content"
@@ -18,33 +19,19 @@
 	        android:inputType="phone"
 	        android:hint="@string/time_input_text" >
 	    </EditText>
-        <EditText
-            android:id="@+id/username_1"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
-            android:hint="@string/username"
-            android:inputType="textFilter" >            
-        </EditText>
-        <EditText 
-            android:id="@+id/username_2"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
-            android:hint="@string/username"
-            android:inputType="textFilter" >
-        </EditText>
-        <EditText 
-            android:id="@+id/username_3"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
-            android:hint="@string/username"
-            android:inputType="textFilter" >
-        </EditText>
-        <Button 
+	    <Button 
 	        android:id="@+id/set_timer"
 	        android:layout_height="wrap_content"
 	        android:layout_width="wrap_content"
 	        android:text="@string/set_timer_text"
 	        android:onClick="setTimer" >
 	    </Button>
+        <Button
+            android:id="@+id/add_username_button"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/add_user_text"
+            android:onClick="addUsername" >            
+        </Button>      
     </LinearLayout>    
 </RelativeLayout>

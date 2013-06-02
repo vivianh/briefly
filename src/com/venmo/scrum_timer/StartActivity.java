@@ -5,19 +5,24 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 public class StartActivity extends Activity {
 
 	public final static String TIME_INPUT = "000";
 	public final static String USERNAMES = "usernames lol";
+	private static int num;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start);
+		
+		num = 0;
 	}
 
 	@Override
@@ -43,10 +48,22 @@ public class StartActivity extends Activity {
 		startActivity(setTimerIntent);
 	}
 	
+	// passing in view here!?!?!? for onclick methods uhhh
+	public void addUsername(View view) {
+		EditText editText = new EditText(this);
+		editText.setHint("Venmo username");
+		editText.setId(num);
+		editText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+		editText.requestFocus();
+		num++;
+		LinearLayout layout = (LinearLayout)findViewById(R.id.usernameLayout);
+		layout.addView(editText);
+	}
 	
 	private ArrayList<String> getUsernames() {
 		ArrayList<String> users = new ArrayList<String>();
 		
+		/*
 		EditText username_1 = (EditText)findViewById(R.id.username_1);
 		users.add(username_1.getText().toString());
 		
@@ -55,6 +72,12 @@ public class StartActivity extends Activity {
 		
 		EditText username_3 = (EditText)findViewById(R.id.username_3);
 		users.add(username_3.getText().toString());
+		*/
+		
+		for (int i = 0; i < num; i++) {
+			EditText uEditText = (EditText)findViewById(i);
+			users.add(uEditText.getText().toString());
+		}
 		
 		return users;
 	}

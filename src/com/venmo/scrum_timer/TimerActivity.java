@@ -1,10 +1,17 @@
 package com.venmo.scrum_timer;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -21,6 +28,7 @@ public class TimerActivity extends Activity {
 	private int initialTime;
 	private long secs;
 	private String seconds;
+	private ArrayList<String> usernames;
 	
 	boolean shouldTeamGetCharged;
 	
@@ -36,7 +44,7 @@ public class TimerActivity extends Activity {
 		initialTimer.setText(time_input);
 		
 		//
-		ArrayList<String> usernames = intent.getStringArrayListExtra(StartActivity.USERNAMES);
+		usernames = intent.getStringArrayListExtra(StartActivity.USERNAMES);
 		TextView usernames_view = (TextView)findViewById(R.id.usernames);
 		
 		String s = "";
