@@ -1,12 +1,16 @@
 package com.venmo.scrum_timer;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class TimerActivity extends Activity {
 
@@ -31,10 +35,22 @@ public class TimerActivity extends Activity {
 		TextView initialTimer = (TextView)findViewById(R.id.timer);
 		initialTimer.setText(time_input);
 		
+		//
+		ArrayList<String> usernames = intent.getStringArrayListExtra(StartActivity.USERNAMES);
+		TextView usernames_view = (TextView)findViewById(R.id.usernames);
+		
+		String s = "";
+		for (int i = 0; i < usernames.size(); i++) {
+			s += " " + usernames.get(i);
+		}
+		
+		usernames_view.setText(s);
+		//
+		
 		initialTime = Integer.parseInt(time_input);
 		startClick(findViewById(R.id.timer));
 		
-		shouldTeamGetCharged = true;
+		shouldTeamGetCharged = false;
 	}
 
 	@Override
@@ -72,8 +88,21 @@ public class TimerActivity extends Activity {
 	private void updateTimer(float time) {
 		secs = (long)(time/1000);
 		secs = initialTime - secs;
-		seconds=String.valueOf(secs);
-    	((TextView)findViewById(R.id.timer)).setText(seconds);
+		
+		if (secs < 0) {
+			shouldTeamGetCharged = true;
+			Context context = getApplicationContext();
+			CharSequence text = "over time sucks to suck";
+			int duration = Toast.LENGTH_SHORT;
+			mHandler.removeCallbacksAndMessages(startTimer);
+			mHandler.removeCallbacks(startTimer);
+			Toast toast = Toast.makeText(context, text, duration);
+			toast.show();
+		}
+		else {
+			seconds=String.valueOf(secs);
+			((TextView)findViewById(R.id.timer)).setText(seconds);
+		}
 	}
 	
 }

@@ -10,5 +10,7 @@
     <string name="timer">000</string>
     <string name="stop_button_text">Stop</string>
     <string name="restart_button_text">Restart</string>
+    <string name="username">Venmo username</string>
+    <string name="usernames">ughhhhh</string>
 
 </resources>

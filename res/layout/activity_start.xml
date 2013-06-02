@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,22 +7,44 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".StartActivity" >
-
-    <EditText
-        android:id="@+id/time_input"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:layout_width="0dip"
-        android:inputType="phone"
-        android:hint="@string/time_input_text" >
-    </EditText>
-
-    <Button 
-        android:id="@+id/set_timer"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/set_timer_text"
-        android:onClick="setTimer" >
-    </Button>
-    
-</LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+	    <EditText
+	        android:id="@+id/time_input"
+	        android:layout_height="wrap_content"
+	        android:layout_width="fill_parent"
+	        android:inputType="phone"
+	        android:hint="@string/time_input_text" >
+	    </EditText>
+        <EditText
+            android:id="@+id/username_1"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:hint="@string/username"
+            android:inputType="textFilter" >            
+        </EditText>
+        <EditText 
+            android:id="@+id/username_2"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:hint="@string/username"
+            android:inputType="textFilter" >
+        </EditText>
+        <EditText 
+            android:id="@+id/username_3"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:hint="@string/username"
+            android:inputType="textFilter" >
+        </EditText>
+        <Button 
+	        android:id="@+id/set_timer"
+	        android:layout_height="wrap_content"
+	        android:layout_width="wrap_content"
+	        android:text="@string/set_timer_text"
+	        android:onClick="setTimer" >
+	    </Button>
+    </LinearLayout>    
+</RelativeLayout>
