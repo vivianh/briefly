@@ -3,11 +3,9 @@ package com.venmo.scrum_timer;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +14,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.TableLayout;
 
 public class StartActivity extends Activity {
 
@@ -73,6 +71,10 @@ public class StartActivity extends Activity {
 		editText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 		editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
 		editText.requestFocus();
+		editText.setLayoutParams(new TableLayout.LayoutParams(
+				LayoutParams.MATCH_PARENT,
+				LayoutParams.WRAP_CONTENT,
+				1.0f));
 		
 		Button uButton = new Button(this);
 		uButton.setLayoutParams(new LayoutParams(
