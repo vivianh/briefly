@@ -3,6 +3,7 @@ package com.venmo.scrum_timer;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -15,6 +16,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class StartActivity extends Activity {
 
@@ -27,7 +30,6 @@ public class StartActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start);
-		
 		num = 0;
 	}
 
@@ -43,7 +45,6 @@ public class StartActivity extends Activity {
 		EditText editText = (EditText)findViewById(R.id.time_input);
 		String time_input = editText.getText().toString();
 		
-
 		if(editText.getText().toString().length() == 0 ) {
 			editText.setError( "Enter time in seconds" );
 			return;
@@ -53,6 +54,9 @@ public class StartActivity extends Activity {
 		setTimerIntent.putExtra(TIME_INPUT, time_input);
 
 		ArrayList<String> usernames = getUsernames();
+		if (usernames == null) {
+			return;
+		}
 		setTimerIntent.putStringArrayListExtra(USERNAMES, usernames);
 		
 		startActivity(setTimerIntent);
@@ -102,7 +106,24 @@ public class StartActivity extends Activity {
 		for (int i = 0; i < c; i++) {
 			View v = layout.getChildAt(i);
 			EditText e = (EditText)((ViewGroup) v).getChildAt(0);
-			users.add(e.getText().toString());
+			String u = e.getText().toString();
+			if (u.length() > 0) {
+				users.add(e.getText().toString());
+			}
+		}
+		
+		if (c == 0) {
+			Context context = getApplicationContext();
+			CharSequence text = "add someone!!!";
+			int duration = Toast.LENGTH_SHORT;
+			Toast toast = Toast.makeText(context, text, duration);
+			toast.show();
+			return null;
+		}
+		
+		if (users.size() == 0) {
+			((TextView) ((ViewGroup) layout.getChildAt(0)).getChildAt(0)).setError("gotta charge someone");
+			return null;
 		}
 		return users;
 	}
