@@ -100,7 +100,7 @@ public class TimerActivity extends Activity {
 		if (secs < 0) {
 			shouldTeamGetCharged = true;
 			Context context = getApplicationContext();
-			CharSequence text = "over time sucks to suck";
+			CharSequence text = "over time";
 			int duration = Toast.LENGTH_SHORT;
 			mHandler.removeCallbacksAndMessages(startTimer);
 			mHandler.removeCallbacks(startTimer);
