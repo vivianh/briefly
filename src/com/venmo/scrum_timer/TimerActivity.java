@@ -152,6 +152,7 @@ public class TimerActivity extends Activity {
 			HttpResponse response;
 			try {
 				HttpPost thepost = new HttpPost("https://api.venmo.com/payments");
+				// does this 2 do anything? capacity?
 				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 				nameValuePairs.add(new BasicNameValuePair("access_token", "WsQJPyg6MRpCbbVdGyDHHpHqZYfs5eEP"));
 				nameValuePairs.add(new BasicNameValuePair("phone", uname));
