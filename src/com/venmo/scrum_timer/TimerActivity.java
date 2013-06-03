@@ -1,12 +1,19 @@
 package com.venmo.scrum_timer;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,6 +21,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -29,8 +37,8 @@ public class TimerActivity extends Activity {
 	private long secs;
 	private String seconds;
 	private ArrayList<String> usernames;
+	private boolean killMe;
 	
-	boolean shouldTeamGetCharged;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +66,7 @@ public class TimerActivity extends Activity {
 		initialTime = Integer.parseInt(time_input);
 		startClick(findViewById(R.id.timer));
 		
-		shouldTeamGetCharged = false;
+		killMe = false;
 	}
 
 	@Override
@@ -91,21 +99,29 @@ public class TimerActivity extends Activity {
 			updateTimer(elapsedTime);
 			mHandler.postDelayed(this, REFRESH_RATE);
 		}
-	};	
+	};
+	
 
 	private void updateTimer(float time) {
 		secs = (long)(time/1000);
 		secs = initialTime - secs;
 		
+		Log.v("ScrumTimer", "updateTimer() was called. time is: " + time);
+		Log.v("ScrumTimer", "updateTimer() was called. secs is: " + secs);
+		
+		if (killMe) {
+			return;
+		}
 		if (secs < 0) {
-			shouldTeamGetCharged = true;
 			Context context = getApplicationContext();
 			CharSequence text = "over time";
 			int duration = Toast.LENGTH_SHORT;
-			mHandler.removeCallbacksAndMessages(startTimer);
 			mHandler.removeCallbacks(startTimer);
 			Toast toast = Toast.makeText(context, text, duration);
 			toast.show();
+			// augafldsja;lkfj;dlskajf;lkajs;lkj
+			new CreateChargeTask().execute();
+			killMe = true;
 		}
 		else {
 			seconds=String.valueOf(secs);
@@ -113,4 +129,53 @@ public class TimerActivity extends Activity {
 		}
 	}
 	
+	private class CreateChargeTask extends AsyncTask<Void, Void, Void> {
+		@Override
+		protected Void doInBackground(Void... voids) {
+//			String[] user_names = new String[] {
+//				"vivian"	
+//			};
+			String uname = "";
+//			for (int i = 0; i < user_names.length; i++) {
+//				uname = user_names[i];
+//				doTheCharge(uname);
+//			}
+			for (int i = 0; i < usernames.size(); i++) {
+				uname = usernames.get(i);
+				doTheCharge(uname);
+			}
+			return null;
+		}
+		
+		protected void doTheCharge(String uname) {
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpResponse response;
+			try {
+				HttpPost thepost = new HttpPost("https://api.venmo.com/payments");
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+				nameValuePairs.add(new BasicNameValuePair("access_token", "WsQJPyg6MRpCbbVdGyDHHpHqZYfs5eEP"));
+				nameValuePairs.add(new BasicNameValuePair("phone", uname));
+				nameValuePairs.add(new BasicNameValuePair("amount", "-.01"));
+				nameValuePairs.add(new BasicNameValuePair("note", "test welp"));
+				nameValuePairs.add(new BasicNameValuePair("audience", "private"));
+				
+				thepost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+				
+				response = httpclient.execute(thepost);
+				
+				StatusLine statusLine = response.getStatusLine();
+				if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+					Log.v("P2P", "this is good. made charge");
+				} else {
+					response.getEntity().getContent().close();
+					Log.v("P2P", "this is bad. didn't make charge");
+					throw new IOException(statusLine.getReasonPhrase());
+				}
+			} catch (ClientProtocolException e) {
+				
+			} catch (IOException e) {
+				
+			}
+		}
+	}
 }
