@@ -20,7 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -29,16 +29,11 @@ import android.widget.Toast;
 
 public class TimerActivity extends Activity {
 
-	private Handler mHandler = new Handler();
-	private final int REFRESH_RATE = 1000; // in milliseconds
-	private long elapsedTime;
-	private long startTime;
 	private int initialTime;
-	private long secs;
-	private String seconds;
 	private ArrayList<String> usernames;
-	private boolean killMe;
-	
+	private boolean charge;
+	public CountDownTimer timer;
+	private long secs;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +46,6 @@ public class TimerActivity extends Activity {
 		TextView initialTimer = (TextView)findViewById(R.id.timer);
 		initialTimer.setText(time_input);
 		
-		//
 		usernames = intent.getStringArrayListExtra(StartActivity.USERNAMES);
 		TextView usernames_view = (TextView)findViewById(R.id.usernames);
 		
@@ -61,14 +55,36 @@ public class TimerActivity extends Activity {
 		}
 		
 		usernames_view.setText(s);
-		//
 		
 		initialTime = Integer.parseInt(time_input);
-		startClick(findViewById(R.id.timer));
+		charge = true;
+		//new TimerTask().execute(initialTime);
 		
-		killMe = false;
+		timer = new MyTimer(initialTime*1000, 1000);
+		timer.start();
 	}
 
+	public class MyTimer extends CountDownTimer {
+
+		public MyTimer(long millisInFuture, long countDownInterval) {
+			super(millisInFuture, countDownInterval);
+			// TODO Auto-generated constructor stub
+		}
+		
+		@Override
+		public void onTick(long timeLeft) {
+			Log.v("P2P", "anything???");
+			((TextView)findViewById(R.id.timer)).setText(String.valueOf(timeLeft/1000));
+
+		}
+		
+		@Override
+		public void onFinish() {
+			Log.v("P2P", "?!?!!");
+			//new CreateChargeTask().execute();
+		}
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -76,80 +92,68 @@ public class TimerActivity extends Activity {
 		return true;
 	}
 	
-	public void startClick(View view) {
-		startTime = System.currentTimeMillis();
-		// check handler functions ughh
-		mHandler.removeCallbacks(startTimer);
-		mHandler.postDelayed(startTimer, 0);
-	}
-
 	public void stopClick(View view) {
-		mHandler.removeCallbacks(startTimer);
-	}
-	
-	public void restartClick(View view) {
-		startTime = System.currentTimeMillis() - elapsedTime;
-		mHandler.removeCallbacks(startTimer);
-		mHandler.postDelayed(startTimer, 0);
-	}
-	
-	private Runnable startTimer = new Runnable() {
-		public void run() {
-			elapsedTime = System.currentTimeMillis() - startTime;
-			updateTimer(elapsedTime);
-			mHandler.postDelayed(this, REFRESH_RATE);
-		}
-	};
-	
-
-	private void updateTimer(float time) {
-		secs = (long)(time/1000);
-		secs = initialTime - secs;
+		//charge = false;
+		timer.cancel();
+		Log.v("P2P", "tried to cancel timer...");
 		
-		Log.v("ScrumTimer", "updateTimer() was called. time is: " + time);
-		Log.v("ScrumTimer", "updateTimer() was called. secs is: " + secs);
-		
-		if (killMe) {
-			return;
-		}
-		if (secs < 0) {
-			Context context = getApplicationContext();
-			CharSequence text = "over time";
-			int duration = Toast.LENGTH_SHORT;
-			mHandler.removeCallbacks(startTimer);
-			Toast toast = Toast.makeText(context, text, duration);
-			toast.show();
-			// augafldsja;lkfj;dlskajf;lkajs;lkj
-			new CreateChargeTask().execute();
-			killMe = true;
-		}
-		else {
-			seconds=String.valueOf(secs);
-			((TextView)findViewById(R.id.timer)).setText(seconds);
-		}
+		Context context = getApplicationContext();
+		CharSequence text = "no charge today!";
+		int duration = Toast.LENGTH_SHORT;
+		Toast toast = Toast.makeText(context, text, duration);
+		toast.show();
 	}
 	
-	private class timerTask extends AsyncTask<Void, Void, Void> {
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-		
-	}
+//	private class TimerTask extends AsyncTask<Integer, Long, Void> {
+//
+//		private long startTime;
+//		private long elapsedTime;
+//		private long secs;
+//		private String seconds;
+//		private boolean timeOut;
+//		
+//		
+//		@Override
+//		protected void onPreExecute() {
+//			 startTime = System.currentTimeMillis();
+//			 timeOut = false;
+//		}
+//		
+//		@Override
+//		protected Void doInBackground(Integer... params) {
+//			while (!timeOut) {
+//				elapsedTime = (System.currentTimeMillis() - startTime)/1000;
+//				publishProgress(elapsedTime);
+//				if (elapsedTime >= initialTime) {
+//					timeOut = true;
+//				}
+//			}
+//			return null;
+//		}
+//		
+//		@Override
+//		protected void onProgressUpdate(Long... progress) {
+//			secs = progress[0];
+//			secs = initialTime - secs;
+//			seconds=String.valueOf(secs);
+//			((TextView)findViewById(R.id.timer)).setText(seconds);
+//		}
+//		
+//		@Override
+//		protected void onPostExecute(Void v) {
+//			if (charge) {				
+//				new CreateChargeTask().execute();
+//				Log.v("P2P", "charge");
+//			} else {
+//				Log.v("P2P", "no charge");
+//			}
+//		}
+//	}
 	
 	private class CreateChargeTask extends AsyncTask<Void, Void, Void> {
 		@Override
 		protected Void doInBackground(Void... voids) {
-//			String[] user_names = new String[] {
-//				"vivian"	
-//			};
 			String uname = "";
-//			for (int i = 0; i < user_names.length; i++) {
-//				uname = user_names[i];
-//				doTheCharge(uname);
-//			}
 			for (int i = 0; i < usernames.size(); i++) {
 				uname = usernames.get(i);
 				doTheCharge(uname);

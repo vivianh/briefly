@@ -34,18 +34,9 @@
 	    		<Button
 	    		    android:layout_width="wrap_content"
 	    		    android:layout_height="wrap_content"
-	    		    android:layout_weight="1" 
 	    		    android:text="@string/stop_button_text"
 	    		    android:onClick="stopClick"
 	    		    android:id="@+id/stop_button" >    		    
-	    		</Button>
-	    		<Button
-	    		    android:layout_width="wrap_content"
-	    		    android:layout_height="wrap_content"
-	    		    android:layout_weight="1"
-	    		    android:text="@string/restart_button_text"
-	    		    android:onClick="restartClick"
-	    		    android:id="@+id/restart_button" >    		    
 	    		</Button>
 	    	</LinearLayout>
 	    	<TextView
