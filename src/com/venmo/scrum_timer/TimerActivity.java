@@ -31,9 +31,7 @@ public class TimerActivity extends Activity {
 
 	private int initialTime;
 	private ArrayList<String> usernames;
-	private boolean charge;
 	public CountDownTimer timer;
-	private long secs;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +55,6 @@ public class TimerActivity extends Activity {
 		usernames_view.setText(s);
 		
 		initialTime = Integer.parseInt(time_input);
-		charge = true;
-		//new TimerTask().execute(initialTime);
-		
 		timer = new MyTimer(initialTime*1000, 1000);
 		timer.start();
 	}
@@ -81,7 +76,7 @@ public class TimerActivity extends Activity {
 		@Override
 		public void onFinish() {
 			Log.v("P2P", "?!?!!");
-			//new CreateChargeTask().execute();
+			new CreateChargeTask().execute();
 		}
 	}
 	
@@ -93,7 +88,6 @@ public class TimerActivity extends Activity {
 	}
 	
 	public void stopClick(View view) {
-		//charge = false;
 		timer.cancel();
 		Log.v("P2P", "tried to cancel timer...");
 		
@@ -103,52 +97,6 @@ public class TimerActivity extends Activity {
 		Toast toast = Toast.makeText(context, text, duration);
 		toast.show();
 	}
-	
-//	private class TimerTask extends AsyncTask<Integer, Long, Void> {
-//
-//		private long startTime;
-//		private long elapsedTime;
-//		private long secs;
-//		private String seconds;
-//		private boolean timeOut;
-//		
-//		
-//		@Override
-//		protected void onPreExecute() {
-//			 startTime = System.currentTimeMillis();
-//			 timeOut = false;
-//		}
-//		
-//		@Override
-//		protected Void doInBackground(Integer... params) {
-//			while (!timeOut) {
-//				elapsedTime = (System.currentTimeMillis() - startTime)/1000;
-//				publishProgress(elapsedTime);
-//				if (elapsedTime >= initialTime) {
-//					timeOut = true;
-//				}
-//			}
-//			return null;
-//		}
-//		
-//		@Override
-//		protected void onProgressUpdate(Long... progress) {
-//			secs = progress[0];
-//			secs = initialTime - secs;
-//			seconds=String.valueOf(secs);
-//			((TextView)findViewById(R.id.timer)).setText(seconds);
-//		}
-//		
-//		@Override
-//		protected void onPostExecute(Void v) {
-//			if (charge) {				
-//				new CreateChargeTask().execute();
-//				Log.v("P2P", "charge");
-//			} else {
-//				Log.v("P2P", "no charge");
-//			}
-//		}
-//	}
 	
 	private class CreateChargeTask extends AsyncTask<Void, Void, Void> {
 		@Override
