@@ -129,6 +129,16 @@ public class TimerActivity extends Activity {
 		}
 	}
 	
+	private class timerTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+	}
+	
 	private class CreateChargeTask extends AsyncTask<Void, Void, Void> {
 		@Override
 		protected Void doInBackground(Void... voids) {

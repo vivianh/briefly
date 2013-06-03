@@ -7,7 +7,9 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
-
+    
+    <uses-permission android:name="android.permission.INTERNET" />
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -15,7 +17,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.venmo.scrum_timer.StartActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+    		android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,9 +27,8 @@
         </activity>
         <activity
             android:name="com.venmo.scrum_timer.TimerActivity"
-            android:label="@string/title_activity_timer" >
+            android:label="@string/title_activity_timer"
+            android:screenOrientation="portrait" >
         </activity>
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
