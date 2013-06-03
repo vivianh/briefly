@@ -10,6 +10,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -22,6 +23,7 @@ public class StartActivity extends Activity {
 	public final static String TIME_INPUT = "000";
 	public final static String USERNAMES = "usernames lol";
 	private static int num;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,16 +63,12 @@ public class StartActivity extends Activity {
 	// passing in view here!?!?!? for onclick methods uhhh
 	public void addUsername(View view) {
 		final LinearLayout layout = (LinearLayout)findViewById(R.id.usernameLayout);
-		
 		LinearLayout uLayout = new LinearLayout(this);
 		uLayout.setLayoutDirection(0);
 		
 		EditText editText = new EditText(this);
-		//editText.setHint("Venmo username");
-		int c = layout.getChildCount();
-		uLayout.setTag(layout.getChildCount());
-		editText.setHint(" " + c);
-		editText.setId(num);
+		editText.setHint("Venmo username");
+		uLayout.setId(num);
 		
 		editText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 		editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -83,9 +81,8 @@ public class StartActivity extends Activity {
 		uButton.setText("-");
 		uButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				//layout.removeViewAt(num);
-				int pos = (Integer)((View) v.getParent()).getTag();
-				layout.removeViewAt(pos);				
+				View view = findViewById(((View) v.getParent()).getId());
+				layout.removeView(view);
 			}
 		});
 		
@@ -95,18 +92,16 @@ public class StartActivity extends Activity {
 		num++;
 	}
 	
-	public void removeUsername(View view) {
-		
-	}
-	
 	private ArrayList<String> getUsernames() {
+		final LinearLayout layout = (LinearLayout)findViewById(R.id.usernameLayout);
 		ArrayList<String> users = new ArrayList<String>();
-		
-		for (int i = 0; i < num; i++) {
-			EditText uEditText = (EditText)findViewById(i);
-			users.add(uEditText.getText().toString());
+	
+		int c = layout.getChildCount();
+		for (int i = 0; i < c; i++) {
+			View v = layout.getChildAt(i);
+			EditText e = (EditText)((ViewGroup) v).getChildAt(0);
+			users.add(e.getText().toString());
 		}
-		
 		return users;
 	}
 	
