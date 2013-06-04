@@ -45,14 +45,14 @@ public class TimerActivity extends Activity {
 		initialTimer.setText(time_input);
 		
 		usernames = intent.getStringArrayListExtra(StartActivity.USERNAMES);
-		TextView usernames_view = (TextView)findViewById(R.id.usernames);
-		
-		String s = "";
-		for (int i = 0; i < usernames.size(); i++) {
-			s += " " + usernames.get(i);
-		}
-		
-		usernames_view.setText(s);
+//		TextView usernames_view = (TextView)findViewById(R.id.usernames);
+//		
+//		String s = "";
+//		for (int i = 0; i < usernames.size(); i++) {
+//			s += " " + usernames.get(i);
+//		}
+//		
+//		usernames_view.setText(s);
 		
 		initialTime = Integer.parseInt(time_input);
 		timer = new MyTimer(initialTime*1000, 1000);
@@ -70,13 +70,20 @@ public class TimerActivity extends Activity {
 		public void onTick(long timeLeft) {
 			Log.v("P2P", "anything???");
 			((TextView)findViewById(R.id.timer)).setText(String.valueOf(timeLeft/1000));
-
 		}
 		
 		@Override
 		public void onFinish() {
+			((TextView)findViewById(R.id.timer)).setText(0);
+			
 			Log.v("P2P", "?!?!!");
 			new CreateChargeTask().execute();
+			
+			Context context = getApplicationContext();
+			CharSequence text = "over time welp";
+			int duration = Toast.LENGTH_SHORT;
+			Toast toast = Toast.makeText(context, text, duration);
+			toast.show();
 		}
 	}
 	
@@ -96,6 +103,10 @@ public class TimerActivity extends Activity {
 		int duration = Toast.LENGTH_SHORT;
 		Toast toast = Toast.makeText(context, text, duration);
 		toast.show();
+	}
+	
+	public void restartClick(View view) {
+
 	}
 	
 	private class CreateChargeTask extends AsyncTask<Void, Void, Void> {

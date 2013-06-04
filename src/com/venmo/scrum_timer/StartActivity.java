@@ -68,11 +68,11 @@ public class StartActivity extends Activity {
 		LinearLayout uLayout = new LinearLayout(this);
 		uLayout.setLayoutDirection(0);
 		
+		uLayout.setId(num);
 		EditText editText = new EditText(this);
 		editText.setHint("Venmo username");
-		uLayout.setId(num);
-		
-		editText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+		//InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+		editText.setInputType(InputType.TYPE_CLASS_PHONE);
 		editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
 		editText.requestFocus();
 		editText.setLayoutParams(new TableLayout.LayoutParams(

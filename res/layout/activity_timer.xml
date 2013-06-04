@@ -7,20 +7,20 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:id="@+id/linearLayout" >
     	<LinearLayout
         	android:orientation="vertical"
     		android:layout_gravity="center"
-    		android:layout_width="wrap_content"
+    		android:layout_width="match_parent"
     		android:layout_height="wrap_content"
     		android:layout_marginTop="20dp"
     		android:id="@+id/timerBackground" >
     		<TextView
     		    android:textColor="#004254"
-    		    android:layout_width="fill_parent"
-    		    android:layout_height="wrap_content"
+    		    android:layout_width="match_parent"
+    		    android:layout_height="wrap_content"    		    
     		    android:gravity="center"
     		    android:textSize="60sp"
     			android:text="@string/timer"
@@ -28,8 +28,10 @@
     		</TextView>
     		<LinearLayout
     		    android:orientation="horizontal"
-    		    android:layout_width="wrap_content"
-    		    android:layout_height="wrap_content"
+    		    android:layout_width="match_parent"
+    		    android:layout_height="match_parent"
+    		    android:layout_gravity="center"
+    		    android:gravity="center"
     		    android:id="@+id/buttonLayout" >
 	    		<Button
 	    		    android:layout_width="wrap_content"
@@ -39,14 +41,16 @@
 	    		    android:id="@+id/stop_button" >    		    
 	    		</Button>
 	    	</LinearLayout>
-	    	<TextView
-	    	    android:textColor="#004254"
-	    	    android:layout_width="wrap_content"
-	    	    android:layout_height="wrap_content"
-	    	    android:layout_gravity="center"
-	    	    android:text="@string/usernames"
-	    	    android:id="@+id/usernames" >
-	    	</TextView>
+	    	<!--
+		    	<TextView
+		    	    android:textColor="#004254"
+		    	    android:layout_width="wrap_content"
+		    	    android:layout_height="wrap_content"
+		    	    android:layout_gravity="center"
+		    	    android:text="@string/usernames"
+		    	    android:id="@+id/usernames" >
+		    	</TextView>
+	    	-->
     	</LinearLayout>
     </LinearLayout>
    
