@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts;
 import android.text.InputType;
@@ -18,8 +17,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -33,14 +37,71 @@ public class StartActivity extends Activity {
 	private final static int CONTACT_PICKER_RESULT = 1001;
 	private static ArrayList<String> usernames;
 	
+	private static ArrayList<String> P2P_android;
+	private static ArrayList<String> P2P_ios;
+	private static ArrayList<String> P2P_backend;
+	private static ArrayList<String> P2P_design;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start);
+		
+		GridView gridview = (GridView) findViewById(R.id.groups);
+		gridview.setAdapter(new ImageAdapter(this));
+		gridview.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+				Toast.makeText(StartActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+			}
+		});
+		
 		num = 0;
 		usernames = new ArrayList<String>();
 	}
 
+		public class ImageAdapter extends BaseAdapter {
+			private Context mContext;
+			
+			public ImageAdapter(Context c) {
+				mContext = c;
+			}
+			
+			public int getCount() {
+				return mThumbIds.length;
+			}
+			
+			public Object getItem(int position) {
+				return null;
+			}
+			
+			public long getItemId(int position) {
+				return 0;
+			}
+
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) {
+				ImageView imageView;
+				if (convertView == null) {
+					imageView = new ImageView(mContext);
+					// 200?!?! vs 100 set in xml
+					imageView.setLayoutParams(new GridView.LayoutParams(200, 200));
+					//imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+					//imageView.setPadding(8, 8,  8,  8);
+				} else {
+					imageView = (ImageView) convertView;
+				}	
+				
+				imageView.setImageResource(mThumbIds[position]);
+				return imageView;
+			}
+			
+			private Integer[] mThumbIds = {
+				R.drawable.vivian, R.drawable.vivian,
+	            R.drawable.vivian, R.drawable.vivian,
+	            R.drawable.vivian, R.drawable.vivian,
+			};
+		}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.start, menu);
@@ -173,6 +234,22 @@ public class StartActivity extends Activity {
 		EditText time = (EditText)findViewById(R.id.time_input);
 		time.setText("");
 		//layout.removeAllViewsInLayout();
+	}
+	
+	public void showGroups(View view) {
+		GridView groups = (GridView) findViewById(R.id.groups);
+		if (groups.getVisibility() == View.VISIBLE) {
+			Log.v("CONTACTGROUP", "?A??");
+			groups.setVisibility(View.GONE);
+		} else if (groups.getVisibility() == View.GONE) {
+			groups.setVisibility(View.VISIBLE);
+			Log.v("CONTACTGROUP", "faslkdf;aklsdf");
+		}
+	}
+	
+	public void addGroup(View view) {
+		//Log.v("GROUP", "yea");
+		
 	}
 	
 	public void pickContacts(View view) {
