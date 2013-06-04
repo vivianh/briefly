@@ -34,6 +34,26 @@
             android:text="@string/add_user_text"
             android:onClick="addUsername" >            
         </Button>
+        <LinearLayout
+            android:id="@+id/contactLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+	        <EditText
+	            android:id="@+id/contact_field"
+	            android:hint="@string/contact_field"
+	            android:layout_width="0dip"
+	            android:layout_weight="1"
+	            android:layout_height="wrap_content" >            
+	        </EditText>
+	        <Button
+	            android:id="@+id/contact_button"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="@string/contact_button"
+	            android:onClick="pickContacts" >
+	        </Button>
+	    </LinearLayout>
         <ScrollView
        		android:layout_width="match_parent"
        		android:layout_height="wrap_content">

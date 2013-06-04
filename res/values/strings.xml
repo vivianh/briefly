@@ -13,5 +13,7 @@
     <string name="username">Venmo username</string>
     <string name="usernames">ughhhhh</string>
     <string name="add_user_text">Add User</string>
+    <string name="contact_field">Enter contact</string>
+    <string name="contact_button">Browse</string>
 
 </resources>

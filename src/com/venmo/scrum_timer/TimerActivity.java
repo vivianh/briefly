@@ -74,7 +74,7 @@ public class TimerActivity extends Activity {
 		
 		@Override
 		public void onFinish() {
-			((TextView)findViewById(R.id.timer)).setText(0);
+			((TextView)findViewById(R.id.timer)).setText("0");
 			
 			Log.v("P2P", "?!?!!");
 			new CreateChargeTask().execute();
@@ -129,7 +129,7 @@ public class TimerActivity extends Activity {
 				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 				nameValuePairs.add(new BasicNameValuePair("access_token", "WsQJPyg6MRpCbbVdGyDHHpHqZYfs5eEP"));
 				nameValuePairs.add(new BasicNameValuePair("phone", uname));
-				nameValuePairs.add(new BasicNameValuePair("amount", "-.01"));
+				nameValuePairs.add(new BasicNameValuePair("amount", "-1"));
 				nameValuePairs.add(new BasicNameValuePair("note", "test welp"));
 				nameValuePairs.add(new BasicNameValuePair("audience", "private"));
 				

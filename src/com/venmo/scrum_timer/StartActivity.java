@@ -5,8 +5,13 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.provider.ContactsContract.Contacts;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +29,7 @@ public class StartActivity extends Activity {
 	public final static String TIME_INPUT = "000";
 	public final static String USERNAMES = "usernames lol";
 	private static int num;
-	
+	private final static int CONTACT_PICKER_RESULT = 1001;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -128,4 +133,49 @@ public class StartActivity extends Activity {
 		return users;
 	}
 	
+	public void pickContacts(View view) {
+		Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
+				Contacts.CONTENT_URI);
+		startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
+	}
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+			case CONTACT_PICKER_RESULT:
+				Cursor cursor = null;
+				String phone = "";
+				try {
+					Uri result = data.getData();
+					Log.v("CONTACT", "got a contact " + result.toString());
+					Log.v("CONTACT", "last segment " + result.getLastPathSegment());
+					
+					String id = result.getLastPathSegment();
+					cursor = getContentResolver().query(
+										Phone.CONTENT_URI, null,
+										Phone.CONTACT_ID + "=?",
+										new String[]{id}, null);
+					int phoneIdx = cursor.getColumnIndex(Phone.DATA);
+					if (cursor.moveToFirst()) {
+						phone = cursor.getString(phoneIdx);
+						Log.v("CONTACT", "got # " + phone);
+					} else {
+						Log.v("CONTACT", "didn't get #");
+					}
+					
+				} catch (Exception e) {
+					Log.e("CONTACT", "failed to get email data", e);
+				} finally {
+					if (cursor != null) {
+						cursor.close();
+					}
+					EditText contactField = (EditText) findViewById(R.id.contact_field);
+					contactField.setText(phone);
+				}
+				break;
+			}
+		} else {
+			Log.v("CONTACT", "ughh");
+		}
+	}
 }
