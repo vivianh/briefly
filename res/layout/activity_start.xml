@@ -7,11 +7,11 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".StartActivity" >
-       <LinearLayout
-       android:orientation="vertical"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:id="@+id/linearLayout" >
+	    <LinearLayout
+	    android:orientation="vertical"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:id="@+id/linearLayout" >
 	    <EditText
 	        android:id="@+id/time_input"
 	        android:layout_height="wrap_content"
@@ -20,20 +20,38 @@
 	        android:imeOptions="actionDone"
 	        android:hint="@string/time_input_text" >
 	    </EditText>
-	    <Button 
-	        android:id="@+id/set_timer"
+	    <LinearLayout
+	        android:id="@+id/buttonLayout"
+	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_width="wrap_content"
-	        android:text="@string/set_timer_text"
-	        android:onClick="setTimer" >
-	    </Button>
-        <Button
-            android:id="@+id/add_username_button"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="@string/add_user_text"
-            android:onClick="addUsername" >            
-        </Button>
+	        android:orientation="horizontal" >
+	        <Button
+	            android:id="@+id/add_username_button"
+	            android:layout_height="wrap_content"
+	            android:layout_width="0dip"
+	            android:layout_weight="1"
+	            android:text="@string/add_user_text"
+	            android:onClick="addUsername" >            
+	        </Button>
+	        <Button
+	            android:id="@+id/contact_button"
+	            android:layout_width="0dip"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:text="@string/contact_button"
+	            android:onClick="pickContacts" >
+	        </Button>
+	        <Button 
+		        android:id="@+id/set_timer"
+		        android:layout_height="wrap_content"
+		        android:layout_width="0dip"
+		        android:layout_weight="1"
+		        android:text="@string/set_timer_text"
+		        android:onClick="setTimer" >
+		    </Button>
+	    </LinearLayout>
+	    
+        <!--
         <LinearLayout
             android:id="@+id/contactLayout"
             android:layout_width="match_parent"
@@ -46,14 +64,9 @@
 	            android:layout_weight="1"
 	            android:layout_height="wrap_content" >            
 	        </EditText>
-	        <Button
-	            android:id="@+id/contact_button"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:text="@string/contact_button"
-	            android:onClick="pickContacts" >
-	        </Button>
 	    </LinearLayout>
+        -->
+        
         <ScrollView
        		android:layout_width="match_parent"
        		android:layout_height="wrap_content">
@@ -63,6 +76,6 @@
             	android:layout_height="wrap_content"
             	android:id="@+id/usernameLayout" >	            
         	</LinearLayout>     
-        </ScrollView> 
+        </ScrollView>
     </LinearLayout>        
 </RelativeLayout>

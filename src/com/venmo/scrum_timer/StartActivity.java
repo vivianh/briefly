@@ -101,6 +101,35 @@ public class StartActivity extends Activity {
 		num++;
 	}
 	
+	private void createField(String phone) {
+		final LinearLayout layout = (LinearLayout)findViewById(R.id.usernameLayout);
+		LinearLayout uLayout = new LinearLayout(this);
+		uLayout.setLayoutDirection(0);
+		uLayout.setId(num);
+		EditText editText = new EditText(this);
+		editText.setText(phone);
+		editText.setLayoutParams(new TableLayout.LayoutParams(
+				LayoutParams.MATCH_PARENT,
+				LayoutParams.WRAP_CONTENT,
+				1.0f));
+		Button uButton = new Button(this);
+		uButton.setLayoutParams(new LayoutParams(
+				LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT));
+		uButton.setText("-");
+		uButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				View view = findViewById(((View) v.getParent()).getId());
+				layout.removeView(view);
+			}
+		});
+		
+		uLayout.addView(editText);
+		uLayout.addView(uButton);
+		layout.addView(uLayout);
+		num++;
+	}
+	
 	private ArrayList<String> getUsernames() {
 		final LinearLayout layout = (LinearLayout)findViewById(R.id.usernameLayout);
 		ArrayList<String> users = new ArrayList<String>();
@@ -115,9 +144,9 @@ public class StartActivity extends Activity {
 			}
 		}
 		
-		if (usernames.size() > 0) {
-			return users;
-		}
+//		if (usernames.size() > 0) {
+//			return users;
+//		}
 		
 		if (c == 0) {
 			Context context = getApplicationContext();
@@ -135,6 +164,7 @@ public class StartActivity extends Activity {
 		
 		return users;
 	}
+	
 	
 	public void pickContacts(View view) {
 		Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
@@ -172,13 +202,14 @@ public class StartActivity extends Activity {
 					if (cursor != null) {
 						cursor.close();
 					}
-					EditText contactField = (EditText) findViewById(R.id.contact_field);
+					//EditText contactField = (EditText) findViewById(R.id.contact_field);
 					if (phone.matches("\\+1[0-9]{10}")) {
 						phone = phone.replace("+1", "");
 						Log.v("CONTACT", "this regex" + phone);
-					}					
-					contactField.setText(phone);
-					usernames.add(phone);
+					}
+					createField(phone);
+					//contactField.setText(phone);
+					//usernames.add(phone);
 				}
 				break;
 			}
