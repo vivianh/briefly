@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts;
 import android.text.InputType;
@@ -73,7 +74,7 @@ public class StartActivity extends Activity {
 		
 		uLayout.setId(num);
 		EditText editText = new EditText(this);
-		editText.setHint("Venmo username");
+		editText.setHint(R.string.username);
 		//InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
 		editText.setInputType(InputType.TYPE_CLASS_PHONE);
 		editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -165,10 +166,20 @@ public class StartActivity extends Activity {
 		return users;
 	}
 	
+	public void clear(View view) {
+		final LinearLayout layout = (LinearLayout)findViewById(R.id.usernameLayout);
+		usernames = new ArrayList<String>();
+		layout.removeAllViews();
+		EditText time = (EditText)findViewById(R.id.time_input);
+		time.setText("");
+		//layout.removeAllViewsInLayout();
+	}
 	
 	public void pickContacts(View view) {
 		Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
 				Contacts.CONTENT_URI);
+		// ????? why is this causing an issue...
+		// contactPickerIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
 		startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
 	}
 	
@@ -205,8 +216,9 @@ public class StartActivity extends Activity {
 					//EditText contactField = (EditText) findViewById(R.id.contact_field);
 					if (phone.matches("\\+1[0-9]{10}")) {
 						phone = phone.replace("+1", "");
-						Log.v("CONTACT", "this regex" + phone);
+						//Log.v("CONTACT", "this regex" + phone);
 					}
+					Log.v("CONTACT", "this regex" + phone);
 					createField(phone);
 					//contactField.setText(phone);
 					//usernames.add(phone);
