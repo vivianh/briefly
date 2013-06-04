@@ -30,17 +30,18 @@ public class StartActivity extends Activity {
 	public final static String USERNAMES = "usernames lol";
 	private static int num;
 	private final static int CONTACT_PICKER_RESULT = 1001;
+	private static ArrayList<String> usernames;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start);
 		num = 0;
+		usernames = new ArrayList<String>();
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.start, menu);
 		return true;
 	}
@@ -53,21 +54,18 @@ public class StartActivity extends Activity {
 		if(editText.getText().toString().length() == 0 ) {
 			editText.setError( "Enter time in seconds" );
 			return;
-		}
-		
-		// is this the only way to pass strings with intents? ask
+		}		
 		setTimerIntent.putExtra(TIME_INPUT, time_input);
 
-		ArrayList<String> usernames = getUsernames();
+		usernames.addAll(getUsernames());
 		if (usernames == null) {
 			return;
 		}
-		setTimerIntent.putStringArrayListExtra(USERNAMES, usernames);
 		
+		setTimerIntent.putStringArrayListExtra(USERNAMES, usernames);		
 		startActivity(setTimerIntent);
 	}
 	
-	// passing in view here!?!?!? for onclick methods uhhh
 	public void addUsername(View view) {
 		final LinearLayout layout = (LinearLayout)findViewById(R.id.usernameLayout);
 		LinearLayout uLayout = new LinearLayout(this);
@@ -117,6 +115,10 @@ public class StartActivity extends Activity {
 			}
 		}
 		
+		if (usernames.size() > 0) {
+			return users;
+		}
+		
 		if (c == 0) {
 			Context context = getApplicationContext();
 			CharSequence text = "add someone!!!";
@@ -130,6 +132,7 @@ public class StartActivity extends Activity {
 			((TextView) ((ViewGroup) layout.getChildAt(0)).getChildAt(0)).setError("gotta charge someone");
 			return null;
 		}
+		
 		return users;
 	}
 	
@@ -170,7 +173,12 @@ public class StartActivity extends Activity {
 						cursor.close();
 					}
 					EditText contactField = (EditText) findViewById(R.id.contact_field);
+					if (phone.matches("\\+1[0-9]{10}")) {
+						phone = phone.replace("+1", "");
+						Log.v("CONTACT", "this regex" + phone);
+					}					
 					contactField.setText(phone);
+					usernames.add(phone);
 				}
 				break;
 			}
