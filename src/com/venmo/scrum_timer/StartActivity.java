@@ -1,6 +1,7 @@
 package com.venmo.scrum_timer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts;
 import android.text.InputType;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,21 +39,37 @@ public class StartActivity extends Activity {
 	private final static int CONTACT_PICKER_RESULT = 1001;
 	private static ArrayList<String> usernames;
 	
-	private static ArrayList<String> P2P_android;
-	private static ArrayList<String> P2P_ios;
-	private static ArrayList<String> P2P_backend;
-	private static ArrayList<String> P2P_design;
+	private static String[] P2P_android;
+	//private static String[] P2P_ios;
+	//private static String[] P2P_backend;
+	private static String[] P2P_design;
+	//private static HashMap<Integer, String[]> groupsMap;
+	private static SparseArray<String[]> groupsMap;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_start);
 		
+		P2P_android = new String[] {"7132487562", "2147265046", "7138284596"}; //me, robert, jin
+		P2P_design = new String[] {"6825546146", "6129613169", "6308546493"}; //sabrina, sonal, sarah
+
+		//groupsMap = new SparseArray<Integer, String[]>();
+		groupsMap = new SparseArray<String[]>();
+		groupsMap.put(0, P2P_android);
+		groupsMap.put(1, P2P_design);
+		
 		GridView gridview = (GridView) findViewById(R.id.groups);
 		gridview.setAdapter(new ImageAdapter(this));
 		gridview.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-				Toast.makeText(StartActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+				//Log.v("CONTACTGROUP", groupsMap.get(position));
+				addGroup(groupsMap.get(position));
+				Log.v("CONTACTGROUP", "position " + position);
+				if (groupsMap.get(0) == null) {
+					Log.v("CONTACTGROUP", "size " + groupsMap.size());
+				}
+				//Toast.makeText(StartActivity.this, "" + position, Toast.LENGTH_SHORT).show();
 			}
 		});
 		
@@ -239,17 +257,21 @@ public class StartActivity extends Activity {
 	public void showGroups(View view) {
 		GridView groups = (GridView) findViewById(R.id.groups);
 		if (groups.getVisibility() == View.VISIBLE) {
-			Log.v("CONTACTGROUP", "?A??");
 			groups.setVisibility(View.GONE);
 		} else if (groups.getVisibility() == View.GONE) {
 			groups.setVisibility(View.VISIBLE);
-			Log.v("CONTACTGROUP", "faslkdf;aklsdf");
 		}
 	}
 	
-	public void addGroup(View view) {
+	public void addGroup(String[] users) {
 		//Log.v("GROUP", "yea");
-		
+		if (users == null) {
+			Log.v("CONTACTGROUP", "welp");
+		} else {
+			for (String u : users) {
+				createField(u);
+			}
+		}
 	}
 	
 	public void pickContacts(View view) {
