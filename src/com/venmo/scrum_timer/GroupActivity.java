@@ -1,8 +1,6 @@
 package com.venmo.scrum_timer;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -14,15 +12,24 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TextView;
 
 public class GroupActivity extends Activity {
 
 	private final static int ADD_GROUP_RESULT = 2; 
+	private static GroupDatabase db;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group);
+		
+		db = new GroupDatabase(this);		
+		//db.addGroup(name, time, amount)
 	}
 
 	@Override
@@ -38,7 +45,21 @@ public class GroupActivity extends Activity {
 		startActivityForResult(createGroupIntent, ADD_GROUP_RESULT);
 	}
 	
-	public class GroupOpenHelper extends SQLiteOpenHelper {
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == RESULT_OK) {
+			switch(requestCode) {
+			case ADD_GROUP_RESULT:
+				String _groupname = data.getStringExtra(EditGroupActivity.GROUPNAME);
+				String _timelimit = data.getStringExtra(EditGroupActivity.TIMELIMIT);
+				String _chargeamt = data.getStringExtra(EditGroupActivity.CHARGEAMT);
+				
+				db.addGroup(_groupname, _timelimit, _chargeamt);	
+			}
+		}
+		updateGroups();
+	}
+
+	public class GroupDatabase extends SQLiteOpenHelper {
 		
 		public static final String TABLE_GROUPS = "groups";
 		public static final String COLUMN_ID = "_id";
@@ -56,7 +77,7 @@ public class GroupActivity extends Activity {
 				COLUMN_TIME + " TEXT, " + 
 				COLUMN_AMOUNT + " TEXT);";
 		
-		GroupOpenHelper(Context context) {
+		GroupDatabase(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		}
 		
@@ -75,16 +96,16 @@ public class GroupActivity extends Activity {
 			SQLiteDatabase db = this.getWritableDatabase();
 			
 			ContentValues values = new ContentValues();
-			values.put(GroupOpenHelper.COLUMN_GROUP_NAME, name);
-			values.put(GroupOpenHelper.COLUMN_TIME, time);
-			values.put(GroupOpenHelper.COLUMN_AMOUNT, amount);
+			values.put(GroupDatabase.COLUMN_GROUP_NAME, name);
+			values.put(GroupDatabase.COLUMN_TIME, time);
+			values.put(GroupDatabase.COLUMN_AMOUNT, amount);
 			
-			db.insert(GroupOpenHelper.TABLE_GROUPS, null, values);
+			db.insert(GroupDatabase.TABLE_GROUPS, null, values);
 			db.close();
 		}
 		
-		public List<Group> getAllGroups() {
-			List<Group> allGroups = new ArrayList<Group>();
+		public ArrayList<Group> getAllGroups() {
+			ArrayList<Group> allGroups = new ArrayList<Group>();
 			String selectQuery = "SELECT * FROM " + TABLE_GROUPS;
 			SQLiteDatabase db = this.getReadableDatabase();
 			Cursor cursor = db.rawQuery(selectQuery, null);
@@ -119,5 +140,60 @@ public class GroupActivity extends Activity {
 			
 		}
 		
+	}
+
+	private void updateGroups() {
+		int num = 0;
+		final LinearLayout layout = (LinearLayout) findViewById(R.id.groups_layout);
+		ArrayList<Group> groups = db.getAllGroups();
+		
+		for (int i = 0; i < groups.size(); i++) {
+			//Log.v("UGH", "??" + groups.get(i));
+			Group current = groups.get(i);			
+			
+			LinearLayout uLayout = new LinearLayout(this);
+			uLayout.setLayoutDirection(0);
+			uLayout.setId(num);
+			
+			TextView textView = new TextView(this);
+			textView.setText(current.getName() + " " + 
+							 current.getTime() + " seconds $" +
+							 current.getAmt());
+			textView.setLayoutParams(new TableLayout.LayoutParams(
+					LayoutParams.MATCH_PARENT,
+					LayoutParams.WRAP_CONTENT,
+					1.0f));
+			
+			Button editButton = new Button(this);
+			editButton.setLayoutParams(new LayoutParams(
+					LayoutParams.WRAP_CONTENT,
+					LayoutParams.WRAP_CONTENT));
+			editButton.setText(">");
+			editButton.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					View view = findViewById(((View) v.getParent()).getId());
+					// get ID of group
+					// and then get all people that match that group yay
+				}
+			});
+			
+			
+			Button uButton = new Button(this);
+			uButton.setLayoutParams(new LayoutParams(
+					LayoutParams.WRAP_CONTENT,
+					LayoutParams.WRAP_CONTENT));
+			uButton.setText("-");
+			uButton.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					View view = findViewById(((View) v.getParent()).getId());
+					layout.removeView(view);
+				}
+			});
+			
+			uLayout.addView(textView);
+			uLayout.addView(uButton);
+			layout.addView(uLayout);
+			num++;
+		}
 	}
 }

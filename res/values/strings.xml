@@ -29,6 +29,7 @@
     <string name="person_name_hint">Name</string>
     <string name="person_number_hint">12345678890</string>
     <string name="browse_contacts_text">Browse Contacts</string>
-    <string name="exit_add_person_text">Add Person</string>
+    <string name="exit_add_person_text">Done</string>
+    <string name="save_group_text">Save Group</string>
 
 </resources>

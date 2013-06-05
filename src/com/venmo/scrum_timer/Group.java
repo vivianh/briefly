@@ -18,4 +18,15 @@ public class Group {
 		_amt = amt;
 	}
 	
+	public String getName() {
+		return _name;
+	}
+	
+	public String getTime() {
+		return _time;
+	}
+	
+	public String getAmt() {
+		return _amt;
+	}
 }

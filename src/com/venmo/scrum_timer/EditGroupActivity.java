@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -20,6 +21,14 @@ public class EditGroupActivity extends Activity {
 	private static ArrayList<String> names;
 	private static ArrayList<String> numbers;
 	
+	private static String _name;
+	private static String _time;
+	private static String _amt;
+	// ??? WHAT AM I DOING but really
+	public final static String GROUPNAME = "GROUPNAME";
+	public final static String TIMELIMIT = "TIMELIMIT";
+	public final static String CHARGEAMT = "CHARGEAMT";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -27,6 +36,7 @@ public class EditGroupActivity extends Activity {
 		
 		names = new ArrayList<String>();
 		numbers = new ArrayList<String>();
+		_name = ""; _time = ""; _amt = "";
 	}
 
 	@Override
@@ -54,6 +64,27 @@ public class EditGroupActivity extends Activity {
 				updateMembers();
 			}
 		}
+	}
+	
+	private void getInfo() {
+		EditText editName = (EditText) findViewById(R.id.edit_group_name);
+		EditText editTime = (EditText) findViewById(R.id.edit_time_limit);
+		EditText editAmt = (EditText) findViewById(R.id.edit_charge_amt);
+		
+		_name = editName.getText().toString();
+		_time = editTime.getText().toString();
+		_amt = editAmt.getText().toString();
+	}
+	
+	public void saveGroup(View view) {
+		getInfo();
+		Intent returnGroupIntent = new Intent();
+		returnGroupIntent.putExtra(GROUPNAME, _name);
+		returnGroupIntent.putExtra(TIMELIMIT, _time);
+		returnGroupIntent.putExtra(CHARGEAMT, _amt);
+		//returnGroupIntent.putStringArrayListExtra(name, value);
+		setResult(RESULT_OK, returnGroupIntent);
+		finish();
 	}
 	
 	// could definitely make this more efficient instead of redoing every time... 

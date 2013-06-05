@@ -32,6 +32,14 @@
 		android:inputType="phone" >        
     </EditText>
     
+    <Button
+        android:id="@+id/add_person_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_person_text"
+        android:onClick="addPerson" >            
+    </Button>
+    
     <ScrollView
         android:id="@+id/edit_people_scroll"
         android:layout_width="match_parent"
@@ -40,15 +48,15 @@
             android:id="@+id/edit_people_layout"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-            <Button
-	            android:id="@+id/add_person_button"
-	            android:layout_width="match_parent"
-	            android:layout_height="wrap_content"
-	            android:text="@string/add_person_text"
-	            android:onClick="addPerson" >            
-	        </Button>
+            android:layout_height="wrap_content" >            
         </LinearLayout>
     </ScrollView>
+    
+    <Button 
+        android:id="@+id/save_group_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save_group_text"
+        android:onClick="saveGroup" />
     
 </LinearLayout>
