@@ -17,5 +17,18 @@
     <string name="contact_button">Browse</string>
     <string name="clear_button">Clear</string>
     <string name="add_group_text">Add Group</string>
+    <string name="yea">yea</string>
+    <string name="create_group_text">Create Group</string>
+    <string name="title_activity_group">GroupActivity</string>
+    <string name="title_activity_edit_group">EditGroupActivity</string>
+    <string name="group_name_hint">Group Name</string>
+    <string name="time_limit_hint">Time Limit (seconds)</string>
+    <string name="charge_amt_hint">1.00</string>
+    <string name="add_person_text">Add Person</string>
+    <string name="title_activity_add_person">AddPersonActivity</string>
+    <string name="person_name_hint">Name</string>
+    <string name="person_number_hint">12345678890</string>
+    <string name="browse_contacts_text">Browse Contacts</string>
+    <string name="exit_add_person_text">Add Person</string>
 
 </resources>

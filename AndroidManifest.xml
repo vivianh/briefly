@@ -7,10 +7,10 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
-    
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -19,7 +19,16 @@
         <activity
             android:name="com.venmo.scrum_timer.StartActivity"
             android:label="@string/app_name"
-    		android:screenOrientation="portrait" >
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.venmo.scrum_timer.TimerActivity"
+            android:label="@string/title_activity_timer"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.venmo.scrum_timer.GroupActivity"
+            android:label="@string/title_activity_group" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,9 +36,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.venmo.scrum_timer.TimerActivity"
-            android:label="@string/title_activity_timer"
-            android:screenOrientation="portrait" >
+            android:name="com.venmo.scrum_timer.EditGroupActivity"
+            android:label="@string/title_activity_edit_group" >
+        </activity>
+        <activity
+            android:name="com.venmo.scrum_timer.AddPersonActivity"
+            android:label="@string/title_activity_add_person" >
         </activity>
     </application>
+
 </manifest>

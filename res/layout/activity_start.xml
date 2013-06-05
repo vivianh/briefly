@@ -68,7 +68,7 @@
 	    <GridView
 	        android:id="@+id/groups"
 	        android:layout_width="match_parent"
-	        android:layout_height="match_parent"
+	        android:layout_height="wrap_content"
 	        android:layout_marginTop="15dp"
 	        android:columnWidth="100dp"
 	        android:numColumns="auto_fit"
@@ -98,7 +98,7 @@
         
         <ScrollView
        		android:layout_width="match_parent"
-       		android:layout_height="wrap_content">
+       		android:layout_height="wrap_content" >
         	<LinearLayout 
             	android:orientation="vertical"
             	android:layout_width="match_parent"
