@@ -41,7 +41,6 @@
 	    		    android:id="@+id/stop_button" >    		    
 	    		</Button>
 	    	</LinearLayout>
-			<!--
 		    	<TextView
 		    	    android:textColor="#004254"
 		    	    android:layout_width="wrap_content"
@@ -50,7 +49,6 @@
 		    	    android:text="@string/usernames"
 		    	    android:id="@+id/usernames" >
 		    	</TextView>
-			-->
     	</LinearLayout>
     </LinearLayout>
    

@@ -30,7 +30,9 @@ import android.widget.Toast;
 public class TimerActivity extends Activity {
 
 	private int initialTime;
-	private ArrayList<String> usernames;
+	private ArrayList<String> names;
+	private ArrayList<String> numbers;
+	private String charge;
 	public CountDownTimer timer;
 	
 	@Override
@@ -39,23 +41,25 @@ public class TimerActivity extends Activity {
 		setContentView(R.layout.activity_timer);
 		
 		Intent intent = getIntent();
-		String time_input = intent.getStringExtra(StartActivity.TIME_INPUT);
+		String time_input = intent.getStringExtra("TIME_INPUT");
+		charge = intent.getStringExtra("CHARGE_AMT");
 		
 		TextView initialTimer = (TextView)findViewById(R.id.timer);
 		initialTimer.setText(time_input);
 		
-		usernames = intent.getStringArrayListExtra(StartActivity.USERNAMES);
+		names = intent.getStringArrayListExtra("NAMES");
+		numbers = intent.getStringArrayListExtra("PHONE_NUMBERS");
 		
-//		TextView usernames_view = (TextView)findViewById(R.id.usernames);
-//		Log.v("CONTACT", "" + usernames.size());
-//		
-//		String s = "";
-//		for (int i = 0; i < usernames.size(); i++) {
-//			s += " " + usernames.get(i);
-//			Log.v("CONTACT", "in timer activity # " + usernames.get(i));
-//		}
-//		
-//		usernames_view.setText(s);
+		TextView usernames_view = (TextView)findViewById(R.id.usernames);
+		Log.v("CONTACT", "" + names.size());
+		
+		String s = "";
+		for (int i = 0; i < names.size(); i++) {
+			s += " " + names.get(i);
+			Log.v("CONTACT", "in timer activity # " + names.get(i));
+		}
+		
+		usernames_view.setText(s);
 		
 		initialTime = Integer.parseInt(time_input);
 		timer = new MyTimer(initialTime*1000, 1000);
@@ -116,8 +120,8 @@ public class TimerActivity extends Activity {
 		@Override
 		protected Void doInBackground(Void... voids) {
 			String uname = "";
-			for (int i = 0; i < usernames.size(); i++) {
-				uname = usernames.get(i);
+			for (int i = 0; i < numbers.size(); i++) {
+				uname = numbers.get(i);
 				doTheCharge(uname);
 			}
 			return null;
@@ -132,7 +136,7 @@ public class TimerActivity extends Activity {
 				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 				nameValuePairs.add(new BasicNameValuePair("access_token", "WsQJPyg6MRpCbbVdGyDHHpHqZYfs5eEP"));
 				nameValuePairs.add(new BasicNameValuePair("phone", uname));
-				nameValuePairs.add(new BasicNameValuePair("amount", "-1"));
+				nameValuePairs.add(new BasicNameValuePair("amount", charge));
 				nameValuePairs.add(new BasicNameValuePair("note", "test welp"));
 				nameValuePairs.add(new BasicNameValuePair("audience", "private"));
 				

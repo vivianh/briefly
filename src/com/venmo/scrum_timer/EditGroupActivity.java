@@ -35,6 +35,9 @@ public class EditGroupActivity extends Activity {
 	public final static String CHARGEAMT = "CHARGEAMT";
 	
 	private static PeopleDatabase db;
+	ArrayList<Person> inGroup;
+	ArrayList<String> inGroupNames;
+	ArrayList<String> inGroupNumbers;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -200,13 +203,17 @@ public class EditGroupActivity extends Activity {
 		layout.removeAllViews();
 		
 		ArrayList<Person> people = db.getAllPeople();
-		ArrayList<Person> inGroup = new ArrayList<Person>();
+		inGroup = new ArrayList<Person>();
+		inGroupNames = new ArrayList<String>();
+		inGroupNumbers = new ArrayList<String>();
 		
 		for (int i = 0; i < people.size(); i++) {
 			Log.v("UGH", "group id" + people.get(i).getGroupId());
 			Log.v("UGH", "set to 0" + group_id);
 			if (people.get(i).getGroupId() == group_id) {
 				inGroup.add(people.get(i));
+				inGroupNames.add(people.get(i).getName());
+				inGroupNumbers.add(people.get(i).getPhone());
 			}
 		}
 		
@@ -245,5 +252,18 @@ public class EditGroupActivity extends Activity {
 			layout.addView(uLayout);
 			num++;
 		}
+	}
+	
+	public void startTimer(View view) {
+		Intent setTimerIntent = new Intent(this, TimerActivity.class);
+		if (_time.length() == 0) {
+			((EditText) findViewById(R.id.edit_time_limit)).setError("Enter time in seconds");
+			return;
+		}
+		setTimerIntent.putExtra("TIME_INPUT", _time);
+		setTimerIntent.putExtra("CHARGE_AMT", _amt);
+		setTimerIntent.putStringArrayListExtra("PHONE_NUMBERS", inGroupNumbers);
+		setTimerIntent.putStringArrayListExtra("NAMES", inGroupNames);
+		startActivity(setTimerIntent);
 	}
 }
