@@ -1,6 +1,5 @@
 package com.venmo.scrum_timer;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -165,7 +164,12 @@ public class GroupActivity extends Activity {
 			editButton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					Intent editGroupIntent = new Intent(GroupActivity.this, EditGroupActivity.class);
-					editGroupIntent.putExtra("GROUP", (Serializable)ugh);
+					//editGroupIntent.putExtra("GROUP", (Parcelable)ugh);
+					editGroupIntent.putExtra("EDIT_GROUP", true);
+					editGroupIntent.putExtra("GROUP_ID", ugh.getId());
+					editGroupIntent.putExtra("GROUP_NAME", ugh.getName());
+					editGroupIntent.putExtra("GROUP_TIME", ugh.getTime());
+					editGroupIntent.putExtra("GROUP_AMT", ugh.getAmt());
 					startActivity(editGroupIntent);
 				}
 			});
@@ -181,7 +185,7 @@ public class GroupActivity extends Activity {
 					View view = findViewById(id);
 					layout.removeView(view);
 					db.removeGroup(ugh.getId());
-					Log.v("UGH", "IS THIS CHANGING " + ugh.getId());
+					//Log.v("UGH", "IS THIS CHANGING " + ugh.getId());
 				}
 			});
 			

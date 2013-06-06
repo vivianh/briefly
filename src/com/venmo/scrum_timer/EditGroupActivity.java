@@ -47,17 +47,20 @@ public class EditGroupActivity extends Activity {
 		Intent intent = getIntent();
 		
 		// intent is from edit bc it has group object
-		Group group = (Group) intent.getExtras().getSerializable("GROUP");
-		if (group != null) {
-			group_id = group.getId();
-			_name = group.getName();
-			_time = group.getTime();
-			_amt = group.getAmt();
-			Log.v("UGH", "check this out " + group.getId());
-			
+		boolean toEdit = intent.getBooleanExtra("EDIT_GROUP", false);
+		if (toEdit) {
+			group_id = intent.getIntExtra("GROUP_ID", -1);
+			_name    = intent.getStringExtra("GROUP_NAME");
+			_time    = intent.getStringExtra("GROUP_TIME");
+			_amt     = intent.getStringExtra("GROUP_AMT");
+
+			Log.v("UGH", "check this out " + group_id);
+			setInfo();
 		} else {
 			group_id = 0;
 		}
+		
+		updateMembers(group_id);
 	}
 
 	@Override
@@ -88,7 +91,13 @@ public class EditGroupActivity extends Activity {
 	}
 	
 	private void setInfo() {
-		
+		EditText editName = (EditText) findViewById(R.id.edit_group_name);
+		EditText editTime = (EditText) findViewById(R.id.edit_time_limit);
+		EditText editAmt = (EditText) findViewById(R.id.edit_charge_amt);
+
+		editName.setText(_name);
+		editTime.setText(_time);
+		editAmt.setText(_amt);
 	}
 	
 	private void getInfo() {
