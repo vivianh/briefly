@@ -3,7 +3,12 @@ package com.venmo.scrum_timer;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,25 +23,41 @@ import android.widget.TextView;
 public class EditGroupActivity extends Activity {
 
 	private final static int ADD_PERSON_RESULT = 100;
-	private static ArrayList<String> names;
-	private static ArrayList<String> numbers;
 	
 	private static String _name;
 	private static String _time;
 	private static String _amt;
+	private static int group_id;
+	
 	// ??? WHAT AM I DOING but really
 	public final static String GROUPNAME = "GROUPNAME";
 	public final static String TIMELIMIT = "TIMELIMIT";
 	public final static String CHARGEAMT = "CHARGEAMT";
+	
+	private static PeopleDatabase db;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_group);
 		
-		names = new ArrayList<String>();
-		numbers = new ArrayList<String>();
 		_name = ""; _time = ""; _amt = "";
+		db = new PeopleDatabase(this);
+		
+		Intent intent = getIntent();
+		
+		// intent is from edit bc it has group object
+		Group group = (Group) intent.getExtras().getSerializable("GROUP");
+		if (group != null) {
+			group_id = group.getId();
+			_name = group.getName();
+			_time = group.getTime();
+			_amt = group.getAmt();
+			Log.v("UGH", "check this out " + group.getId());
+			
+		} else {
+			group_id = 0;
+		}
 	}
 
 	@Override
@@ -59,11 +80,15 @@ public class EditGroupActivity extends Activity {
 				//data = getIntent();
 				String name = data.getStringExtra(AddPersonActivity.NAME);
 				String number = data.getStringExtra(AddPersonActivity.NUMBER);
-				names.add(name);
-				numbers.add(number);
-				updateMembers();
+
+				db.addPersonToDB(name, number, group_id);
+				updateMembers(group_id);
 			}
 		}
+	}
+	
+	private void setInfo() {
+		
 	}
 	
 	private void getInfo() {
@@ -76,30 +101,118 @@ public class EditGroupActivity extends Activity {
 		_amt = editAmt.getText().toString();
 	}
 	
+	// this shouldn't return back to activity
 	public void saveGroup(View view) {
 		getInfo();
 		Intent returnGroupIntent = new Intent();
 		returnGroupIntent.putExtra(GROUPNAME, _name);
 		returnGroupIntent.putExtra(TIMELIMIT, _time);
 		returnGroupIntent.putExtra(CHARGEAMT, _amt);
-		//returnGroupIntent.putStringArrayListExtra(name, value);
 		setResult(RESULT_OK, returnGroupIntent);
 		finish();
 	}
 	
+	public class PeopleDatabase extends SQLiteOpenHelper {
+
+		public static final String TABLE_PEOPLE = "people";
+		public static final String COLUMN_ID = "_id";
+		public static final String COLUMN_NAME = "user_name";
+		public static final String COLUMN_PHONE = "phone_num";
+		public static final String COLUMN_GROUP_ID = "group_id";
+		
+		private static final String DATABASE_NAME = "people.db";
+		private static final int DATABASE_VERSION = 1;
+		
+		private static final String PEOPLE_TABLE_CREATE =
+				"CREATE TABLE " + TABLE_PEOPLE + " (" +
+				COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+				COLUMN_NAME + " TEXT, " + 
+				COLUMN_PHONE + " TEXT, " +
+				COLUMN_GROUP_ID + " TEXT);";
+		
+		public PeopleDatabase(Context context) {
+			super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		}
+
+		@Override
+		public void onCreate(SQLiteDatabase db) {
+			db.execSQL(PEOPLE_TABLE_CREATE);			
+		}
+
+		@Override
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		public void addPersonToDB(String name, String phone, int group_id) {
+			SQLiteDatabase db = this.getWritableDatabase();
+			
+			ContentValues values = new ContentValues();
+			values.put(COLUMN_NAME, name);
+			values.put(COLUMN_PHONE, phone);
+			values.put(COLUMN_GROUP_ID, group_id);
+			
+			db.insert(TABLE_PEOPLE, null, values);
+			db.close();
+		}
+		
+		public void removePerson(int id) {
+			SQLiteDatabase db = this.getWritableDatabase();			
+			db.delete(TABLE_PEOPLE, COLUMN_ID + " = ?",
+					new String[] {String.valueOf(id)} );
+			db.close();
+		}
+		
+		public ArrayList<Person> getAllPeople() {
+			ArrayList<Person> allPeople = new ArrayList<Person>();
+			String selectQuery = "SELECT * FROM " + TABLE_PEOPLE;
+			SQLiteDatabase db = this.getReadableDatabase();
+			Cursor cursor = db.rawQuery(selectQuery, null);
+			if (cursor.moveToFirst()) {
+				do {
+					Person person = new Person(cursor.getInt(0),
+											   cursor.getString(1),
+											   cursor.getString(2),   
+											   group_id);
+					allPeople.add(person);
+				} while (cursor.moveToNext());
+			}
+			return allPeople;
+		}
+	}
+	
 	// could definitely make this more efficient instead of redoing every time... 
-	private void updateMembers() {
+	private void updateMembers(int group_id) {
 		int num = 0;
 		final LinearLayout layout = (LinearLayout) findViewById(R.id.edit_people_layout);
 		
-		for (int i = 0; i < names.size(); i++) {
-			Log.v("UGH", "??" + names.get(i));
+		// remove all members
+		layout.removeAllViews();
+		
+		ArrayList<Person> people = db.getAllPeople();
+		ArrayList<Person> inGroup = new ArrayList<Person>();
+		
+		for (int i = 0; i < people.size(); i++) {
+			Log.v("UGH", "group id" + people.get(i).getGroupId());
+			Log.v("UGH", "set to 0" + group_id);
+			if (people.get(i).getGroupId() == group_id) {
+				inGroup.add(people.get(i));
+			}
+		}
+		
+		for (int i = 0; i < inGroup.size(); i++) {
+			// Log.v("UGH", "??" + names.get(i));
+			Person current = inGroup.get(i);
+			final Person ugh = current;
+			
 			LinearLayout uLayout = new LinearLayout(this);
 			uLayout.setLayoutDirection(0);
 			uLayout.setId(num);
 			
 			TextView textView = new TextView(this);
-			textView.setText(names.get(i));
+			textView.setText(current.getName() + " " +
+							 current.getPhone());
 			textView.setLayoutParams(new TableLayout.LayoutParams(
 					LayoutParams.MATCH_PARENT,
 					LayoutParams.WRAP_CONTENT,
@@ -114,6 +227,7 @@ public class EditGroupActivity extends Activity {
 				public void onClick(View v) {
 					View view = findViewById(((View) v.getParent()).getId());
 					layout.removeView(view);
+					db.removePerson(ugh.getId());
 				}
 			});
 			

@@ -1,13 +1,10 @@
 package com.venmo.scrum_timer;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,7 +12,6 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts;
 import android.text.InputType;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;

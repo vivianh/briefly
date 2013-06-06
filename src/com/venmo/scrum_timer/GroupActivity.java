@@ -1,5 +1,6 @@
 package com.venmo.scrum_timer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -7,9 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -28,8 +29,8 @@ public class GroupActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group);
 		
-		db = new GroupDatabase(this);		
-		//db.addGroup(name, time, amount)
+		db = new GroupDatabase(this);
+		updateGroups();
 	}
 
 	@Override
@@ -96,11 +97,18 @@ public class GroupActivity extends Activity {
 			SQLiteDatabase db = this.getWritableDatabase();
 			
 			ContentValues values = new ContentValues();
-			values.put(GroupDatabase.COLUMN_GROUP_NAME, name);
-			values.put(GroupDatabase.COLUMN_TIME, time);
-			values.put(GroupDatabase.COLUMN_AMOUNT, amount);
+			values.put(COLUMN_GROUP_NAME, name);
+			values.put(COLUMN_TIME, time);
+			values.put(COLUMN_AMOUNT, amount);
 			
-			db.insert(GroupDatabase.TABLE_GROUPS, null, values);
+			db.insert(TABLE_GROUPS, null, values);
+			db.close();
+		}
+		
+		public void removeGroup(int id) {
+			SQLiteDatabase db = this.getWritableDatabase();			
+			db.delete(TABLE_GROUPS, COLUMN_ID + " = ?",
+					new String[] { String.valueOf(id) });
 			db.close();
 		}
 		
@@ -111,45 +119,30 @@ public class GroupActivity extends Activity {
 			Cursor cursor = db.rawQuery(selectQuery, null);
 			if (cursor.moveToFirst()) {
 				do {
-					Group group = new Group(cursor.getString(0),
-						cursor.getString(1), cursor.getString(2));
+					Group group = new Group(cursor.getInt(0),
+											cursor.getString(1),
+											cursor.getString(2),
+											cursor.getString(3));
 					allGroups.add(group);
 				} while (cursor.moveToNext());
 			}			
 			return allGroups;
 		}
 	}
-	
-	public class PeopleOpenHelper extends SQLiteOpenHelper {
-
-		public PeopleOpenHelper(Context context, String name,
-				CursorFactory factory, int version) {
-			super(context, name, factory, version);
-			// TODO Auto-generated constructor stub
-		}
-
-		@Override
-		public void onCreate(SQLiteDatabase db) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
 
 	private void updateGroups() {
 		int num = 0;
 		final LinearLayout layout = (LinearLayout) findViewById(R.id.groups_layout);
+		
+		// remove groups
+		layout.removeAllViews();
+		
 		ArrayList<Group> groups = db.getAllGroups();
 		
 		for (int i = 0; i < groups.size(); i++) {
 			//Log.v("UGH", "??" + groups.get(i));
-			Group current = groups.get(i);			
+			Group current = groups.get(i);
+			final Group ugh = current;
 			
 			LinearLayout uLayout = new LinearLayout(this);
 			uLayout.setLayoutDirection(0);
@@ -171,26 +164,29 @@ public class GroupActivity extends Activity {
 			editButton.setText(">");
 			editButton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
-					View view = findViewById(((View) v.getParent()).getId());
-					// get ID of group
-					// and then get all people that match that group yay
+					Intent editGroupIntent = new Intent(GroupActivity.this, EditGroupActivity.class);
+					editGroupIntent.putExtra("GROUP", (Serializable)ugh);
+					startActivity(editGroupIntent);
 				}
 			});
-			
 			
 			Button uButton = new Button(this);
 			uButton.setLayoutParams(new LayoutParams(
 					LayoutParams.WRAP_CONTENT,
 					LayoutParams.WRAP_CONTENT));
 			uButton.setText("-");
-			uButton.setOnClickListener(new View.OnClickListener() {
+			uButton.setOnClickListener(new View.OnClickListener() {		
 				public void onClick(View v) {
-					View view = findViewById(((View) v.getParent()).getId());
+					int id = ((View) v.getParent()).getId();
+					View view = findViewById(id);
 					layout.removeView(view);
+					db.removeGroup(ugh.getId());
+					Log.v("UGH", "IS THIS CHANGING " + ugh.getId());
 				}
 			});
 			
 			uLayout.addView(textView);
+			uLayout.addView(editButton);
 			uLayout.addView(uButton);
 			layout.addView(uLayout);
 			num++;

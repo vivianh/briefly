@@ -43,7 +43,8 @@
     <ScrollView
         android:id="@+id/edit_people_scroll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >        
+        android:layout_height="0dip"
+        android:layout_weight="1" >        
         <LinearLayout
             android:id="@+id/edit_people_layout"
             android:orientation="vertical"

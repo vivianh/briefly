@@ -11,11 +11,15 @@ public class Group {
 		
 	}
 	
-	public Group(String name, String time, String amt) {
-		//_id = id;
+	public Group(int id, String name, String time, String amt) {
+		_id = id;
 		_name = name;
 		_time = time;
 		_amt = amt;
+	}
+	
+	public int getId() {
+		return _id;
 	}
 	
 	public String getName() {
