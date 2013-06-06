@@ -60,4 +60,10 @@
         android:text="@string/save_group_text"
         android:onClick="saveGroup" />
     
+    <Button 
+        android:id="@+id/start_timer_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/start_timer_text" />
+    
 </LinearLayout>

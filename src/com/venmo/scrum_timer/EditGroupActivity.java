@@ -183,7 +183,7 @@ public class EditGroupActivity extends Activity {
 					Person person = new Person(cursor.getInt(0),
 											   cursor.getString(1),
 											   cursor.getString(2),   
-											   group_id);
+											   cursor.getInt(3));
 					allPeople.add(person);
 				} while (cursor.moveToNext());
 			}

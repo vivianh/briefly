@@ -31,5 +31,6 @@
     <string name="browse_contacts_text">Browse Contacts</string>
     <string name="exit_add_person_text">Done</string>
     <string name="save_group_text">Save Group</string>
+    <string name="start_timer_text">Start Timer</string>
 
 </resources>

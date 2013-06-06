@@ -86,6 +86,7 @@ public class AddPersonActivity extends Activity {
 		} else {
 			Log.v("CONTACT", "ughh");
 		}
+		getInfo(name, number);
 	}
 	
 	private void getInfo(String str, String num) {
