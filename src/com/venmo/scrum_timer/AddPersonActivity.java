@@ -29,7 +29,7 @@ public class AddPersonActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.add_person, menu);
+		// getMenuInflater().inflate(R.menu.add_person, menu);
 		return true;
 	}
 	

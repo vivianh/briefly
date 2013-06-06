@@ -3,7 +3,7 @@
     package="com.venmo.scrum_timer"
     android:versionCode="1"
     android:versionName="1.0" >
-
+    
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
@@ -17,31 +17,30 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.venmo.scrum_timer.StartActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
             android:name="com.venmo.scrum_timer.TimerActivity"
             android:label="@string/title_activity_timer"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
             android:name="com.venmo.scrum_timer.GroupActivity"
             android:label="@string/title_activity_group" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.venmo.scrum_timer.EditGroupActivity"
-            android:label="@string/title_activity_edit_group" >
+            android:label="@string/title_activity_edit_group"
+            android:screenOrientation="portrait"
+			android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
             android:name="com.venmo.scrum_timer.AddPersonActivity"
-            android:label="@string/title_activity_add_person" >
+            android:label="@string/title_activity_add_person"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" >
         </activity>
     </application>
 
