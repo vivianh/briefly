@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts;
 import android.util.Log;
@@ -49,24 +50,30 @@ public class AddPersonActivity extends Activity {
 			switch (requestCode) {
 			case CONTACT_PICKER_RESULT:
 				Cursor cursor = null;
-				String phone = "";
 				try {
 					Uri result = data.getData();
 					Log.v("CONTACT", "got a contact " + result.toString());
 					Log.v("CONTACT", "last segment " + result.getLastPathSegment());
-					// HOW TO ALSO GET CONTACT NAME
 					
 					String id = result.getLastPathSegment();
+					
+					// gets phone #
 					cursor = getContentResolver().query(
 										Phone.CONTENT_URI, null,
 										Phone.CONTACT_ID + "=?",
 										new String[]{id}, null);
 					int phoneIdx = cursor.getColumnIndex(Phone.DATA);
 					if (cursor.moveToFirst()) {
-						phone = cursor.getString(phoneIdx);
-						Log.v("CONTACT", "got # " + phone);
+						number = cursor.getString(phoneIdx);
+						Log.v("CONTACT", "got # " + number);
 					} else {
 						Log.v("CONTACT", "didn't get #");
+					}
+					
+					// gets name
+					cursor = getContentResolver().query(result, null, null, null, null);
+					if (cursor.moveToFirst()) {
+						name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 					}
 					
 				} catch (Exception e) {
@@ -75,11 +82,11 @@ public class AddPersonActivity extends Activity {
 					if (cursor != null) {
 						cursor.close();
 					}
-					if (phone.matches("\\+1[0-9]{10}")) {
-						phone = phone.replace("+1", "");
+					if (number.matches("\\+1[0-9]{10}")) {
+						number = number.replace("+1", "");
 					}
-					number = phone;
-					name = "Vivian Huang";
+					// number = phone;
+					// name = "Vivian Huang";
 				}
 				break;
 			}
