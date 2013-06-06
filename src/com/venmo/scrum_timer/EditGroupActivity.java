@@ -256,6 +256,7 @@ public class EditGroupActivity extends Activity {
 	}
 	
 	public void startTimer(View view) {
+		getInfo();
 		Intent setTimerIntent = new Intent(this, TimerActivity.class);
 		if (_time.length() == 0) {
 			((EditText) findViewById(R.id.edit_time_limit)).setError("Enter time in seconds");
