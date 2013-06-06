@@ -21,6 +21,7 @@ import android.widget.TextView;
 public class GroupActivity extends Activity {
 
 	private final static int ADD_GROUP_RESULT = 2; 
+	private final static int EDIT_GROUP_RESULT = 1;
 	private static GroupDatabase db;
 	
 	@Override
@@ -47,13 +48,18 @@ public class GroupActivity extends Activity {
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
+			String _groupname = data.getStringExtra(EditGroupActivity.GROUPNAME);
+			String _timelimit = data.getStringExtra(EditGroupActivity.TIMELIMIT);
+			String _chargeamt = data.getStringExtra(EditGroupActivity.CHARGEAMT);
+			
 			switch(requestCode) {
-			case ADD_GROUP_RESULT:
-				String _groupname = data.getStringExtra(EditGroupActivity.GROUPNAME);
-				String _timelimit = data.getStringExtra(EditGroupActivity.TIMELIMIT);
-				String _chargeamt = data.getStringExtra(EditGroupActivity.CHARGEAMT);
-				
-				db.addGroup(_groupname, _timelimit, _chargeamt);	
+			case ADD_GROUP_RESULT:								
+				db.addGroup(_groupname, _timelimit, _chargeamt);
+				break;
+			case EDIT_GROUP_RESULT:
+				int _gid = data.getIntExtra("GROUP_ID", -1);
+				Group g = new Group(_gid, _groupname, _timelimit, _chargeamt);
+				db.updateGroup(g);
 			}
 		}
 		updateGroups();
@@ -102,6 +108,18 @@ public class GroupActivity extends Activity {
 			
 			db.insert(TABLE_GROUPS, null, values);
 			db.close();
+		}
+		
+		public void updateGroup(Group group) {
+			SQLiteDatabase db = this.getWritableDatabase();
+			
+			ContentValues values = new ContentValues();
+			values.put(COLUMN_GROUP_NAME, group.getName());
+			values.put(COLUMN_TIME, group.getTime());
+			values.put(COLUMN_AMOUNT, group.getAmt());
+			
+			db.update(TABLE_GROUPS, values, COLUMN_ID + " = ?",
+					new String[] {String.valueOf(group.getId())});
 		}
 		
 		public void removeGroup(int id) {
@@ -170,7 +188,7 @@ public class GroupActivity extends Activity {
 					editGroupIntent.putExtra("GROUP_NAME", ugh.getName());
 					editGroupIntent.putExtra("GROUP_TIME", ugh.getTime());
 					editGroupIntent.putExtra("GROUP_AMT", ugh.getAmt());
-					startActivity(editGroupIntent);
+					startActivityForResult(editGroupIntent, EDIT_GROUP_RESULT);
 				}
 			});
 			

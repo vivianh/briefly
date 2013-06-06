@@ -120,6 +120,7 @@ public class EditGroupActivity extends Activity {
 		returnGroupIntent.putExtra(GROUPNAME, _name);
 		returnGroupIntent.putExtra(TIMELIMIT, _time);
 		returnGroupIntent.putExtra(CHARGEAMT, _amt);
+		returnGroupIntent.putExtra("GROUP_ID", group_id);
 		setResult(RESULT_OK, returnGroupIntent);
 		finish();
 	}
