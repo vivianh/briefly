@@ -1,6 +1,7 @@
 package com.venmo.scrum_timer;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,12 +13,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class AddPersonActivity extends Activity {
 
 	private final static int CONTACT_PICKER_RESULT = 1001;
-	private static String name = "";
-	private static String number = "";
+	private static String name;
+	private static String number;
 	public final static String NAME = "NAME";
 	public final static String NUMBER = "NUMBER";
 	
@@ -25,6 +27,8 @@ public class AddPersonActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_person);
+		name = "";
+		number = "";
 	}
 
 	@Override
@@ -93,6 +97,15 @@ public class AddPersonActivity extends Activity {
 		} else {
 			Log.v("CONTACT", "ughh");
 		}
+		
+		if (number.length() == 0) {
+			Context context = getApplicationContext();
+			CharSequence text = "No # associated";
+			int duration = Toast.LENGTH_SHORT;
+			Toast toast = Toast.makeText(context, text, duration);
+			toast.show();
+		}
+		
 		getInfo(name, number);
 	}
 	
