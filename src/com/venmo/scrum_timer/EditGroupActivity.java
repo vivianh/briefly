@@ -60,7 +60,7 @@ public class EditGroupActivity extends Activity {
 			Log.v("UGH", "check this out " + group_id);
 			setInfo();
 		} else {
-			group_id = 0;
+			group_id = intent.getIntExtra("GROUP_ID", -1);
 		}
 		
 		updateMembers(group_id);

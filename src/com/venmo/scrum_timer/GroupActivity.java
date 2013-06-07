@@ -1,6 +1,7 @@
 package com.venmo.scrum_timer;
 
 import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,7 +10,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -18,7 +20,11 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
-public class GroupActivity extends Activity {
+import com.venmo.scrum_timer.DeleteGroupDialog.DeleteGroupDialogListener;
+
+
+// is this ok1?!!?!??!?!?!?!
+public class GroupActivity extends FragmentActivity implements DeleteGroupDialogListener{
 
 	private final static int ADD_GROUP_RESULT = 2; 
 	private final static int EDIT_GROUP_RESULT = 1;
@@ -43,6 +49,7 @@ public class GroupActivity extends Activity {
 	public void createGroup(View view) {
 		Intent createGroupIntent = new Intent(this, EditGroupActivity.class);
 		//startActivity(createGroupIntent);
+		//createGroupIntent.putExtra("GROUP_ID", db.getSize());
 		startActivityForResult(createGroupIntent, ADD_GROUP_RESULT);
 	}
 	
@@ -145,6 +152,14 @@ public class GroupActivity extends Activity {
 			}			
 			return allGroups;
 		}
+		
+//		public int getMax() {
+//			String countQuery = "SELECT * FROM " + TABLE_GROUPS;
+//			SQLiteDatabase db = this.getReadableDatabase();
+//			Cursor cursor = db.rawQuery(countQuery, null);
+//			
+//			return cursor.getCount();
+//		}
 	}
 
 	private void updateGroups() {
@@ -182,7 +197,6 @@ public class GroupActivity extends Activity {
 			editButton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					Intent editGroupIntent = new Intent(GroupActivity.this, EditGroupActivity.class);
-					//editGroupIntent.putExtra("GROUP", (Parcelable)ugh);
 					editGroupIntent.putExtra("EDIT_GROUP", true);
 					editGroupIntent.putExtra("GROUP_ID", ugh.getId());
 					editGroupIntent.putExtra("GROUP_NAME", ugh.getName());
@@ -199,10 +213,12 @@ public class GroupActivity extends Activity {
 			uButton.setText("-");
 			uButton.setOnClickListener(new View.OnClickListener() {		
 				public void onClick(View v) {
-					int id = ((View) v.getParent()).getId();
-					View view = findViewById(id);
-					layout.removeView(view);
-					db.removeGroup(ugh.getId());
+					int view_id = ((View) v.getParent()).getId();
+//					View view = findViewById(id);
+//					layout.removeView(view);
+					// int group_id = db.removeGroup(ugh.getId());
+					int group_id = ugh.getId();
+					showDeleteDialog(view_id, group_id);
 					//Log.v("UGH", "IS THIS CHANGING " + ugh.getId());
 				}
 			});
@@ -212,6 +228,29 @@ public class GroupActivity extends Activity {
 			uLayout.addView(uButton);
 			layout.addView(uLayout);
 			num++;
+		}
+	}
+
+	
+	private void showDeleteDialog(int view_id, int group_id) {
+		FragmentManager fm = getSupportFragmentManager();
+		
+		Bundle bundle = new Bundle();
+		bundle.putInt("VIEW_ID", view_id);
+		bundle.putInt("GROUP_ID", group_id);
+        DeleteGroupDialog deleteGroupDialog = new DeleteGroupDialog();
+        deleteGroupDialog.setArguments(bundle);
+        deleteGroupDialog.show(fm, "activity_delete_dialog");
+	}
+	
+	@Override
+	public void onFinishDeleteDialog(int signal, int view_id, int group_id) {
+		// Toast.makeText(this, "Hi", Toast.LENGTH_SHORT).show();
+		if (signal == 0) {
+			LinearLayout layout = (LinearLayout) findViewById(R.id.groups_layout);
+			View view = findViewById(view_id);
+			layout.removeView(view);
+			db.removeGroup(group_id);
 		}
 	}
 }
