@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.view.Menu;
@@ -242,15 +243,20 @@ public class GroupActivity extends FragmentActivity implements DeleteGroupDialog
         deleteGroupDialog.setArguments(bundle);
         deleteGroupDialog.show(fm, "activity_delete_dialog");
 	}
-	
+
 	@Override
-	public void onFinishDeleteDialog(int signal, int view_id, int group_id) {
-		// Toast.makeText(this, "Hi", Toast.LENGTH_SHORT).show();
-		if (signal == 0) {
-			LinearLayout layout = (LinearLayout) findViewById(R.id.groups_layout);
-			View view = findViewById(view_id);
-			layout.removeView(view);
-			db.removeGroup(group_id);
-		}
+	public void onDialogPositiveClick(DialogFragment dialog) {
+		int view_id = dialog.getArguments().getInt("VIEW_ID");
+		int group_id = dialog.getArguments().getInt("GROUP_ID");
+		LinearLayout layout = (LinearLayout) findViewById(R.id.groups_layout);
+		View view = findViewById(view_id);
+		layout.removeView(view);
+		db.removeGroup(group_id);
+	}
+
+	@Override
+	public void onDialogNegativeClick(DialogFragment dialog) {
+		// TODO Auto-generated method stub
+		
 	}
 }
