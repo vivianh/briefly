@@ -33,7 +33,7 @@ public class DeleteGroupDialog extends DialogFragment {
 	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		String title = "UGH";
+		String title = "Confirm delete";
 		Dialog dialog = new AlertDialog.Builder(getActivity())
 			.setTitle(title)
 			.setPositiveButton("Delete", new DialogInterface.OnClickListener() {				

@@ -47,6 +47,8 @@
             android:name="com.venmo.scrum_timer.DeleteDialogActivity"
             android:label="@string/title_activity_delete_dialog" >
         </activity>
+        <activity
+            android:name="com.venmo.scrum_timer.TestActivity" />
     </application>
 
 </manifest>

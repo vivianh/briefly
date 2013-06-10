@@ -1,0 +1,29 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EBEBEB"
+    android:padding="20dp">
+
+    <RelativeLayout
+        android:id="@+id/june"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/vivian_button"
+        android:padding="8dp">
+        
+        <TextView 
+            android:text="June"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentLeft="true"/>
+        
+        <TextView 
+            android:text="$123.56"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"/>
+        
+    </RelativeLayout>
+    
+ </RelativeLayout>

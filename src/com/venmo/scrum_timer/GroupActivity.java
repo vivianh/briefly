@@ -3,6 +3,7 @@ package com.venmo.scrum_timer;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.ExpandableListActivity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -10,34 +11,52 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TableLayout;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.CheckedTextView;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.TextView;
-
-import com.venmo.scrum_timer.DeleteGroupDialog.DeleteGroupDialogListener;
+import android.widget.Toast;
 
 
 // is this ok1?!!?!??!?!?!?!
-public class GroupActivity extends FragmentActivity implements DeleteGroupDialogListener{
+public class GroupActivity extends ExpandableListActivity implements
+	OnChildClickListener {
 
 	private final static int ADD_GROUP_RESULT = 2; 
 	private final static int EDIT_GROUP_RESULT = 1;
 	private static GroupDatabase db;
 	
+	ArrayList<Group> allGroups;
+	ArrayList<Object> allChildren = new ArrayList<Object>();
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_group);
+		// setContentView(R.layout.activity_group);
 		
 		db = new GroupDatabase(this);
-		updateGroups();
+		Log.v("UGH", "" + db.getAllGroups().size());
+		
+		allGroups = db.getAllGroups();
+		setChildData();
+		
+		ExpandableListView exp = getExpandableListView();
+		exp.setDividerHeight(2);
+		exp.setGroupIndicator(null);
+		exp.setClickable(true);
+		
+		NewAdapter mNewAdapter = new NewAdapter(allGroups, allChildren);
+		mNewAdapter.setInflater((LayoutInflater)
+					getSystemService(Context.LAYOUT_INFLATER_SERVICE), this);
+		getExpandableListView().setAdapter(mNewAdapter);
+		exp.setOnChildClickListener(this);
 	}
 
 	@Override
@@ -70,7 +89,7 @@ public class GroupActivity extends FragmentActivity implements DeleteGroupDialog
 				db.updateGroup(g);
 			}
 		}
-		updateGroups();
+		//updateGroups();
 	}
 
 	public class GroupDatabase extends SQLiteOpenHelper {
@@ -153,110 +172,137 @@ public class GroupActivity extends FragmentActivity implements DeleteGroupDialog
 			}			
 			return allGroups;
 		}
-		
-//		public int getMax() {
-//			String countQuery = "SELECT * FROM " + TABLE_GROUPS;
-//			SQLiteDatabase db = this.getReadableDatabase();
-//			Cursor cursor = db.rawQuery(countQuery, null);
-//			
-//			return cursor.getCount();
-//		}
-	}
 
-	private void updateGroups() {
-		int num = 0;
-		final LinearLayout layout = (LinearLayout) findViewById(R.id.groups_layout);
+	}
+	
+	public void setChildData() {
 		
-		// remove groups
-		layout.removeAllViews();
-		
-		ArrayList<Group> groups = db.getAllGroups();
-		
-		for (int i = 0; i < groups.size(); i++) {
-			//Log.v("UGH", "??" + groups.get(i));
-			Group current = groups.get(i);
-			final Group ugh = current;
+		for (int i = 0; i < allGroups.size(); i++) {
+			ArrayList<Person> child = new ArrayList<Person>();
 			
-			LinearLayout uLayout = new LinearLayout(this);
-			uLayout.setLayoutDirection(0);
-			uLayout.setId(num);
+			Person p1 = new Person(0, "Vivian", "7132487562", i);
+			Person p2 = new Person(0, "Robert", "7132487562", i);
 			
-			TextView textView = new TextView(this);
-			textView.setText(current.getName() + " " + 
-							 current.getTime() + " seconds $" +
-							 current.getAmt());
-			textView.setLayoutParams(new TableLayout.LayoutParams(
-					LayoutParams.MATCH_PARENT,
-					LayoutParams.WRAP_CONTENT,
-					1.0f));
+			child.add(p1);
+			child.add(p2);
 			
-			Button editButton = new Button(this);
-			editButton.setLayoutParams(new LayoutParams(
-					LayoutParams.WRAP_CONTENT,
-					LayoutParams.WRAP_CONTENT));
-			editButton.setText(">");
-			editButton.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					Intent editGroupIntent = new Intent(GroupActivity.this, EditGroupActivity.class);
-					editGroupIntent.putExtra("EDIT_GROUP", true);
-					editGroupIntent.putExtra("GROUP_ID", ugh.getId());
-					editGroupIntent.putExtra("GROUP_NAME", ugh.getName());
-					editGroupIntent.putExtra("GROUP_TIME", ugh.getTime());
-					editGroupIntent.putExtra("GROUP_AMT", ugh.getAmt());
-					startActivityForResult(editGroupIntent, EDIT_GROUP_RESULT);
-				}
-			});
-			
-			Button uButton = new Button(this);
-			uButton.setLayoutParams(new LayoutParams(
-					LayoutParams.WRAP_CONTENT,
-					LayoutParams.WRAP_CONTENT));
-			uButton.setText("-");
-			uButton.setOnClickListener(new View.OnClickListener() {		
-				public void onClick(View v) {
-					int view_id = ((View) v.getParent()).getId();
-//					View view = findViewById(id);
-//					layout.removeView(view);
-					// int group_id = db.removeGroup(ugh.getId());
-					int group_id = ugh.getId();
-					showDeleteDialog(view_id, group_id);
-					//Log.v("UGH", "IS THIS CHANGING " + ugh.getId());
-				}
-			});
-			
-			uLayout.addView(textView);
-			uLayout.addView(editButton);
-			uLayout.addView(uButton);
-			layout.addView(uLayout);
-			num++;
+			allChildren.add(child);
 		}
 	}
-
 	
-	private void showDeleteDialog(int view_id, int group_id) {
-		FragmentManager fm = getSupportFragmentManager();
+	@Override
+	public boolean onChildClick(ExpandableListView parent, View v,
+			int groupPosition, int childPosition, long id) {
+		Toast.makeText(this, "Clicked on Child", Toast.LENGTH_SHORT).show();
+		return true;
+	}
+
+	public class NewAdapter extends BaseExpandableListAdapter {
+
+		public ArrayList<Group> groupItem;
+		public ArrayList<Person> tempChild;
+		public ArrayList<Object> childItem = new ArrayList<Object>();
+		// ???
+		public LayoutInflater mInflater;
+		public Activity activity;
 		
-		Bundle bundle = new Bundle();
-		bundle.putInt("VIEW_ID", view_id);
-		bundle.putInt("GROUP_ID", group_id);
-        DeleteGroupDialog deleteGroupDialog = new DeleteGroupDialog();
-        deleteGroupDialog.setArguments(bundle);
-        deleteGroupDialog.show(fm, "activity_delete_dialog");
-	}
+		public NewAdapter(ArrayList<Group> grList, ArrayList<Object> childList) {
+			groupItem = grList;
+			childItem = childList;
+		}
+		
+		public void setInflater(LayoutInflater inflater, Activity act) {
+			mInflater = inflater;
+			activity = act;
+		}
+		
+		@Override
+		public Object getChild(int groupPosition, int childPosition) {
+			return null;
+		}
 
-	@Override
-	public void onDialogPositiveClick(DialogFragment dialog) {
-		int view_id = dialog.getArguments().getInt("VIEW_ID");
-		int group_id = dialog.getArguments().getInt("GROUP_ID");
-		LinearLayout layout = (LinearLayout) findViewById(R.id.groups_layout);
-		View view = findViewById(view_id);
-		layout.removeView(view);
-		db.removeGroup(group_id);
-	}
+		@Override
+		public long getChildId(int groupPosition, int childPosition) {
+			return 0;
+		}
 
-	@Override
-	public void onDialogNegativeClick(DialogFragment dialog) {
-		// TODO Auto-generated method stub
+		@SuppressWarnings("unchecked")
+		@Override
+		public View getChildView(int groupPosition, final int childPosition,
+				boolean isLastChild, View convertView, ViewGroup parent) {
+			tempChild = (ArrayList<Person>) childItem.get(groupPosition);
+			
+			TextView text = null;
+			
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.childrow, null);
+			}
+			
+			text = (TextView) convertView.findViewById(R.id.textView1);
+			text.setText(tempChild.get(childPosition)._name);
+			convertView.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Toast.makeText(activity, tempChild.get(childPosition)._name,
+							Toast.LENGTH_SHORT).show();
+				}
+			});
+			
+			return convertView;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public int getChildrenCount(int groupPosition) {
+			return ((ArrayList<String>)childItem.get(groupPosition)).size();
+		}
+
+		@Override
+		public Object getGroup(int groupPosition) {
+			return null;
+		}
+
+		@Override
+		public int getGroupCount() {
+			return groupItem.size();
+		}
+		
+		@Override
+		public void onGroupCollapsed(int groupPosition) {
+			super.onGroupCollapsed(groupPosition);
+		}
+		
+		@Override
+		public void onGroupExpanded(int groupPosition) {
+			super.onGroupExpanded(groupPosition);
+		}
+		
+		@Override
+		public long getGroupId(int groupPosition) {
+			return 0;
+		}
+
+		@Override
+		public View getGroupView(int groupPosition, boolean isExpanded,
+				View convertView, ViewGroup parent) {
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.grouprow, null);				
+			}
+			
+			((CheckedTextView) convertView).setText(groupItem.get(groupPosition)._name);
+			((CheckedTextView) convertView).setChecked(isExpanded);
+			return convertView;
+		}
+
+		@Override
+		public boolean hasStableIds() {
+			return false;
+		}
+
+		@Override
+		public boolean isChildSelectable(int groupPosition, int childPosition) {
+			return false;
+		}
 		
 	}
 }
