@@ -32,9 +32,9 @@
     <string name="exit_add_person_text">Done</string>
     <string name="save_group_text">Save Group</string>
     <string name="start_timer_text">Start Timer</string>
-    <string name="label_group_name">Group Name</string>
-    <string name="label_time_limit">Time Limit</string>
-    <string name="label_charge_amt">Charge Amt $</string>
+    <string name="label_group_name">Group Name:</string>
+    <string name="label_time_limit">Time Limit:</string>
+    <string name="label_charge_amt">Charge:</string>
     <string name="title_activity_delete_dialog">DeleteDialogActivity</string>
 
 </resources>

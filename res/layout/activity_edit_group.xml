@@ -3,78 +3,111 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".EditGroupActivity" >
 
-    <RelativeLayout
+   <LinearLayout
         android:id="@+id/info_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <EditText
-            android:id="@+id/edit_group_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
-            android:inputType="text" >
-
-        </EditText>
-
-        <TextView
-            android:id="@+id/label_group_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/edit_group_name"
-            android:text="@string/label_group_name" >
-        </TextView>
-
-        <EditText
-            android:id="@+id/edit_time_limit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/edit_group_name"
-            android:layout_marginLeft="100dp"
-            android:inputType="phone" >
-        </EditText>
-
-        <TextView
-            android:id="@+id/label_time_limit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/edit_time_limit"
-            android:text="@string/label_time_limit" >
-        </TextView>
-
-        <EditText
-            android:id="@+id/edit_charge_amt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/edit_time_limit"
-            android:layout_marginLeft="100dp"
-            android:inputType="phone" >
-        </EditText>
-
-        <TextView
-            android:id="@+id/label_charge_amt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/edit_charge_amt"
-            android:text="@string/label_charge_amt" >
-        </TextView>
-    </RelativeLayout>
-
-    <Button
-        android:id="@+id/add_person_button"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/ic_add_person"
-        android:onClick="addPerson" 
-        android:layout_gravity="right"
-        android:layout_marginTop="10dp">
-    </Button>
+        android:orientation="vertical" >
+
+        <LinearLayout
+        	android:id="@+id/group_name_view"
+        	android:background="#FFFFFF"
+        	android:layout_width="match_parent"
+        	android:layout_height="60dp"
+        	android:orientation="horizontal"        	
+		    android:paddingBottom="10dp"
+		    android:paddingLeft="15dp"
+		    android:paddingRight="15dp"
+		    android:paddingTop="10dp" >            
+
+            <TextView
+	            android:id="@+id/label_group_name"
+	            android:layout_width="120dp"
+	            android:layout_height="wrap_content"
+	            android:text="@string/label_group_name"
+	            android:textSize="20sp"
+	            android:textColor="#24bbd2" >
+	        </TextView>
+            
+	        <EditText
+	            android:id="@+id/edit_group_name"
+	            android:layout_width="0dip"
+	            android:layout_weight="1"
+	            android:layout_height="wrap_content"
+	            android:inputType="text" >
+	        </EditText>      
+	    </LinearLayout>
+	    
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="#EEEEEE" />
+        
+        <LinearLayout
+        	android:id="@+id/time_limit_view"
+        	android:background="#FFFFFF"
+        	android:layout_width="match_parent"
+        	android:layout_height="60dp"
+        	android:orientation="horizontal"
+        	android:paddingBottom="10dp"
+		    android:paddingLeft="15dp"
+		    android:paddingRight="15dp"
+		    android:paddingTop="10dp" >            
+
+            <TextView
+	            android:id="@+id/label_time_limit"
+	            android:layout_width="120dp"
+	            android:layout_height="wrap_content"
+	            android:text="@string/label_time_limit"
+	            android:textSize="20sp"
+	            android:textColor="#24bbd2"
+	            android:textStyle="bold" >
+	        </TextView>
+            
+	        <EditText
+	            android:id="@+id/edit_time_limit"
+	            android:layout_width="60dp"
+	            android:layout_height="wrap_content"
+	            android:inputType="phone"
+	            android:gravity="right">
+	        </EditText>      
+	    </LinearLayout>
+	    
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="#EEEEEE" />
+	    
+        <LinearLayout
+        	android:id="@+id/charge_amt_view"
+        	android:background="#FFFFFF"
+        	android:layout_width="match_parent"
+        	android:layout_height="60dp"
+        	android:orientation="horizontal"
+        	android:paddingBottom="10dp"
+		    android:paddingLeft="15dp"
+		    android:paddingRight="15dp"
+		    android:paddingTop="10dp" >            
+
+            <TextView
+	            android:id="@+id/label_charge_amt"
+	            android:layout_width="120dp"
+	            android:layout_height="wrap_content"
+	            android:text="@string/label_charge_amt"
+	            android:textSize="20sp"
+	            android:textColor="#24bbd2" >
+	        </TextView>
+            
+	        <EditText
+	            android:id="@+id/edit_charge_amt"
+	            android:layout_width="60dp"
+	            android:layout_height="wrap_content"
+	            android:inputType="phone" >
+	        </EditText>      
+	    </LinearLayout>
+    </LinearLayout>
 
     <ScrollView
         android:id="@+id/edit_people_scroll"
@@ -97,21 +130,39 @@
 	    android:orientation="horizontal" >
 	    
 	    <Button
+	        android:id="@+id/cancel_button"
+	        android:layout_width="0dip"
+	        android:layout_weight="1"
+	        android:layout_height="wrap_content"
+	        android:text="Cancel"	
+	        android:background="@android:color/darker_gray" 
+	        android:textColor="@android:color/white"
+	        android:layout_margin="5dp" />
+	     
+	    <Button
 	        android:id="@+id/save_group_button"
 	        android:layout_width="0dip"
 	        android:layout_weight="1"
 	        android:layout_height="wrap_content"
 	        android:onClick="saveGroup"
-	        android:text="@string/save_group_text" />
-	
-	    <Button
-	        android:id="@+id/start_timer_button"
-	        android:layout_width="0dip"
-	        android:layout_weight="1"
-	        android:layout_height="wrap_content"
-	        android:onClick="startTimer"
-	        android:text="@string/start_timer_text" />
+	        android:text="@string/save_group_text"
+	        android:background="#24bbd2" 
+	        android:textColor="@android:color/white"
+	        android:layout_margin="5dp" />		  
 	    
 	</LinearLayout>
+	
+	
+	
+	<Button
+        android:id="@+id/start_timer_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="startTimer"
+        android:text="@string/start_timer_text"	
+        android:background="#77db71" 
+        android:textColor="@android:color/white"
+        android:layout_margin="5dp" />
+	    
 
 </LinearLayout>

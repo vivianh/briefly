@@ -12,6 +12,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
@@ -68,15 +70,29 @@ public class EditGroupActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		// getMenuInflater().inflate(R.menu.edit_group, menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.edit_group, menu);		
 		return true;
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_add_person:
+			Intent addPersonIntent = new Intent(this, AddPersonActivity.class);
+			startActivityForResult(addPersonIntent, ADD_PERSON_RESULT);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	/*
 	public void addPerson(View view) {
 		Intent addPersonIntent = new Intent(this, AddPersonActivity.class);
 		startActivityForResult(addPersonIntent, ADD_PERSON_RESULT);
 	}
+	*/
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {

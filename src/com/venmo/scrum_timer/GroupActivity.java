@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -39,12 +41,9 @@ public class GroupActivity extends ExpandableListActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// setContentView(R.layout.activity_group);
 		
 		db = new GroupDatabase(this);
-		Log.v("UGH", "" + db.getAllGroups().size());
-		
-		allGroups = db.getAllGroups();
+		updateGroups();
 		setChildData();
 		
 		ExpandableListView exp = getExpandableListView();
@@ -61,17 +60,31 @@ public class GroupActivity extends ExpandableListActivity implements
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		// getMenuInflater().inflate(R.menu.group, menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.group, menu);
 		return true;
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.menu_create_group:
+				Intent createGroupIntent = new Intent(getApplicationContext(), EditGroupActivity.class);
+				startActivityForResult(createGroupIntent, ADD_GROUP_RESULT);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+	
+	
 	public void createGroup(View view) {
 		Intent createGroupIntent = new Intent(this, EditGroupActivity.class);
 		//startActivity(createGroupIntent);
 		//createGroupIntent.putExtra("GROUP_ID", db.getSize());
 		startActivityForResult(createGroupIntent, ADD_GROUP_RESULT);
 	}
+	
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
@@ -89,11 +102,14 @@ public class GroupActivity extends ExpandableListActivity implements
 				db.updateGroup(g);
 			}
 		}
-		//updateGroups();
+		updateGroups();
 	}
 
+	public void updateGroups() {
+		allGroups = db.getAllGroups();
+	}
+	
 	public class GroupDatabase extends SQLiteOpenHelper {
-		
 		public static final String TABLE_GROUPS = "groups";
 		public static final String COLUMN_ID = "_id";
 		public static final String COLUMN_GROUP_NAME = "group_name";
@@ -121,8 +137,6 @@ public class GroupActivity extends ExpandableListActivity implements
 
 		@Override
 		public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
-			// TODO Auto-generated method stub
-			
 		}
 		
 		public void addGroup(String name, String time, String amount) {
@@ -198,7 +212,6 @@ public class GroupActivity extends ExpandableListActivity implements
 	}
 
 	public class NewAdapter extends BaseExpandableListAdapter {
-
 		public ArrayList<Group> groupItem;
 		public ArrayList<Person> tempChild;
 		public ArrayList<Object> childItem = new ArrayList<Object>();
@@ -232,14 +245,19 @@ public class GroupActivity extends ExpandableListActivity implements
 				boolean isLastChild, View convertView, ViewGroup parent) {
 			tempChild = (ArrayList<Person>) childItem.get(groupPosition);
 			
-			TextView text = null;
+			TextView textName = null;
+			TextView textNum = null;
 			
 			if (convertView == null) {
 				convertView = mInflater.inflate(R.layout.childrow, null);
 			}
 			
-			text = (TextView) convertView.findViewById(R.id.textView1);
-			text.setText(tempChild.get(childPosition)._name);
+			textName = (TextView) convertView.findViewById(R.id.textView1);
+			textName.setText(tempChild.get(childPosition)._name);
+			
+			textNum = (TextView) convertView.findViewById(R.id.textView2);
+			textNum.setText(tempChild.get(childPosition)._phone);
+			
 			convertView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -289,8 +307,10 @@ public class GroupActivity extends ExpandableListActivity implements
 				convertView = mInflater.inflate(R.layout.grouprow, null);				
 			}
 			
-			((CheckedTextView) convertView).setText(groupItem.get(groupPosition)._name);
-			((CheckedTextView) convertView).setChecked(isExpanded);
+			View title = ((ViewGroup)convertView).getChildAt(1);
+			
+			((CheckedTextView) title).setText(groupItem.get(groupPosition)._name);
+			((CheckedTextView) title).setChecked(isExpanded);
 			return convertView;
 		}
 
