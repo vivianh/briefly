@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CheckedTextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="60dp"
-    android:layout_marginLeft="5dp"
-    android:gravity="center_vertical"
-    android:text="ugh"
-    android:textColor="#FFFFFF"
-    android:padding="10dp"
-    android:textSize="14sp" />
+    android:orientation="horizontal"
+    android:background="#FFFFFF" >
+    
+    <ImageView
+        android:id="@+id/arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/down" >        
+    </ImageView>
+    
+	<CheckedTextView
+	    android:layout_width="wrap_content"
+	    android:layout_height="60dp"
+	    android:layout_marginLeft="5dp"
+	    android:gravity="center_vertical"
+	    android:padding="10dp"
+	    android:textSize="24sp"
+	    android:textStyle="bold"
+	    android:textColor="#24bbd2" />
+	
+</LinearLayout>
