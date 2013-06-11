@@ -16,10 +16,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckedTextView;
@@ -100,6 +98,8 @@ public class GroupActivity extends ExpandableListActivity implements
 			String _groupname = data.getStringExtra(GROUPNAME);
 			String _timelimit = data.getStringExtra(TIMELIMIT);
 			String _chargeamt = data.getStringExtra(CHARGEAMT);
+			// only if this is not cancel...
+			_chargeamt = _chargeamt.substring(0, _chargeamt.length()-3);
 			int _groupid = data.getIntExtra(GROUPID, -1);
 			
 			switch(requestCode) {
@@ -390,6 +390,10 @@ public class GroupActivity extends ExpandableListActivity implements
 	public boolean onChildClick(ExpandableListView parent, View v,
 			int groupPosition, int childPosition, long id) {
 		// Toast.makeText(this, "Clicked on Child", Toast.LENGTH_SHORT).show();
+		
+//		ImageView icon = (ImageView) v.findViewById(R.id.person_icon);
+//		icon.setImageResource(R.drawable.person);
+		
 		return true;
 	}
 
@@ -442,8 +446,18 @@ public class GroupActivity extends ExpandableListActivity implements
 			convertView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					Toast.makeText(activity, tempChild.get(childPosition)._name,
-							Toast.LENGTH_SHORT).show();
+//					Toast.makeText(activity, tempChild.get(childPosition)._name,
+//							Toast.LENGTH_SHORT).show();
+					// this works.. just need to toggle more
+					ImageView icon = (ImageView) v.findViewById(R.id.person_icon);
+					if (icon.getTag() == "blue") {
+						// remove from current arraylist
+						icon.setImageResource(R.drawable.person);
+						icon.setTag("gray");
+					} else {
+						icon.setImageResource(R.drawable.ic_blue_person);
+						icon.setTag("blue");
+					}
 				}
 			});
 			
@@ -520,4 +534,5 @@ public class GroupActivity extends ExpandableListActivity implements
 		}
 		
 	}
+
 }
