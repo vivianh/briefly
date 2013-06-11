@@ -123,6 +123,7 @@ public class EditGroupActivity extends Activity {
 	public void cancel(View view) {
 		Intent backIntent = new Intent(this, GroupActivity.class);
 		setResult(RESULT_OK, backIntent);
+		finish();
 	}
 	
 	public void startTimer(View view) {

@@ -47,6 +47,9 @@ public class GroupActivity extends ExpandableListActivity implements
 	ArrayList<Object> allChildren = new ArrayList<Object>();
 	ArrayList<Person> allPeople = new ArrayList<Person>();
 	
+	// global arrayList of arrayLists of people, size = allGroups.size()
+	// go through all people and add to these arrayLists
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -98,7 +101,10 @@ public class GroupActivity extends ExpandableListActivity implements
 			int _groupid = data.getIntExtra(GROUPID, -1);
 			
 			switch(requestCode) {
-			case ADD_GROUP_RESULT:								
+			case ADD_GROUP_RESULT:
+				if (_groupid == -1) {
+					break;
+				}
 				groupDB.addGroup(_groupname, _timelimit, _chargeamt);
 				break;
 			case EDIT_GROUP_RESULT:
@@ -112,10 +118,12 @@ public class GroupActivity extends ExpandableListActivity implements
 			
 			// do some error checking here if ^ are not generated
 			
-			for (int i = 0 ; i < newNames.size(); i++) {
-				String name = newNames.get(i);
-				String number = newNumbers.get(i);
-				peopleDB.addPersonToDB(name, number, _groupid);
+			if (newNames != null && newNumbers != null) {
+				for (int i = 0 ; i < newNames.size(); i++) {
+					String name = newNames.get(i);
+					String number = newNumbers.get(i);
+					peopleDB.addPersonToDB(name, number, _groupid);
+				}
 			}
 		}
 		updateGroups();
@@ -173,7 +181,7 @@ public class GroupActivity extends ExpandableListActivity implements
 				COLUMN_TIME + " TEXT, " + 
 				COLUMN_AMOUNT + " TEXT);";
 		
-		private int count = 1;
+		private int count;
 		// why did this break in onCreate
 		
 		GroupDatabase(Context context) {
@@ -183,6 +191,7 @@ public class GroupActivity extends ExpandableListActivity implements
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL(GROUPS_TABLE_CREATE);
+			count = 1;
 		}
 
 		@Override
