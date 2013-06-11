@@ -443,10 +443,21 @@ public class GroupActivity extends ExpandableListActivity implements
 				convertView = mInflater.inflate(R.layout.grouprow, null);				
 			}
 			
-			View title = ((ViewGroup)convertView).getChildAt(1);
+			View titleGroup = ((ViewGroup) convertView).getChildAt(1);
+			View title = ((ViewGroup) titleGroup).getChildAt(0);			
+			View infoGroup = ((ViewGroup) titleGroup).getChildAt(1);			
+			View charge = ((ViewGroup) infoGroup).getChildAt(0);
+			View time   = ((ViewGroup) infoGroup).getChildAt(1);
 			
 			((CheckedTextView) title).setText(groupItem.get(groupPosition)._name);
 			((CheckedTextView) title).setChecked(isExpanded);
+			
+			String _charge = "$" + groupItem.get(groupPosition)._amt + ".00";
+			String _time = groupItem.get(groupPosition)._time + " secs";
+			
+			((TextView) charge).setText(_charge);
+			((TextView) time).setText(_time);
+			
 			return convertView;
 		}
 
