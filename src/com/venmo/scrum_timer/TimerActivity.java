@@ -33,6 +33,7 @@ public class TimerActivity extends Activity {
 	private ArrayList<String> names;
 	private ArrayList<String> numbers;
 	private String charge;
+	private String time_input;
 	public CountDownTimer timer;
 	
 	@Override
@@ -41,24 +42,21 @@ public class TimerActivity extends Activity {
 		setContentView(R.layout.activity_timer);
 		
 		Intent intent = getIntent();
-		String time_input = intent.getStringExtra("TIME_INPUT");
-		charge = intent.getStringExtra("CHARGE_AMT");
+		time_input = intent.getStringExtra(GroupActivity.TIMELIMIT);
+		charge = intent.getStringExtra(GroupActivity.CHARGEAMT);
+		numbers = intent.getStringArrayListExtra(GroupActivity.ALL_NUMBERS);
+		names = intent.getStringArrayListExtra(GroupActivity.ALL_NAMES);
 		
 		TextView initialTimer = (TextView)findViewById(R.id.timer);
 		initialTimer.setText(time_input);
-		
-		names = intent.getStringArrayListExtra("NAMES");
-		numbers = intent.getStringArrayListExtra("PHONE_NUMBERS");
-		
+	
 		TextView usernames_view = (TextView)findViewById(R.id.usernames);
-		Log.v("CONTACT", "" + names.size());
+		// Log.v("CONTACT", "" + names.size());
 		
 		String s = "";
 		for (int i = 0; i < names.size(); i++) {
 			s += " " + names.get(i);
-			Log.v("CONTACT", "in timer activity # " + names.get(i));
 		}
-		
 		usernames_view.setText(s);
 		
 		initialTime = Integer.parseInt(time_input);
@@ -96,12 +94,10 @@ public class TimerActivity extends Activity {
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		// getMenuInflater().inflate(R.menu.timer, menu);
 		return true;
 	}
 	
-	public void stopClick(View view) {
+	public void stopTimer(View view) {
 		timer.cancel();
 		Log.v("P2P", "tried to cancel timer...");
 		
@@ -110,10 +106,6 @@ public class TimerActivity extends Activity {
 		int duration = Toast.LENGTH_SHORT;
 		Toast toast = Toast.makeText(context, text, duration);
 		toast.show();
-	}
-	
-	public void restartClick(View view) {
-
 	}
 	
 	private class CreateChargeTask extends AsyncTask<Void, Void, Void> {
@@ -128,6 +120,7 @@ public class TimerActivity extends Activity {
 		}
 		
 		protected void doTheCharge(String uname) {
+			uname = "-" + uname;
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpResponse response;
 			try {

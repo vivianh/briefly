@@ -148,9 +148,23 @@ public class GroupActivity extends ExpandableListActivity implements
 		// String name = ((TextView) parent.findViewById(R.id.group_name)).getText().toString();
 		// please = global.get(groupDB.getGroupId(name));
 		please = global.get(parent.getTag());
+		
+		ArrayList<String> numbers = new ArrayList<String>();
+		ArrayList<String> names = new ArrayList<String>();
 		for (int i = 0; i < please.size(); i++) {
-			Log.v("PLZ", please.get(i)._name);
+			// Log.v("PLZ", please.get(i)._name);
+			names.add(please.get(i)._name);
+			numbers.add(please.get(i)._phone);
 		}
+		
+		Intent startTimerIntent = new Intent(this, TimerActivity.class);
+		Group g = groupDB.getGroup((Integer) parent.getTag());
+		startTimerIntent.putExtra(GROUPNAME, g._name);
+		startTimerIntent.putExtra(TIMELIMIT, g._time);
+		startTimerIntent.putExtra(CHARGEAMT, g._amt);
+		startTimerIntent.putStringArrayListExtra(ALL_NUMBERS, numbers);
+		startTimerIntent.putStringArrayListExtra(ALL_NAMES, names);
+		startActivity(startTimerIntent);
 	}
 	
 	public void cache() {
