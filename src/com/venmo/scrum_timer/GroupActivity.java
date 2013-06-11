@@ -102,9 +102,6 @@ public class GroupActivity extends ExpandableListActivity implements
 			
 			switch(requestCode) {
 			case ADD_GROUP_RESULT:
-				if (_groupid == -1) {
-					break;
-				}
 				groupDB.addGroup(_groupname, _timelimit, _chargeamt);
 				break;
 			case EDIT_GROUP_RESULT:
@@ -119,6 +116,7 @@ public class GroupActivity extends ExpandableListActivity implements
 			// do some error checking here if ^ are not generated
 			
 			if (newNames != null && newNumbers != null) {
+				_groupid = groupDB.max();
 				for (int i = 0 ; i < newNames.size(); i++) {
 					String name = newNames.get(i);
 					String number = newNumbers.get(i);
@@ -181,9 +179,6 @@ public class GroupActivity extends ExpandableListActivity implements
 				COLUMN_TIME + " TEXT, " + 
 				COLUMN_AMOUNT + " TEXT);";
 		
-		private int count;
-		// why did this break in onCreate
-		
 		GroupDatabase(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		}
@@ -191,7 +186,6 @@ public class GroupActivity extends ExpandableListActivity implements
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL(GROUPS_TABLE_CREATE);
-			count = 1;
 		}
 
 		@Override
@@ -208,8 +202,6 @@ public class GroupActivity extends ExpandableListActivity implements
 			
 			db.insert(TABLE_GROUPS, null, values);
 			db.close();
-			count++;
-			Log.v("PLZ", "is this not updating? " + count);
 		}
 		
 		public void updateGroup(Group group) {
@@ -249,7 +241,19 @@ public class GroupActivity extends ExpandableListActivity implements
 		}
 	
 		public int max() {
-			return count;
+			SQLiteDatabase db = this.getReadableDatabase();
+	        String query = "SELECT MAX(_id) AS _id FROM " + TABLE_GROUPS;
+	        Cursor cursor = db.rawQuery(query, null);
+	
+	        int id = 0;     
+	        if (cursor.moveToFirst())
+	        {
+	            do
+	            {           
+	                id = cursor.getInt(0);                  
+	            } while(cursor.moveToNext());           
+	        }
+	        return id;
 		}
 	}
 	

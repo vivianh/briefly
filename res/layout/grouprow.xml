@@ -50,7 +50,7 @@
 
             <TextView
                 android:id="@+id/time_limit"
-                android:layout_width="50dp"
+                android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:textColor="#A9A9A9"
                 android:textSize="14sp" >
