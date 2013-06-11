@@ -145,8 +145,9 @@ public class GroupActivity extends ExpandableListActivity implements
 	public void startTimer(View view) {
 		ArrayList<Person> please = new ArrayList<Person>();
 		View parent = (View) view.getParent();
-		String name = ((TextView) parent.findViewById(R.id.group_name)).getText().toString();
-		please = global.get(groupDB.getGroupId(name));
+		// String name = ((TextView) parent.findViewById(R.id.group_name)).getText().toString();
+		// please = global.get(groupDB.getGroupId(name));
+		please = global.get(parent.getTag());
 		for (int i = 0; i < please.size(); i++) {
 			Log.v("PLZ", please.get(i)._name);
 		}
@@ -157,7 +158,7 @@ public class GroupActivity extends ExpandableListActivity implements
 			Group g = allGroups.get(i);
 			ArrayList<Person> p = new ArrayList<Person>();
 			for (int j = 0; j < allPeople.size(); j++) {
-				if (allPeople.get(j).getGroupId() == g._id) {
+				if ((int)allPeople.get(j).getGroupId() == g._id) {
 					p.add(allPeople.get(j));
 				}
 			}
@@ -172,7 +173,8 @@ public class GroupActivity extends ExpandableListActivity implements
 		String name = ((CheckedTextView) parent.findViewById(R.id.group_name)).getText().toString();
 		String time = ((TextView) parent.findViewById(R.id.time_limit)).getText().toString();
 		String amt = ((TextView) parent.findViewById(R.id.charge_amt)).getText().toString();
-		int group_id = groupDB.getGroupId(name);
+		// int group_id = groupDB.getGroupId(name);
+		int group_id = (Integer) parent.getTag();
 		time = time.split(" ")[0];
 		amt = amt.substring(1);
 		
@@ -202,9 +204,10 @@ public class GroupActivity extends ExpandableListActivity implements
 	public void deletePerson(View view) {
 		Log.v("PLZ", "deleting");
 		View parent = (View) view.getParent();
-		String name = ((TextView) parent.findViewById(R.id.person_name)).getText().toString();
+		// String name = ((TextView) parent.findViewById(R.id.person_name)).getText().toString();
 		// ugh ufuffja;sdkfj;lsk
-		peopleDB.removePerson(peopleDB.getId(name));
+		// peopleDB.removePerson(peopleDB.getId(name));
+		peopleDB.removePerson((Integer)parent.getTag());
 		updatePeople();
 		setChildData();
 	}
@@ -302,19 +305,19 @@ public class GroupActivity extends ExpandableListActivity implements
 			return gr;
 		}
 		
-		public int getGroupId(String name) {
-			SQLiteDatabase db = this.getReadableDatabase();
-			String query = "SELECT " + COLUMN_ID + " AS " +  COLUMN_ID +
-					" FROM " + TABLE_GROUPS + " WHERE " + COLUMN_GROUP_NAME +
-					" = '" + name + "'";
-			Cursor cursor = db.rawQuery(query, null);
-			
-			int id = -1;
-			if (cursor.moveToFirst()) {
-				id = cursor.getInt(0);
-			}
-			return id;
-		}
+//		public int getGroupId(String name) {
+//			SQLiteDatabase db = this.getReadableDatabase();
+//			String query = "SELECT " + COLUMN_ID + " AS " +  COLUMN_ID +
+//					" FROM " + TABLE_GROUPS + " WHERE " + COLUMN_GROUP_NAME +
+//					" = '" + name + "'";
+//			Cursor cursor = db.rawQuery(query, null);
+//			
+//			int id = -1;
+//			if (cursor.moveToFirst()) {
+//				id = cursor.getInt(0);
+//			}
+//			return id;
+//		}
 		
 		public int max() {
 			SQLiteDatabase db = this.getReadableDatabase();
@@ -401,6 +404,7 @@ public class GroupActivity extends ExpandableListActivity implements
 			return allPeople;
 		}
 	
+		/*
 		public int getId(String name) {
 			SQLiteDatabase db = this.getReadableDatabase();
 			String query = "SELECT " + COLUMN_ID + " AS " +  COLUMN_ID +
@@ -428,6 +432,7 @@ public class GroupActivity extends ExpandableListActivity implements
 			}
 			return id;
 		}
+		*/
 		
 		public Person getPerson(int group_id, String name) {
 			return null;
@@ -487,15 +492,18 @@ public class GroupActivity extends ExpandableListActivity implements
 			return null;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public long getChildId(int groupPosition, int childPosition) {
-			return 0;
+			tempChild = (ArrayList<Person>) childItem.get(groupPosition);
+			return tempChild.get(childPosition)._id;
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
 		public View getChildView(int groupPosition, final int childPosition,
 				boolean isLastChild, View convertView, ViewGroup parent) {
+			
 			tempChild = (ArrayList<Person>) childItem.get(groupPosition);
 			
 			TextView textName = null;
@@ -505,23 +513,31 @@ public class GroupActivity extends ExpandableListActivity implements
 				convertView = mInflater.inflate(R.layout.childrow, null);
 			}
 			
+			convertView.setTag((int)getChildId(groupPosition, childPosition));
+			
 			textName = (TextView) convertView.findViewById(R.id.person_name);
 			textName.setText(tempChild.get(childPosition)._name);
 			
 			textNum = (TextView) convertView.findViewById(R.id.person_number);
 			textNum.setText(tempChild.get(childPosition)._phone);
 			
+			final View view = convertView;
+			
 			convertView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					Log.v("PLZ", "hitting child view");
+					// Log.v("PLZ", "hitting child view");
 //					Toast.makeText(activity, tempChild.get(childPosition)._name,
 //							Toast.LENGTH_SHORT).show();
 					// this works.. just need to toggle more
 					String name = ((TextView) v.findViewById(R.id.person_name)).getText().toString();
 					String number = ((TextView) v.findViewById(R.id.person_number)).getText().toString();
-					int group_id = peopleDB.getGroupId(name);
-					int _id = peopleDB.getId(name);
+					// int group_id = peopleDB.getGroupId(name);
+					View parent = (View) view.getParent();
+					int group_id = (Integer) parent.getTag();
+					
+					// int _id = peopleDB.getId(name);
+					int _id = (Integer) view.getTag();
 					ArrayList<Person> people = global.get(group_id);
 					ImageView icon = (ImageView) v.findViewById(R.id.person_icon);
 					
@@ -577,7 +593,7 @@ public class GroupActivity extends ExpandableListActivity implements
 		
 		@Override
 		public long getGroupId(int groupPosition) {
-			return 0;
+			return groupItem.get(groupPosition)._id;
 		}
 
 		@Override
@@ -586,6 +602,9 @@ public class GroupActivity extends ExpandableListActivity implements
 			if (convertView == null) {
 				convertView = mInflater.inflate(R.layout.grouprow, null);				
 			}
+			
+			// Log.v("PLZ", "" + getGroupId(groupPosition));
+			convertView.setTag((int)getGroupId(groupPosition));
 			
 			CheckedTextView title = (CheckedTextView) (convertView.findViewById(R.id.group_name));
 			TextView charge = (TextView) (convertView.findViewById(R.id.charge_amt));
