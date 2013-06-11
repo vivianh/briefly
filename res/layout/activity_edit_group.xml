@@ -28,7 +28,7 @@
 	            android:layout_height="wrap_content"
 	            android:text="@string/label_group_name"
 	            android:textSize="20sp"
-	            android:textColor="#24bbd2" >
+	            android:textColor="#019ECD" >
 	        </TextView>
             
 	        <EditText
@@ -62,16 +62,14 @@
 	            android:layout_height="wrap_content"
 	            android:text="@string/label_time_limit"
 	            android:textSize="20sp"
-	            android:textColor="#24bbd2"
-	            android:textStyle="bold" >
+	            android:textColor="#019ECD" >
 	        </TextView>
             
 	        <EditText
 	            android:id="@+id/edit_time_limit"
 	            android:layout_width="60dp"
 	            android:layout_height="wrap_content"
-	            android:inputType="phone"
-	            android:gravity="right">
+	            android:inputType="phone" >
 	        </EditText>      
 	    </LinearLayout>
 	    
@@ -97,7 +95,7 @@
 	            android:layout_height="wrap_content"
 	            android:text="@string/label_charge_amt"
 	            android:textSize="20sp"
-	            android:textColor="#24bbd2" >
+	            android:textColor="#019ECD" >
 	        </TextView>
             
 	        <EditText
@@ -137,7 +135,10 @@
 	        android:text="Cancel"	
 	        android:background="@android:color/darker_gray" 
 	        android:textColor="@android:color/white"
-	        android:layout_margin="5dp" />
+	        android:layout_marginTop="10dp"
+	        android:layout_marginLeft="10dp"
+	        android:layout_marginRight="5dp"
+	        android:layout_marginBottom="5dp" />
 	     
 	    <Button
 	        android:id="@+id/save_group_button"
@@ -146,9 +147,12 @@
 	        android:layout_height="wrap_content"
 	        android:onClick="saveGroup"
 	        android:text="@string/save_group_text"
-	        android:background="#24bbd2" 
+	        android:background="#019ECD" 
 	        android:textColor="@android:color/white"
-	        android:layout_margin="5dp" />		  
+	        android:layout_marginTop="10dp"
+	        android:layout_marginLeft="5dp"
+	        android:layout_marginRight="10dp"
+	        android:layout_marginBottom="5dp" />		  
 	    
 	</LinearLayout>
 	
@@ -160,9 +164,12 @@
         android:layout_height="wrap_content"
         android:onClick="startTimer"
         android:text="@string/start_timer_text"	
-        android:background="#77db71" 
+        android:background="#008B23" 
         android:textColor="@android:color/white"
-        android:layout_margin="5dp" />
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp" />
 	    
 
 </LinearLayout>

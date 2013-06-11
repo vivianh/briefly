@@ -15,7 +15,8 @@
     </ImageView>
     
     <LinearLayout 
-        android:layout_width="match_parent"
+        android:layout_width="0dip"
+        android:layout_weight="1"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:orientation="vertical"
@@ -44,11 +45,8 @@
         android:id="@+id/trash1"
         android:src="@drawable/trash"
         android:layout_width="wrap_content"
-		android:layout_height="60dp" />
-    
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/black" />
+		android:layout_height="60dp"
+		android:layout_gravity="right"
+		android:layout_marginRight="10dp" />
 
 </LinearLayout>

@@ -22,6 +22,6 @@
 	    android:padding="10dp"
 	    android:textSize="24sp"
 	    android:textStyle="bold"
-	    android:textColor="#24bbd2" />
+	    android:textColor="#019ECD" />
 	
 </LinearLayout>
