@@ -3,24 +3,13 @@ package com.venmo.scrum_timer;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import android.widget.TextView;
 
 public class EditGroupActivity extends Activity {
 
@@ -30,42 +19,37 @@ public class EditGroupActivity extends Activity {
 	private static String _time;
 	private static String _amt;
 	private static int group_id;
-	
-	// ??? WHAT AM I DOING but really
-	public final static String GROUPNAME = "GROUPNAME";
-	public final static String TIMELIMIT = "TIMELIMIT";
-	public final static String CHARGEAMT = "CHARGEAMT";
-	
-	private static PeopleDatabase db;
-	ArrayList<Person> inGroup;
-	ArrayList<String> inGroupNames;
-	ArrayList<String> inGroupNumbers;
+	ArrayList<String> namesInGroup;
+	ArrayList<String> numbersInGroup;
+	ArrayList<String> newNames;
+	ArrayList<String> newNumbers;
+	public static final String NEW_NAMES = "NEWNAMES";
+	public static final String NEW_NUMBERS = "NEWNUMBERS";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_group);
 		
-		_name = ""; _time = ""; _amt = "";
-		db = new PeopleDatabase(this);
-		
+		namesInGroup = new ArrayList<String>();
+		numbersInGroup = new ArrayList<String>();
+		newNames = new ArrayList<String>();
+		newNumbers = new ArrayList<String>();
 		Intent intent = getIntent();
 		
 		// intent is from edit bc it has group object
 		boolean toEdit = intent.getBooleanExtra("EDIT_GROUP", false);
 		if (toEdit) {
-			group_id = intent.getIntExtra("GROUP_ID", -1);
-			_name    = intent.getStringExtra("GROUP_NAME");
-			_time    = intent.getStringExtra("GROUP_TIME");
-			_amt     = intent.getStringExtra("GROUP_AMT");
-
-			Log.v("UGH", "check this out " + group_id);
+			group_id = intent.getIntExtra(GroupActivity.GROUPID, -1);
+			_name    = intent.getStringExtra(GroupActivity.GROUPNAME);
+			_time    = intent.getStringExtra(GroupActivity.TIMELIMIT);
+			_amt     = intent.getStringExtra(GroupActivity.CHARGEAMT);
+			namesInGroup = intent.getStringArrayListExtra(GroupActivity.ALL_NAMES);
+			numbersInGroup = intent.getStringArrayListExtra(GroupActivity.ALL_NUMBERS);
 			setInfo();
 		} else {
-			group_id = intent.getIntExtra("GROUP_ID", -1);
+			group_id = intent.getIntExtra(GroupActivity.GROUPID, -1);
 		}
-		
-		updateMembers(group_id);
 	}
 
 	@Override
@@ -86,13 +70,6 @@ public class EditGroupActivity extends Activity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
-	/*
-	public void addPerson(View view) {
-		Intent addPersonIntent = new Intent(this, AddPersonActivity.class);
-		startActivityForResult(addPersonIntent, ADD_PERSON_RESULT);
-	}
-	*/
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
@@ -102,9 +79,10 @@ public class EditGroupActivity extends Activity {
 				//data = getIntent();
 				String name = data.getStringExtra(AddPersonActivity.NAME);
 				String number = data.getStringExtra(AddPersonActivity.NUMBER);
-
-				db.addPersonToDB(name, number, group_id);
-				updateMembers(group_id);
+				namesInGroup.add(name);
+				numbersInGroup.add(number);
+				newNames.add(name);
+				newNumbers.add(number);
 			}
 		}
 	}
@@ -129,146 +107,22 @@ public class EditGroupActivity extends Activity {
 		_amt = editAmt.getText().toString();
 	}
 	
-	// this shouldn't return back to activity
 	public void saveGroup(View view) {
 		getInfo();
-		Intent returnGroupIntent = new Intent();
-		returnGroupIntent.putExtra(GROUPNAME, _name);
-		returnGroupIntent.putExtra(TIMELIMIT, _time);
-		returnGroupIntent.putExtra(CHARGEAMT, _amt);
-		returnGroupIntent.putExtra("GROUP_ID", group_id);
+		Intent returnGroupIntent = new Intent(this, GroupActivity.class);
+		returnGroupIntent.putExtra(GroupActivity.GROUPNAME, _name);
+		returnGroupIntent.putExtra(GroupActivity.TIMELIMIT, _time);
+		returnGroupIntent.putExtra(GroupActivity.CHARGEAMT, _amt);
+		returnGroupIntent.putExtra(GroupActivity.GROUPID, group_id);
+		returnGroupIntent.putStringArrayListExtra(NEW_NAMES, newNames);
+		returnGroupIntent.putStringArrayListExtra(NEW_NUMBERS, newNumbers);
 		setResult(RESULT_OK, returnGroupIntent);
 		finish();
 	}
 	
-	public class PeopleDatabase extends SQLiteOpenHelper {
-
-		public static final String TABLE_PEOPLE = "people";
-		public static final String COLUMN_ID = "_id";
-		public static final String COLUMN_NAME = "user_name";
-		public static final String COLUMN_PHONE = "phone_num";
-		public static final String COLUMN_GROUP_ID = "group_id";
-		
-		private static final String DATABASE_NAME = "people.db";
-		private static final int DATABASE_VERSION = 1;
-		
-		private static final String PEOPLE_TABLE_CREATE =
-				"CREATE TABLE " + TABLE_PEOPLE + " (" +
-				COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-				COLUMN_NAME + " TEXT, " + 
-				COLUMN_PHONE + " TEXT, " +
-				COLUMN_GROUP_ID + " TEXT);";
-		
-		public PeopleDatabase(Context context) {
-			super(context, DATABASE_NAME, null, DATABASE_VERSION);
-		}
-
-		@Override
-		public void onCreate(SQLiteDatabase db) {
-			db.execSQL(PEOPLE_TABLE_CREATE);			
-		}
-
-		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		public void addPersonToDB(String name, String phone, int group_id) {
-			SQLiteDatabase db = this.getWritableDatabase();
-			
-			ContentValues values = new ContentValues();
-			values.put(COLUMN_NAME, name);
-			values.put(COLUMN_PHONE, phone);
-			values.put(COLUMN_GROUP_ID, group_id);
-			
-			db.insert(TABLE_PEOPLE, null, values);
-			db.close();
-		}
-		
-		public void removePerson(int id) {
-			SQLiteDatabase db = this.getWritableDatabase();			
-			db.delete(TABLE_PEOPLE, COLUMN_ID + " = ?",
-					new String[] {String.valueOf(id)} );
-			db.close();
-		}
-		
-		public ArrayList<Person> getAllPeople() {
-			ArrayList<Person> allPeople = new ArrayList<Person>();
-			String selectQuery = "SELECT * FROM " + TABLE_PEOPLE;
-			SQLiteDatabase db = this.getReadableDatabase();
-			Cursor cursor = db.rawQuery(selectQuery, null);
-			if (cursor.moveToFirst()) {
-				do {
-					Person person = new Person(cursor.getInt(0),
-											   cursor.getString(1),
-											   cursor.getString(2),   
-											   cursor.getInt(3));
-					allPeople.add(person);
-				} while (cursor.moveToNext());
-			}
-			return allPeople;
-		}
-	}
-	
-	// could definitely make this more efficient instead of redoing every time... 
-	private void updateMembers(int group_id) {
-		int num = 0;
-		final LinearLayout layout = (LinearLayout) findViewById(R.id.edit_people_layout);
-		
-		// remove all members
-		layout.removeAllViews();
-		
-		ArrayList<Person> people = db.getAllPeople();
-		inGroup = new ArrayList<Person>();
-		inGroupNames = new ArrayList<String>();
-		inGroupNumbers = new ArrayList<String>();
-		
-		for (int i = 0; i < people.size(); i++) {
-			Log.v("UGH", "group id" + people.get(i).getGroupId());
-			Log.v("UGH", "set to 0" + group_id);
-			if (people.get(i).getGroupId() == group_id) {
-				inGroup.add(people.get(i));
-				inGroupNames.add(people.get(i).getName());
-				inGroupNumbers.add(people.get(i).getPhone());
-			}
-		}
-		
-		for (int i = 0; i < inGroup.size(); i++) {
-			// Log.v("UGH", "??" + names.get(i));
-			Person current = inGroup.get(i);
-			final Person ugh = current;
-			
-			LinearLayout uLayout = new LinearLayout(this);
-			uLayout.setLayoutDirection(0);
-			uLayout.setId(num);
-			
-			TextView textView = new TextView(this);
-			textView.setText(current.getName() + " " +
-							 current.getPhone());
-			textView.setLayoutParams(new TableLayout.LayoutParams(
-					LayoutParams.MATCH_PARENT,
-					LayoutParams.WRAP_CONTENT,
-					1.0f));
-			
-			Button uButton = new Button(this);
-			uButton.setLayoutParams(new LayoutParams(
-					LayoutParams.WRAP_CONTENT,
-					LayoutParams.WRAP_CONTENT));
-			uButton.setText("-");
-			uButton.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					View view = findViewById(((View) v.getParent()).getId());
-					layout.removeView(view);
-					db.removePerson(ugh.getId());
-				}
-			});
-			
-			uLayout.addView(textView);
-			uLayout.addView(uButton);
-			layout.addView(uLayout);
-			num++;
-		}
+	public void cancel(View view) {
+		Intent backIntent = new Intent(this, GroupActivity.class);
+		setResult(RESULT_OK, backIntent);
 	}
 	
 	public void startTimer(View view) {
@@ -278,10 +132,11 @@ public class EditGroupActivity extends Activity {
 			((EditText) findViewById(R.id.edit_time_limit)).setError("Enter time in seconds");
 			return;
 		}
-		setTimerIntent.putExtra("TIME_INPUT", _time);
-		setTimerIntent.putExtra("CHARGE_AMT", _amt);
-		setTimerIntent.putStringArrayListExtra("PHONE_NUMBERS", inGroupNumbers);
-		setTimerIntent.putStringArrayListExtra("NAMES", inGroupNames);
+		setTimerIntent.putExtra(GroupActivity.GROUPNAME, _name);
+		setTimerIntent.putExtra(GroupActivity.TIMELIMIT, _time);
+		setTimerIntent.putExtra(GroupActivity.CHARGEAMT, _amt);
+		setTimerIntent.putStringArrayListExtra(GroupActivity.ALL_NUMBERS, namesInGroup);
+		setTimerIntent.putStringArrayListExtra(GroupActivity.ALL_NAMES, numbersInGroup);
 		startActivity(setTimerIntent);
 	}
 }

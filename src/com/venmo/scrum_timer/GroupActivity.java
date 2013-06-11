@@ -27,23 +27,33 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-// is this ok1?!!?!??!?!?!?!
 public class GroupActivity extends ExpandableListActivity implements
 	OnChildClickListener {
 
 	private final static int ADD_GROUP_RESULT = 2; 
 	private final static int EDIT_GROUP_RESULT = 1;
-	private static GroupDatabase db;
+	private static GroupDatabase groupDB;
+	private static PeopleDatabase peopleDB;
 	
-	ArrayList<Group> allGroups;
+	public final static String GROUPNAME = "GROUPNAME";
+	public final static String TIMELIMIT = "TIMELIMIT";
+	public final static String CHARGEAMT = "CHARGEAMT";
+	public final static String GROUPID = "GROUPID";
+	public final static String ALL_NAMES = "NAMES";
+	public final static String ALL_NUMBERS = "NUMBERS";
+	
+	ArrayList<Group> allGroups = new ArrayList<Group>();
 	ArrayList<Object> allChildren = new ArrayList<Object>();
+	ArrayList<Person> allPeople = new ArrayList<Person>();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		db = new GroupDatabase(this);
+		groupDB = new GroupDatabase(this);
+		peopleDB = new PeopleDatabase(this);
 		updateGroups();
+		updatePeople();
 		setChildData();
 		
 		ExpandableListView exp = getExpandableListView();
@@ -70,6 +80,8 @@ public class GroupActivity extends ExpandableListActivity implements
 		switch (item.getItemId()) {
 			case R.id.menu_create_group:
 				Intent createGroupIntent = new Intent(getApplicationContext(), EditGroupActivity.class);
+				createGroupIntent.putExtra(GROUPID, groupDB.max());
+				Log.v("PLZ", "group ID on creation " + groupDB.max());
 				startActivityForResult(createGroupIntent, ADD_GROUP_RESULT);
 				return true;
 			default:
@@ -77,36 +89,70 @@ public class GroupActivity extends ExpandableListActivity implements
 		}
 	}
 	
-	
-	public void createGroup(View view) {
-		Intent createGroupIntent = new Intent(this, EditGroupActivity.class);
-		//startActivity(createGroupIntent);
-		//createGroupIntent.putExtra("GROUP_ID", db.getSize());
-		startActivityForResult(createGroupIntent, ADD_GROUP_RESULT);
-	}
-	
-	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
-			String _groupname = data.getStringExtra(EditGroupActivity.GROUPNAME);
-			String _timelimit = data.getStringExtra(EditGroupActivity.TIMELIMIT);
-			String _chargeamt = data.getStringExtra(EditGroupActivity.CHARGEAMT);
+			String _groupname = data.getStringExtra(GROUPNAME);
+			String _timelimit = data.getStringExtra(TIMELIMIT);
+			String _chargeamt = data.getStringExtra(CHARGEAMT);
+			int _groupid = data.getIntExtra(GROUPID, -1);
 			
 			switch(requestCode) {
 			case ADD_GROUP_RESULT:								
-				db.addGroup(_groupname, _timelimit, _chargeamt);
+				groupDB.addGroup(_groupname, _timelimit, _chargeamt);
 				break;
 			case EDIT_GROUP_RESULT:
-				int _gid = data.getIntExtra("GROUP_ID", -1);
-				Group g = new Group(_gid, _groupname, _timelimit, _chargeamt);
-				db.updateGroup(g);
+				Group g = new Group(_groupid, _groupname, _timelimit, _chargeamt);
+				groupDB.updateGroup(g);
+				break;
+			}
+			
+			ArrayList<String> newNames = data.getStringArrayListExtra(EditGroupActivity.NEW_NAMES);
+			ArrayList<String> newNumbers = data.getStringArrayListExtra(EditGroupActivity.NEW_NUMBERS);
+			
+			// do some error checking here if ^ are not generated
+			
+			for (int i = 0 ; i < newNames.size(); i++) {
+				String name = newNames.get(i);
+				String number = newNumbers.get(i);
+				peopleDB.addPersonToDB(name, number, _groupid);
 			}
 		}
 		updateGroups();
+		updatePeople();
+		setChildData();
 	}
 
 	public void updateGroups() {
-		allGroups = db.getAllGroups();
+		allGroups = groupDB.getAllGroups();
+	}
+	
+	public void updatePeople() {
+		allPeople = peopleDB.getAllPeople();
+	}
+	
+	// I need the save button to go back bc I need it to return bc the db is there
+	public void editGroup(Group group) {
+		Intent editGroupIntent = new Intent(getApplicationContext(), EditGroupActivity.class);
+
+		ArrayList<String> inGroupNames = new ArrayList<String>();
+		ArrayList<String> inGroupNumbers = new ArrayList<String>();
+		int group_id = group._id;
+		for (int i = 0; i < allPeople.size(); i++) {
+			if (allPeople.get(i)._group_id == group_id) {
+				inGroupNames.add(allPeople.get(i)._name);
+				inGroupNumbers.add(allPeople.get(i)._phone);
+			}
+		}
+		
+		editGroupIntent.putExtra("EDIT_GROUP", true);
+		editGroupIntent.putExtra(GROUPNAME, group._name);
+		editGroupIntent.putExtra(TIMELIMIT, group._time);
+		editGroupIntent.putExtra(CHARGEAMT, group._amt);
+		editGroupIntent.putExtra(GROUPID, group._id);
+		editGroupIntent.putStringArrayListExtra(ALL_NAMES, inGroupNames);
+		editGroupIntent.putStringArrayListExtra(ALL_NUMBERS, inGroupNumbers);
+		
+		startActivityForResult(editGroupIntent, EDIT_GROUP_RESULT);
 	}
 	
 	public class GroupDatabase extends SQLiteOpenHelper {
@@ -125,6 +171,9 @@ public class GroupActivity extends ExpandableListActivity implements
 				COLUMN_GROUP_NAME + " TEXT, " +
 				COLUMN_TIME + " TEXT, " + 
 				COLUMN_AMOUNT + " TEXT);";
+		
+		private int count = 1;
+		// why did this break in onCreate
 		
 		GroupDatabase(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -149,6 +198,8 @@ public class GroupActivity extends ExpandableListActivity implements
 			
 			db.insert(TABLE_GROUPS, null, values);
 			db.close();
+			count++;
+			Log.v("PLZ", "is this not updating? " + count);
 		}
 		
 		public void updateGroup(Group group) {
@@ -186,28 +237,114 @@ public class GroupActivity extends ExpandableListActivity implements
 			}			
 			return allGroups;
 		}
-
-	}
 	
-	public void setChildData() {
-		
-		for (int i = 0; i < allGroups.size(); i++) {
-			ArrayList<Person> child = new ArrayList<Person>();
-			
-			Person p1 = new Person(0, "Vivian", "7132487562", i);
-			Person p2 = new Person(0, "Robert", "7132487562", i);
-			
-			child.add(p1);
-			child.add(p2);
-			
-			allChildren.add(child);
+		public int max() {
+			return count;
 		}
 	}
 	
+	public class PeopleDatabase extends SQLiteOpenHelper {
+
+		public static final String TABLE_PEOPLE = "people";
+		public static final String COLUMN_ID = "_id";
+		public static final String COLUMN_NAME = "user_name";
+		public static final String COLUMN_PHONE = "phone_num";
+		public static final String COLUMN_GROUP_ID = "group_id";
+		
+		private static final String DATABASE_NAME = "people.db";
+		private static final int DATABASE_VERSION = 1;
+		
+		private static final String PEOPLE_TABLE_CREATE =
+				"CREATE TABLE " + TABLE_PEOPLE + " (" +
+				COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+				COLUMN_NAME + " TEXT, " + 
+				COLUMN_PHONE + " TEXT, " +
+				COLUMN_GROUP_ID + " TEXT);";
+		
+		public PeopleDatabase(Context context) {
+			super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		}
+
+		@Override
+		public void onCreate(SQLiteDatabase db) {
+			db.execSQL(PEOPLE_TABLE_CREATE);			
+		}
+
+		@Override
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+		}
+		
+		public void addPersonToDB(String name, String phone, int group_id) {
+			SQLiteDatabase db = this.getWritableDatabase();
+			
+			ContentValues values = new ContentValues();
+			values.put(COLUMN_NAME, name);
+			values.put(COLUMN_PHONE, phone);
+			values.put(COLUMN_GROUP_ID, group_id);
+			
+			db.insert(TABLE_PEOPLE, null, values);
+			db.close();
+		}
+		
+		public void removePerson(int id) {
+			SQLiteDatabase db = this.getWritableDatabase();			
+			db.delete(TABLE_PEOPLE, COLUMN_ID + " = ?",
+					new String[] {String.valueOf(id)} );
+			db.close();
+		}
+		
+		public ArrayList<Person> getAllPeople() {
+			ArrayList<Person> allPeople = new ArrayList<Person>();
+			String selectQuery = "SELECT * FROM " + TABLE_PEOPLE;
+			SQLiteDatabase db = this.getReadableDatabase();
+			Cursor cursor = db.rawQuery(selectQuery, null);
+			if (cursor.moveToFirst()) {
+				do {
+					Person person = new Person(cursor.getInt(0),
+											   cursor.getString(1),
+											   cursor.getString(2),   
+											   cursor.getInt(3));
+					allPeople.add(person);
+				} while (cursor.moveToNext());
+			}
+			return allPeople;
+		}
+	}
+
+	public void setChildData() {
+		ArrayList<Person> child;
+		int group_id = -1;
+		
+		ArrayList<Person> allPeople = peopleDB.getAllPeople();
+		
+		for (int i = 0; i < allGroups.size(); i++) {
+			child = new ArrayList<Person>();			
+			group_id = allGroups.get(i)._id;
+			Log.v("PLZ", "trying to replace group id " + allGroups.get(i)._id);
+			
+			for (int j = 0; j < allPeople.size(); j++) {
+				Log.v("PLZ", "id of person " + allPeople.get(j)._group_id);
+				if (allPeople.get(j)._group_id == group_id) {
+					child.add(allPeople.get(j));
+				}
+			}
+			Log.v("PLZ", "size of " + child.size());
+			allChildren.add(child);
+			for (int j = 0; j < allChildren.size(); j++) {
+				Log.v("PLZ", "kids " + j);
+				for (int k = 0; k < child.size(); k++) {
+					Log.v("PLZ", "kids and then " + child.get(k)._name);
+				}
+			}
+		}
+	}
+	
+	// toggles y/n for person there or not
 	@Override
 	public boolean onChildClick(ExpandableListView parent, View v,
 			int groupPosition, int childPosition, long id) {
-		Toast.makeText(this, "Clicked on Child", Toast.LENGTH_SHORT).show();
+		// Toast.makeText(this, "Clicked on Child", Toast.LENGTH_SHORT).show();
 		return true;
 	}
 
@@ -215,7 +352,6 @@ public class GroupActivity extends ExpandableListActivity implements
 		public ArrayList<Group> groupItem;
 		public ArrayList<Person> tempChild;
 		public ArrayList<Object> childItem = new ArrayList<Object>();
-		// ???
 		public LayoutInflater mInflater;
 		public Activity activity;
 		

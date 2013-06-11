@@ -24,7 +24,8 @@
         </activity>
         <activity
             android:name="com.venmo.scrum_timer.GroupActivity"
-            android:label="@string/title_activity_group" >
+            android:label="@string/title_activity_group"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
