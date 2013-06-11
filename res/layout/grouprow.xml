@@ -84,6 +84,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:src="@drawable/ic_start"
+        android:onClick="startTimer"
         android:layout_marginRight="10dp" >        
     </ImageView>
     

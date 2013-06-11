@@ -1,6 +1,7 @@
 package com.venmo.scrum_timer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.ExpandableListActivity;
@@ -25,7 +26,6 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class GroupActivity extends ExpandableListActivity implements
@@ -35,6 +35,7 @@ public class GroupActivity extends ExpandableListActivity implements
 	private final static int EDIT_GROUP_RESULT = 1;
 	private static GroupDatabase groupDB;
 	private static PeopleDatabase peopleDB;
+	private static HashMap<Integer, ArrayList<Person>> global;
 	
 	public final static String GROUPNAME = "GROUPNAME";
 	public final static String TIMELIMIT = "TIMELIMIT";
@@ -56,8 +57,10 @@ public class GroupActivity extends ExpandableListActivity implements
 		
 		groupDB = new GroupDatabase(this);
 		peopleDB = new PeopleDatabase(this);
+		global = new HashMap<Integer, ArrayList<Person>>();
 		updateGroups();
 		updatePeople();
+		cache();
 		setChildData();
 		
 		ExpandableListView exp = getExpandableListView();
@@ -139,6 +142,29 @@ public class GroupActivity extends ExpandableListActivity implements
 		allPeople = peopleDB.getAllPeople();
 	}
 	
+	public void startTimer(View view) {
+		ArrayList<Person> please = new ArrayList<Person>();
+		View parent = (View) view.getParent();
+		String name = ((TextView) parent.findViewById(R.id.group_name)).getText().toString();
+		please = global.get(groupDB.getGroupId(name));
+		for (int i = 0; i < please.size(); i++) {
+			Log.v("PLZ", please.get(i)._name);
+		}
+	}
+	
+	public void cache() {
+		for (int i = 0; i < allGroups.size(); i++) {
+			Group g = allGroups.get(i);
+			ArrayList<Person> p = new ArrayList<Person>();
+			for (int j = 0; j < allPeople.size(); j++) {
+				if (allPeople.get(j).getGroupId() == g._id) {
+					p.add(allPeople.get(j));
+				}
+			}
+			global.put(g._id, p);
+		}
+	}
+	
 	// I need the save button to go back bc I need it to return bc the db is there
 	public void editGroup(View view) {		
 		View parent = (View) view.getParent();
@@ -171,6 +197,16 @@ public class GroupActivity extends ExpandableListActivity implements
 		editGroupIntent.putStringArrayListExtra(ALL_NUMBERS, inGroupNumbers);
 		
 		startActivityForResult(editGroupIntent, EDIT_GROUP_RESULT);
+	}
+	
+	public void deletePerson(View view) {
+		Log.v("PLZ", "deleting");
+		View parent = (View) view.getParent();
+		String name = ((TextView) parent.findViewById(R.id.person_name)).getText().toString();
+		// ugh ufuffja;sdkfj;lsk
+		peopleDB.removePerson(peopleDB.getId(name));
+		updatePeople();
+		setChildData();
 	}
 	
 	public class GroupDatabase extends SQLiteOpenHelper {
@@ -364,6 +400,38 @@ public class GroupActivity extends ExpandableListActivity implements
 			}
 			return allPeople;
 		}
+	
+		public int getId(String name) {
+			SQLiteDatabase db = this.getReadableDatabase();
+			String query = "SELECT " + COLUMN_ID + " AS " +  COLUMN_ID +
+					" FROM " + TABLE_PEOPLE + " WHERE " + COLUMN_NAME +
+					" = '" + name + "'";
+			Cursor cursor = db.rawQuery(query, null);
+			
+			int id = -1;
+			if (cursor.moveToFirst()) {
+				id = cursor.getInt(0);
+			}
+			return id;
+		}
+		
+		public int getGroupId(String name) {
+			SQLiteDatabase db = this.getReadableDatabase();
+			String query = "SELECT " + COLUMN_GROUP_ID + " AS " +
+					COLUMN_GROUP_ID + " FROM " + TABLE_PEOPLE + " WHERE " +
+					COLUMN_NAME + " = '" + name + "'";
+			Cursor cursor = db.rawQuery(query, null);
+			
+			int id = -1;
+			if (cursor.moveToFirst()) {
+				id = cursor.getInt(0);
+			}
+			return id;
+		}
+		
+		public Person getPerson(int group_id, String name) {
+			return null;
+		}
 	}
 
 	public void setChildData() {
@@ -437,27 +505,44 @@ public class GroupActivity extends ExpandableListActivity implements
 				convertView = mInflater.inflate(R.layout.childrow, null);
 			}
 			
-			textName = (TextView) convertView.findViewById(R.id.textView1);
+			textName = (TextView) convertView.findViewById(R.id.person_name);
 			textName.setText(tempChild.get(childPosition)._name);
 			
-			textNum = (TextView) convertView.findViewById(R.id.textView2);
+			textNum = (TextView) convertView.findViewById(R.id.person_number);
 			textNum.setText(tempChild.get(childPosition)._phone);
 			
 			convertView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					Log.v("PLZ", "hitting child view");
 //					Toast.makeText(activity, tempChild.get(childPosition)._name,
 //							Toast.LENGTH_SHORT).show();
 					// this works.. just need to toggle more
+					String name = ((TextView) v.findViewById(R.id.person_name)).getText().toString();
+					String number = ((TextView) v.findViewById(R.id.person_number)).getText().toString();
+					int group_id = peopleDB.getGroupId(name);
+					int _id = peopleDB.getId(name);
+					ArrayList<Person> people = global.get(group_id);
 					ImageView icon = (ImageView) v.findViewById(R.id.person_icon);
+					
 					if (icon.getTag() == "blue") {
-						// remove from current arraylist
 						icon.setImageResource(R.drawable.person);
 						icon.setTag("gray");
+						// boolean welp = people.remove(peopleDB.getPerson(group_id, name));
+						for (int i = 0; i < people.size(); i++) {
+							if (people.get(i)._group_id == group_id && people.get(i)._name == name) {
+								people.remove(i);
+							}
+						}
+						// Log.v("PLZ", "did it remove? " + welp);
+						Log.v("PLZ", "removing from internal arraylist");
 					} else {
 						icon.setImageResource(R.drawable.ic_blue_person);
 						icon.setTag("blue");
+						people.add(new Person(_id, name, number, group_id));
+						Log.v("PLZ", "adding back to arraylist");
 					}
+					global.put(group_id, people);
 				}
 			});
 			
