@@ -58,6 +58,35 @@
         </LinearLayout>
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/delete_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/trash"
+        android:onClick="deleteGroup"
+        android:layout_marginRight="10dp" >        
+    </ImageView>
+    
+    <ImageView
+        android:id="@+id/edit_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/edit"
+        android:onClick="editGroup"
+        android:layout_marginRight="10dp" >        
+    </ImageView>
+    
+    <ImageView
+        android:id="@+id/start_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/ic_start"
+        android:layout_marginRight="10dp" >        
+    </ImageView>
+    
     <!--  
     <ImageButton
         android:layout_width="wrap_content"

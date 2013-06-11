@@ -16,8 +16,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckedTextView;
@@ -138,12 +140,21 @@ public class GroupActivity extends ExpandableListActivity implements
 	}
 	
 	// I need the save button to go back bc I need it to return bc the db is there
-	public void editGroup(Group group) {
+	public void editGroup(View view) {		
+		View parent = (View) view.getParent();
+		
+		String name = ((CheckedTextView) parent.findViewById(R.id.group_name)).getText().toString();
+		String time = ((TextView) parent.findViewById(R.id.time_limit)).getText().toString();
+		String amt = ((TextView) parent.findViewById(R.id.charge_amt)).getText().toString();
+		int group_id = groupDB.getGroupId(name);
+		time = time.split(" ")[0];
+		amt = amt.substring(1);
+		
 		Intent editGroupIntent = new Intent(getApplicationContext(), EditGroupActivity.class);
 
 		ArrayList<String> inGroupNames = new ArrayList<String>();
 		ArrayList<String> inGroupNumbers = new ArrayList<String>();
-		int group_id = group._id;
+
 		for (int i = 0; i < allPeople.size(); i++) {
 			if (allPeople.get(i)._group_id == group_id) {
 				inGroupNames.add(allPeople.get(i)._name);
@@ -152,10 +163,10 @@ public class GroupActivity extends ExpandableListActivity implements
 		}
 		
 		editGroupIntent.putExtra("EDIT_GROUP", true);
-		editGroupIntent.putExtra(GROUPNAME, group._name);
-		editGroupIntent.putExtra(TIMELIMIT, group._time);
-		editGroupIntent.putExtra(CHARGEAMT, group._amt);
-		editGroupIntent.putExtra(GROUPID, group._id);
+		editGroupIntent.putExtra(GROUPNAME, name);
+		editGroupIntent.putExtra(TIMELIMIT, time);
+		editGroupIntent.putExtra(CHARGEAMT, amt);
+		editGroupIntent.putExtra(GROUPID, group_id);
 		editGroupIntent.putStringArrayListExtra(ALL_NAMES, inGroupNames);
 		editGroupIntent.putStringArrayListExtra(ALL_NUMBERS, inGroupNumbers);
 		
@@ -240,6 +251,35 @@ public class GroupActivity extends ExpandableListActivity implements
 			return allGroups;
 		}
 	
+		public Group getGroup(int id) {
+			SQLiteDatabase db = this.getReadableDatabase();
+			String query = "SELECT * FROM " + TABLE_GROUPS + " WHERE "
+					+ COLUMN_ID + " = " + id;
+			Group gr = new Group();
+			Cursor cursor = db.rawQuery(query, null);
+			if (cursor.moveToFirst()) {
+				gr = new Group(cursor.getInt(0),
+							   cursor.getString(1),
+							   cursor.getString(2),
+							   cursor.getString(3));
+			}
+			return gr;
+		}
+		
+		public int getGroupId(String name) {
+			SQLiteDatabase db = this.getReadableDatabase();
+			String query = "SELECT " + COLUMN_ID + " AS " +  COLUMN_ID +
+					" FROM " + TABLE_GROUPS + " WHERE " + COLUMN_GROUP_NAME +
+					" = '" + name + "'";
+			Cursor cursor = db.rawQuery(query, null);
+			
+			int id = -1;
+			if (cursor.moveToFirst()) {
+				id = cursor.getInt(0);
+			}
+			return id;
+		}
+		
 		public int max() {
 			SQLiteDatabase db = this.getReadableDatabase();
 	        String query = "SELECT MAX(_id) AS _id FROM " + TABLE_GROUPS;
@@ -335,22 +375,13 @@ public class GroupActivity extends ExpandableListActivity implements
 		for (int i = 0; i < allGroups.size(); i++) {
 			child = new ArrayList<Person>();			
 			group_id = allGroups.get(i)._id;
-			Log.v("PLZ", "trying to replace group id " + allGroups.get(i)._id);
 			
 			for (int j = 0; j < allPeople.size(); j++) {
-				Log.v("PLZ", "id of person " + allPeople.get(j)._group_id);
 				if (allPeople.get(j)._group_id == group_id) {
 					child.add(allPeople.get(j));
 				}
 			}
-			Log.v("PLZ", "size of " + child.size());
 			allChildren.add(child);
-			for (int j = 0; j < allChildren.size(); j++) {
-				Log.v("PLZ", "kids " + j);
-				for (int k = 0; k < child.size(); k++) {
-					Log.v("PLZ", "kids and then " + child.get(k)._name);
-				}
-			}
 		}
 	}
 	
