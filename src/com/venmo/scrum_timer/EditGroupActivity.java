@@ -139,4 +139,5 @@ public class EditGroupActivity extends Activity {
 		setTimerIntent.putStringArrayListExtra(GroupActivity.ALL_NAMES, numbersInGroup);
 		startActivity(setTimerIntent);
 	}
+
 }

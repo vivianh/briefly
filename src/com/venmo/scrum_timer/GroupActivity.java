@@ -23,6 +23,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckedTextView;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -443,20 +444,23 @@ public class GroupActivity extends ExpandableListActivity implements
 				convertView = mInflater.inflate(R.layout.grouprow, null);				
 			}
 			
-			View titleGroup = ((ViewGroup) convertView).getChildAt(1);
-			View title = ((ViewGroup) titleGroup).getChildAt(0);			
-			View infoGroup = ((ViewGroup) titleGroup).getChildAt(1);			
-			View charge = ((ViewGroup) infoGroup).getChildAt(0);
-			View time   = ((ViewGroup) infoGroup).getChildAt(1);
+			CheckedTextView title = (CheckedTextView) (convertView.findViewById(R.id.group_name));
+			TextView charge = (TextView) (convertView.findViewById(R.id.charge_amt));
+			TextView time = (TextView) (convertView.findViewById(R.id.time_limit));
 			
 			((CheckedTextView) title).setText(groupItem.get(groupPosition)._name);
 			((CheckedTextView) title).setChecked(isExpanded);
-			
 			String _charge = "$" + groupItem.get(groupPosition)._amt + ".00";
 			String _time = groupItem.get(groupPosition)._time + " secs";
+			charge.setText(_charge);
+			time.setText(_time);
 			
-			((TextView) charge).setText(_charge);
-			((TextView) time).setText(_time);
+			ImageView arrow = (ImageView) convertView.findViewById(R.id.arrow);
+			if (isExpanded) {				
+				arrow.setImageResource(R.drawable.up);
+			} else {
+				arrow.setImageResource(R.drawable.down);
+			}
 			
 			return convertView;
 		}

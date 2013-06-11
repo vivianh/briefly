@@ -39,6 +39,7 @@
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
+            android:theme="@android:style/Theme.Holo.Dialog"
             android:name="com.venmo.scrum_timer.AddPersonActivity"
             android:label="@string/title_activity_add_person"
             android:screenOrientation="portrait"
