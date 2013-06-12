@@ -25,7 +25,7 @@
     <string name="add_contact">Add Contact</string>
     <string name="meeting_caption">It\'s meeting time!</string>
     <string name="secs">secs</string>
-    <string name="people">people</string>
+    <string name="money">$$$</string>
     <string name="sec_per_person">secs per person</string>
     <string name="or">-- OR --</string>
 </resources>

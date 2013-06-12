@@ -50,6 +50,17 @@ public class TimerActivity extends Activity {
 		TextView initialTimer = (TextView)findViewById(R.id.timer);
 		initialTimer.setText(time_input);
 	
+		TextView money = (TextView)findViewById(R.id.money_text);
+		money.setText("$" + charge + ".00");
+		
+		TextView info = (TextView) findViewById(R.id.info);
+		int num = names.size();
+		
+		if (num == 1) {
+			info.setText(num + " person, " + Integer.parseInt(time_input)/num + " seconds");
+		} else {
+			info.setText(num + " people, " + Integer.parseInt(time_input)/num + " secs each");
+		}
 		// TextView usernames_view = (TextView)findViewById(R.id.usernames);
 		// Log.v("CONTACT", "" + names.size());
 		

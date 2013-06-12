@@ -1,7 +1,6 @@
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-   	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:id="@+id/timerBackground"
@@ -9,6 +8,7 @@
 	android:background="#E5E5E5" >
 	
     <TextView
+        android:id="@+id/meeting_caption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
@@ -25,7 +25,7 @@
 	<TextView
 	    android:layout_width="240dp"
 	    android:layout_height="130dp" 
-	    android:layout_gravity="center_horizontal"   		    
+	    android:layout_gravity="center_horizontal" 		    
 	    android:gravity="center"
 	    android:textSize="50sp"
 		android:text="@string/timer"
@@ -33,16 +33,39 @@
 		android:id="@+id/timer"
 		android:background="#019ECD"
 		android:layout_marginTop="20dp"
-		android:layout_marginBottom="20dp" >
+		android:layout_marginBottom="20dp"
+		android:layout_below="@id/meeting_caption"
+		android:layout_centerHorizontal="true" >
 	</TextView>
- 	
+ 
+	<!-- 200dp width, 60dp height -->
 	<TextView 
-	    android:layout_width="200dp"
-	    android:layout_height="60dp"
+	    android:id="@+id/info"
+	    android:layout_width="240dp"
+	    android:layout_height="40dp"
+	    android:layout_gravity="center_horizontal"
 	    android:background="@android:color/white"
-	    android:layout_marginTop="40dp"
-	    android:layout_marginLeft="40dp"
-	    android:text="@string/secs" />
+	    android:text="@string/secs"
+	    android:textSize="20sp"
+	    android:textColor="#B9B9B9"
+	    android:gravity="center"
+	    android:layout_below="@id/timer"
+	    android:layout_centerHorizontal="true" />
+	 <!--  android:layout_marginTop="40dp" -->
+	
+	<TextView
+	    android:layout_width="240dp"
+	    android:layout_height="40dp"
+	    android:background="@android:color/white"
+	    android:layout_gravity="center_horizontal"
+	    android:layout_marginTop="10dp"
+	    android:text="@string/money"
+	    android:textColor="#B9B9B9"
+	    android:textSize="20sp"
+	    android:gravity="center"
+	    android:layout_below="@id/info"
+	    android:id="@+id/money_text"
+	    android:layout_centerHorizontal="true" />
 	
  	<!--
   	<TextView
@@ -60,11 +83,12 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_gravity="bottom"
-	    android:background="#008B23"
+	    android:background="#B9B9B9"
 	    android:onClick="stopTimer"
 	    android:text="@string/stop_button_text"
 	    android:textColor="@android:color/white"
-	    android:layout_marginTop="70dp"
-	    android:layout_marginRight="10dp"
-	    android:layout_marginLeft="10dp" />
-</LinearLayout>
+	    android:layout_marginRight="20dp"
+	    android:layout_marginLeft="20dp"
+	    android:layout_alignParentBottom="true"
+	    android:layout_marginBottom="20dp" />
+</RelativeLayout>
