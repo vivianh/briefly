@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -179,7 +180,7 @@ public class EditGroupActivity extends Activity {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = convertView;
 			ViewHolder holder;
-			if (v == null) {
+//			if (v == null) {
 				LayoutInflater vi = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.childrow, null);
 				holder = new ViewHolder();
@@ -187,15 +188,15 @@ public class EditGroupActivity extends Activity {
 				holder.name = (TextView) v.findViewById(R.id.person_name);
 				holder.phone = (TextView) v.findViewById(R.id.person_number);
 				holder.trash = (ImageView) v.findViewById(R.id.trash1);
-			} else {
-				holder = (ViewHolder) v.getTag();
-			}
+//			} else {
+//				holder = (ViewHolder) v.getTag();
+//			}
 			
 			final Person person = entries.get(position);
 			if (person != null) {
 				// holder.icon.setImageResource(R.drawable.ic_blue_person);
-				// holder.name.setText(person._name);
-				// holder.phone.setText(person._phone);
+				holder.name.setText(person._name);
+				holder.phone.setText(person._phone);
 			}
 			return v;
 		}

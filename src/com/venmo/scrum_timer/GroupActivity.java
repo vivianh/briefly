@@ -450,27 +450,12 @@ public class GroupActivity extends ExpandableListActivity implements
 			}
 			return allPeople;
 		}
-	
-		/*
-		public int getId(String name) {
-			SQLiteDatabase db = this.getReadableDatabase();
-			String query = "SELECT " + COLUMN_ID + " AS " +  COLUMN_ID +
-					" FROM " + TABLE_PEOPLE + " WHERE " + COLUMN_NAME +
-					" = '" + name + "'";
-			Cursor cursor = db.rawQuery(query, null);
-			
-			int id = -1;
-			if (cursor.moveToFirst()) {
-				id = cursor.getInt(0);
-			}
-			return id;
-		}
-		
-		public int getGroupId(String name) {
+
+		public int getGroupID(int _id) {
 			SQLiteDatabase db = this.getReadableDatabase();
 			String query = "SELECT " + COLUMN_GROUP_ID + " AS " +
 					COLUMN_GROUP_ID + " FROM " + TABLE_PEOPLE + " WHERE " +
-					COLUMN_NAME + " = '" + name + "'";
+					COLUMN_ID + " = '" + _id + "'";
 			Cursor cursor = db.rawQuery(query, null);
 			
 			int id = -1;
@@ -478,11 +463,6 @@ public class GroupActivity extends ExpandableListActivity implements
 				id = cursor.getInt(0);
 			}
 			return id;
-		}
-		*/
-		
-		public Person getPerson(int group_id, String name) {
-			return null;
 		}
 	}
 
@@ -575,15 +555,27 @@ public class GroupActivity extends ExpandableListActivity implements
 				public void onClick(View v) {
 					String name = ((TextView) v.findViewById(R.id.person_name)).getText().toString();
 					String number = ((TextView) v.findViewById(R.id.person_number)).getText().toString();
-					int group_id = (Integer) view.getTag();
+					// View view = (View)v.getParent();
+					
+					//Log.v("PLZ", "" + groupDB.max());
+
+					//int group_id = (Integer) view.getTag();
+					//Log.v("PLZ", "group id "+group_id);
 					int _id = (Integer) view.getTag();
+					int group_id = peopleDB.getGroupID(_id);
 					ArrayList<Person> people = global.get(group_id);
 					ImageView icon = (ImageView) v.findViewById(R.id.person_icon);
+					if (people == null) {
+						Log.v("PLZ", "group id "+group_id);
+						Log.v("PLZ", "ugh");
+					}
+					// Log.v("PLZ", "" + people.size());
 					
 					if (icon.getTag().equals("blue")) {
 						icon.setImageResource(R.drawable.person_gray);
 						icon.setTag("gray");
 						// something goes wrong here
+						
 						for (int i = 0; i < people.size(); i++) {
 							Log.v("PLZ", people.get(i)._name);
 							if (people.get(i)._group_id == group_id && people.get(i)._name.equals(name)) {
