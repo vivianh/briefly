@@ -9,7 +9,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 
 public class EditGroupActivity extends Activity {
 
@@ -23,9 +25,13 @@ public class EditGroupActivity extends Activity {
 	ArrayList<String> numbersInGroup;
 	ArrayList<String> newNames;
 	ArrayList<String> newNumbers;
+	ArrayList<Person> yayPeople;
 	public static final String NEW_NAMES = "NEWNAMES";
 	public static final String NEW_NUMBERS = "NEWNUMBERS";
 	
+	private ListView mainListView;
+	private ArrayAdapter<Person> listAdapter;
+ 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -35,6 +41,7 @@ public class EditGroupActivity extends Activity {
 		numbersInGroup = new ArrayList<String>();
 		newNames = new ArrayList<String>();
 		newNumbers = new ArrayList<String>();
+		yayPeople = new ArrayList<Person>();
 		Intent intent = getIntent();
 		
 		// intent is from edit bc it has group object
@@ -50,6 +57,10 @@ public class EditGroupActivity extends Activity {
 		} else {
 			group_id = intent.getIntExtra(GroupActivity.GROUPID, -1);
 		}
+		
+		ArrayList<Person> people = new ArrayList<Person>();
+		listAdapter = new CustomAdapter<Person>(this, R.layout.childrow, people);
+		mainListView.setAdapter(listAdapter);
 	}
 
 	@Override
@@ -142,4 +153,15 @@ public class EditGroupActivity extends Activity {
 		startActivity(setTimerIntent);
 	}
 
+	public class CustomAdapter extends ArrayAdapter<Person> {
+		public CustomAdapter(Activity a, int textViewResourceId, ArrayList<Person> entries) {
+			super(a, textViewResourceId, entries);
+			this.entries = entries;
+			this.activity = a;
+		}
+		
+		public static class ViewHolder {
+			
+		}
+	}
 }

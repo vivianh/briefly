@@ -43,6 +43,7 @@ public class GroupActivity extends ExpandableListActivity implements
 	public final static String GROUPID = "GROUPID";
 	public final static String ALL_NAMES = "NAMES";
 	public final static String ALL_NUMBERS = "NUMBERS";
+	public final static String PEOPLE = "PEOPLE";
 	
 	ArrayList<Group> allGroups = new ArrayList<Group>();
 	ArrayList<Object> allChildren = new ArrayList<Object>();
@@ -202,9 +203,12 @@ public class GroupActivity extends ExpandableListActivity implements
 
 		ArrayList<String> inGroupNames = new ArrayList<String>();
 		ArrayList<String> inGroupNumbers = new ArrayList<String>();
-
+		ArrayList<Person> yayPeople = new ArrayList<Person>();
+		
+		
 		for (int i = 0; i < allPeople.size(); i++) {
 			if (allPeople.get(i)._group_id == group_id) {
+				yayPeople.add(allPeople.get(i));
 				inGroupNames.add(allPeople.get(i)._name);
 				inGroupNumbers.add(allPeople.get(i)._phone);
 			}
@@ -217,7 +221,7 @@ public class GroupActivity extends ExpandableListActivity implements
 		editGroupIntent.putExtra(GROUPID, group_id);
 		editGroupIntent.putStringArrayListExtra(ALL_NAMES, inGroupNames);
 		editGroupIntent.putStringArrayListExtra(ALL_NUMBERS, inGroupNumbers);
-		
+		editGroupIntent.putExtra(PEOPLE, yayPeople);
 		startActivityForResult(editGroupIntent, EDIT_GROUP_RESULT);
 	}
 	

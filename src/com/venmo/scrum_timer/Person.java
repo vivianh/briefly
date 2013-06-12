@@ -1,6 +1,9 @@
 package com.venmo.scrum_timer;
 
-public class Person {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Person implements Parcelable {
 
 	int _id;
 	String _name;
@@ -43,5 +46,35 @@ public class Person {
 	
 	public int getGroupId() {
 		return _group_id;
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(_id);
+		dest.writeString(_name);
+		dest.writeString(_phone);
+		dest.writeInt(_group_id);
+	}
+	
+	public static final Parcelable.Creator<Person> CREATOR = new Parcelable.Creator<Person>() {
+		public Person createFromParcel(Parcel in) {
+			return new Person(in);
+		}
+		
+		public Person[] newArray(int size) {
+			return new Person[size];
+		}
+	};
+	
+	private Person(Parcel in) {
+		_id = in.readInt();
+		_name = in.readString();
+		_phone = in.readString();
+		_group_id = in.readInt();
 	}
 }

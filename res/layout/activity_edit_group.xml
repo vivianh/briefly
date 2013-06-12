@@ -107,6 +107,14 @@
 	    </LinearLayout>
     </LinearLayout>
 
+	<ListView
+	    android:layout_width="match_parent"
+	    android:layout_height="0dip"
+	    android:layout_weight="1"
+	    android:id="@+id/listView" >	    
+	</ListView>
+   
+   <!--
     <ScrollView
         android:id="@+id/edit_people_scroll"
         android:layout_width="match_parent"
@@ -120,6 +128,7 @@
             android:orientation="vertical" >
         </LinearLayout>
     </ScrollView>
+    -->
 
 	<LinearLayout
 	    android:id="@+id/idk_yet"
