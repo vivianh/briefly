@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -55,9 +56,6 @@ public class GroupActivity extends ExpandableListActivity implements
 	ArrayList<Person> allPeople = new ArrayList<Person>();
 	
 	ExpandableListView exp;
-	
-	// global arrayList of arrayLists of people, size = allGroups.size()
-	// go through all people and add to these arrayLists
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -555,29 +553,26 @@ public class GroupActivity extends ExpandableListActivity implements
 				public void onClick(View v) {
 					String name = ((TextView) v.findViewById(R.id.person_name)).getText().toString();
 					String number = ((TextView) v.findViewById(R.id.person_number)).getText().toString();
-					// View view = (View)v.getParent();
-					
-					//Log.v("PLZ", "" + groupDB.max());
 
-					//int group_id = (Integer) view.getTag();
-					//Log.v("PLZ", "group id "+group_id);
 					int _id = (Integer) view.getTag();
 					int group_id = peopleDB.getGroupID(_id);
 					ArrayList<Person> people = global.get(group_id);
+					
 					ImageView icon = (ImageView) v.findViewById(R.id.person_icon);
+					TextView textName = (TextView) v.findViewById(R.id.person_name);
+					TextView textNum = (TextView) v.findViewById(R.id.person_number);
+					
 					if (people == null) {
 						Log.v("PLZ", "group id "+group_id);
 						Log.v("PLZ", "ugh");
 					}
-					// Log.v("PLZ", "" + people.size());
 					
 					if (icon.getTag().equals("blue")) {
 						icon.setImageResource(R.drawable.person_gray);
 						icon.setTag("gray");
-						// something goes wrong here
-						
+						textName.setTextColor(Color.parseColor("#A9A9A9"));
+						textNum.setTextColor(Color.parseColor("#A9A9A9"));
 						for (int i = 0; i < people.size(); i++) {
-							Log.v("PLZ", people.get(i)._name);
 							if (people.get(i)._group_id == group_id && people.get(i)._name.equals(name)) {
 								people.remove(i);
 								global.put(group_id, people);
@@ -586,6 +581,8 @@ public class GroupActivity extends ExpandableListActivity implements
 					} else {
 						icon.setImageResource(R.drawable.person_blue);
 						icon.setTag("blue");
+						textName.setTextColor(Color.parseColor("#000000"));
+						textNum.setTextColor(Color.parseColor("#A9A9A9"));
 						people.add(new Person(_id, name, number, group_id));
 						global.put(group_id, people);
 					}
