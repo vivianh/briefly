@@ -39,15 +39,20 @@
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
-            android:theme="@android:style/Theme.Holo.Dialog"
             android:name="com.venmo.scrum_timer.AddPersonActivity"
             android:label="@string/title_activity_add_person"
             android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Dialog"
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
             android:name="com.venmo.scrum_timer.DeleteDialogActivity"
             android:label="@string/title_activity_delete_dialog" >
+        </activity>
+        <activity
+            android:name="com.venmo.scrum_timer.DeleteGroupActivity"
+            android:theme="@android:style/Theme.Holo.Dialog"
+            android:label="@string/title_activity_delete_group" >
         </activity>
     </application>
 

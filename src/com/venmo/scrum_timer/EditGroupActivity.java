@@ -3,15 +3,20 @@ package com.venmo.scrum_timer;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class EditGroupActivity extends Activity {
 
@@ -53,13 +58,13 @@ public class EditGroupActivity extends Activity {
 			_amt     = intent.getStringExtra(GroupActivity.CHARGEAMT);
 			namesInGroup = intent.getStringArrayListExtra(GroupActivity.ALL_NAMES);
 			numbersInGroup = intent.getStringArrayListExtra(GroupActivity.ALL_NUMBERS);
+			yayPeople = intent.getParcelableArrayListExtra(GroupActivity.PEOPLE);
 			setInfo();
 		} else {
 			group_id = intent.getIntExtra(GroupActivity.GROUPID, -1);
 		}
-		
-		ArrayList<Person> people = new ArrayList<Person>();
-		listAdapter = new CustomAdapter<Person>(this, R.layout.childrow, people);
+		mainListView = (ListView) findViewById(R.id.listView);
+		listAdapter = new CustomAdapter(this, R.id.listView, yayPeople);
 		mainListView.setAdapter(listAdapter);
 	}
 
@@ -152,16 +157,47 @@ public class EditGroupActivity extends Activity {
 		setTimerIntent.putStringArrayListExtra(GroupActivity.ALL_NAMES, numbersInGroup);
 		startActivity(setTimerIntent);
 	}
+	
+	public static class ViewHolder {
+		public ImageView icon;
+		public TextView name;
+		public TextView phone;
+		public ImageView trash;
+	}
 
 	public class CustomAdapter extends ArrayAdapter<Person> {
+		private ArrayList<Person> entries;
+		private Activity activity;
+		
 		public CustomAdapter(Activity a, int textViewResourceId, ArrayList<Person> entries) {
 			super(a, textViewResourceId, entries);
 			this.entries = entries;
 			this.activity = a;
 		}
 		
-		public static class ViewHolder {
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View v = convertView;
+			ViewHolder holder;
+			if (v == null) {
+				LayoutInflater vi = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				v = vi.inflate(R.layout.childrow, null);
+				holder = new ViewHolder();
+				holder.icon = (ImageView) v.findViewById(R.id.person_icon);
+				holder.name = (TextView) v.findViewById(R.id.person_name);
+				holder.phone = (TextView) v.findViewById(R.id.person_number);
+				holder.trash = (ImageView) v.findViewById(R.id.trash1);
+			} else {
+				holder = (ViewHolder) v.getTag();
+			}
 			
+			final Person person = entries.get(position);
+			if (person != null) {
+				// holder.icon.setImageResource(R.drawable.ic_blue_person);
+				// holder.name.setText(person._name);
+				// holder.phone.setText(person._phone);
+			}
+			return v;
 		}
 	}
 }

@@ -3,6 +3,7 @@ package com.venmo.scrum_timer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ExpandableListActivity;
 import android.content.ContentValues;
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckedTextView;
 import android.widget.ExpandableListView;
@@ -28,11 +31,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class GroupActivity extends ExpandableListActivity implements
 	OnChildClickListener {
 
 	private final static int ADD_GROUP_RESULT = 2; 
 	private final static int EDIT_GROUP_RESULT = 1;
+	private final static int DELETE_GROUP_RESULT = 3;
 	private static GroupDatabase groupDB;
 	private static PeopleDatabase peopleDB;
 	private static HashMap<Integer, ArrayList<Person>> global;
@@ -49,12 +54,16 @@ public class GroupActivity extends ExpandableListActivity implements
 	ArrayList<Object> allChildren = new ArrayList<Object>();
 	ArrayList<Person> allPeople = new ArrayList<Person>();
 	
+	ExpandableListView exp;
+	
 	// global arrayList of arrayLists of people, size = allGroups.size()
 	// go through all people and add to these arrayLists
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// getActionBar().setDisplayShowHomeEnabled(false);
 		
 		groupDB = new GroupDatabase(this);
 		peopleDB = new PeopleDatabase(this);
@@ -64,7 +73,7 @@ public class GroupActivity extends ExpandableListActivity implements
 		cache();
 		setChildData();
 		
-		ExpandableListView exp = getExpandableListView();
+		exp = getExpandableListView();
 		exp.setDividerHeight(2);
 		exp.setGroupIndicator(null);
 		exp.setClickable(true);
@@ -104,6 +113,11 @@ public class GroupActivity extends ExpandableListActivity implements
 				return;
 			}
 			
+			if (data.getBooleanExtra(DeleteGroupActivity.DELETE, false) == true) {
+				Log.v("PLZ", "" + data.getIntExtra(GROUPID, -1));
+				groupDB.removeGroup(data.getIntExtra(GROUPID, -1));
+			}
+			
 			String _groupname = data.getStringExtra(GROUPNAME);
 			String _timelimit = data.getStringExtra(TIMELIMIT);
 			String _chargeamt = data.getStringExtra(CHARGEAMT);
@@ -139,6 +153,7 @@ public class GroupActivity extends ExpandableListActivity implements
 		updateGroups();
 		updatePeople();
 		setChildData();
+		((BaseAdapter) exp.getAdapter()).notifyDataSetChanged();
 	}
 
 	public void updateGroups() {
@@ -188,7 +203,7 @@ public class GroupActivity extends ExpandableListActivity implements
 	}
 	
 	// I need the save button to go back bc I need it to return bc the db is there
-	public void editGroup(View view) {		
+	public void editGroup(View view) {
 		View parent = (View) view.getParent();
 		
 		String name = ((CheckedTextView) parent.findViewById(R.id.group_name)).getText().toString();
@@ -234,6 +249,14 @@ public class GroupActivity extends ExpandableListActivity implements
 		peopleDB.removePerson((Integer)parent.getTag());
 		updatePeople();
 		setChildData();
+	}
+	
+	public void deleteGroup(View view) {
+		Intent deleteGroupIntent = new Intent(this, DeleteGroupActivity.class);
+		View parent = (View) view.getParent();
+		Log.v("PLZ", "set tag " + parent.getTag());
+		deleteGroupIntent.putExtra(GROUPID, (Integer)parent.getTag());
+		startActivityForResult(deleteGroupIntent, DELETE_GROUP_RESULT);
 	}
 	
 	public class GroupDatabase extends SQLiteOpenHelper {
@@ -560,7 +583,9 @@ public class GroupActivity extends ExpandableListActivity implements
 					if (icon.getTag().equals("blue")) {
 						icon.setImageResource(R.drawable.person);
 						icon.setTag("gray");
+						// something goes wrong here
 						for (int i = 0; i < people.size(); i++) {
+							Log.v("PLZ", people.get(i)._name);
 							if (people.get(i)._group_id == group_id && people.get(i)._name.equals(name)) {
 								people.remove(i);
 								global.put(group_id, people);
@@ -612,6 +637,7 @@ public class GroupActivity extends ExpandableListActivity implements
 		@Override
 		public View getGroupView(int groupPosition, boolean isExpanded,
 				View convertView, ViewGroup parent) {
+			notifyDataSetChanged();
 			if (convertView == null) {
 				convertView = mInflater.inflate(R.layout.grouprow, null);				
 			}

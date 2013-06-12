@@ -33,7 +33,6 @@ public class AddPersonActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// getMenuInflater().inflate(R.menu.add_person, menu);
 		return true;
 	}
 	
@@ -41,12 +40,6 @@ public class AddPersonActivity extends Activity {
 		Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
 				Contacts.CONTENT_URI);
 		startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
-		
-//		private void pickContact() {
-//		    Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
-//		    pickContactIntent.setType(Phone.CONTENT_TYPE); // Show user only contacts w/ phone numbers
-//		    startActivityForResult(pickContactIntent, PICK_CONTACT_REQUEST);
-//		}
 	}
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -128,8 +121,14 @@ public class AddPersonActivity extends Activity {
 	
 	public void exitAddPerson(View view) {
 		getInfo(name, number);
-		if (name.length() == 0 || number.length() == 0) {
+		View parent = (View) view.getParent();
+		EditText _name = (EditText) parent.findViewById(R.id.add_person_name);
+		EditText _num = (EditText) parent.findViewById(R.id.add_person_number);
+		if (name.length() == 0) {
+			_name.setError("");
 			// some sort of error check here ugh
+		} else if (number.length() == 0) {
+			_num.setError("");
 		}
 		Intent returnPersonIntent = new Intent();
 		returnPersonIntent.putExtra(NAME, name);

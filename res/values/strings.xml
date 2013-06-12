@@ -6,7 +6,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="time_input_text">Enter time in seconds</string>
     <string name="set_timer_text">Start</string>
-    <string name="title_activity_timer">TimerActivity</string>
+    <string name="title_activity_timer">briefly</string>
     <string name="timer">000</string>
     <string name="stop_button_text">Stop</string>
     <string name="restart_button_text">Restart</string>
@@ -19,8 +19,8 @@
     <string name="add_group_text">Add Group</string>
     <string name="yea">yea</string>
     <string name="create_group_text">Create Group</string>
-    <string name="title_activity_group">Scrum</string>
-    <string name="title_activity_edit_group">EditGroupActivity</string>
+    <string name="title_activity_group">briefly</string>
+    <string name="title_activity_edit_group">briefly</string>
     <string name="group_name_hint">Group Name</string>
     <string name="time_limit_hint">Time Limit (seconds)</string>
     <string name="charge_amt_hint">1.00</string>
@@ -36,5 +36,6 @@
     <string name="label_time_limit">Time Limit:</string>
     <string name="label_charge_amt">Charge:</string>
     <string name="title_activity_delete_dialog">DeleteDialogActivity</string>
+    <string name="title_activity_delete_group">DeleteGroupActivity</string>
 
 </resources>
