@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Delete Group?" />
+        android:text="@string/confirm_delete" />
         
     <LinearLayout
         android:orientation="horizontal"
@@ -25,7 +25,7 @@
 	        android:layout_weight="1"
 	        android:layout_height="wrap_content"
 	        android:id="@+id/cancel_delete"
-	        android:text="cancel"
+	        android:text="@string/cancel_text"
 	        android:onClick="cancel" />
 	        
 	    <Button 
@@ -33,7 +33,7 @@
 	        android:layout_weight="1"
 	        android:layout_height="wrap_content"
 	        android:id="@+id/confirm_delete"
-	        android:text="delete"
+	        android:text="@string/delete_text"
 	        android:onClick="delete" />
 	 </LinearLayout>
 	    

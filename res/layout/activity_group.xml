@@ -9,19 +9,4 @@
     android:orientation="vertical"
     tools:context=".GroupActivity" >
     
-    <Button
-        android:id="@+id/create_group_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/create_group_text"
-        android:onClick="createGroup" >        
-    </Button>
-
-    <LinearLayout
-        android:id="@+id/groups_layout"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >        
-    </LinearLayout>
-    
 </LinearLayout>

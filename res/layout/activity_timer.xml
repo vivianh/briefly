@@ -13,12 +13,13 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:textColor="#019ECD"
-        android:text="It's meeting time!"
+        android:text="@string/meeting_caption"
+        android:textSize="30sp"
+        android:typeface="serif"
         android:gravity="center"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp" >        
+        android:layout_marginTop="20dp" >        
     </TextView>
     
 	<TextView
@@ -41,7 +42,7 @@
 	    android:background="@android:color/white"
 	    android:layout_marginTop="40dp"
 	    android:layout_marginLeft="40dp"
-	    android:text="50 secs" />
+	    android:text="@string/secs" />
 	
  	<!--
   	<TextView

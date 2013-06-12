@@ -18,41 +18,36 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.venmo.scrum_timer.TimerActivity"
-            android:label="@string/title_activity_timer"
+            android:label="@string/title"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
             android:name="com.venmo.scrum_timer.GroupActivity"
-            android:label="@string/title_activity_group"
+            android:label="@string/title"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.venmo.scrum_timer.EditGroupActivity"
-            android:label="@string/title_activity_edit_group"
+            android:label="@string/title"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
             android:name="com.venmo.scrum_timer.AddPersonActivity"
-            android:label="@string/title_activity_add_person"
+            android:label="@string/title"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Dialog"
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
-            android:name="com.venmo.scrum_timer.DeleteDialogActivity"
-            android:label="@string/title_activity_delete_dialog" >
-        </activity>
-        <activity
             android:name="com.venmo.scrum_timer.DeleteGroupActivity"
             android:theme="@android:style/Theme.Holo.Dialog"
-            android:label="@string/title_activity_delete_group" >
+            android:label="@string/title" >
         </activity>
     </application>
 
