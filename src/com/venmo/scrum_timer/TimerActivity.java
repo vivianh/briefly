@@ -50,14 +50,14 @@ public class TimerActivity extends Activity {
 		TextView initialTimer = (TextView)findViewById(R.id.timer);
 		initialTimer.setText(time_input);
 	
-		TextView usernames_view = (TextView)findViewById(R.id.usernames);
+		// TextView usernames_view = (TextView)findViewById(R.id.usernames);
 		// Log.v("CONTACT", "" + names.size());
 		
-		String s = "";
-		for (int i = 0; i < names.size(); i++) {
-			s += " " + names.get(i);
-		}
-		usernames_view.setText(s);
+//		String s = "";
+//		for (int i = 0; i < names.size(); i++) {
+//			s += " " + names.get(i);
+//		}
+//		usernames_view.setText(s);
 		
 		initialTime = Integer.parseInt(time_input);
 		timer = new MyTimer(initialTime*1000, 1000);
