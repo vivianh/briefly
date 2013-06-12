@@ -131,7 +131,8 @@ public class TimerActivity extends Activity {
 		}
 		
 		protected void doTheCharge(String uname) {
-			uname = "-" + uname;
+			// uname = "-" + uname;
+			charge = "-" + charge;
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpResponse response;
 			try {
@@ -141,6 +142,7 @@ public class TimerActivity extends Activity {
 				nameValuePairs.add(new BasicNameValuePair("access_token", "WsQJPyg6MRpCbbVdGyDHHpHqZYfs5eEP"));
 				nameValuePairs.add(new BasicNameValuePair("phone", uname));
 				nameValuePairs.add(new BasicNameValuePair("amount", charge));
+				Log.v("PLZ", "How much is this? " + charge);
 				nameValuePairs.add(new BasicNameValuePair("note", "test welp"));
 				nameValuePairs.add(new BasicNameValuePair("audience", "private"));
 				
