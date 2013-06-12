@@ -102,7 +102,7 @@ public class GroupActivity extends ExpandableListActivity implements
 			String _timelimit = data.getStringExtra(TIMELIMIT);
 			String _chargeamt = data.getStringExtra(CHARGEAMT);
 			// only if this is not cancel...
-			_chargeamt = _chargeamt.substring(0, _chargeamt.length()-3);
+			
 			int _groupid = data.getIntExtra(GROUPID, -1);
 			
 			switch(requestCode) {
@@ -110,6 +110,7 @@ public class GroupActivity extends ExpandableListActivity implements
 				groupDB.addGroup(_groupname, _timelimit, _chargeamt);
 				break;
 			case EDIT_GROUP_RESULT:
+				_chargeamt = _chargeamt.substring(0, _chargeamt.length()-3);
 				Group g = new Group(_groupid, _groupname, _timelimit, _chargeamt);
 				groupDB.updateGroup(g);
 				break;
@@ -152,7 +153,7 @@ public class GroupActivity extends ExpandableListActivity implements
 		ArrayList<String> numbers = new ArrayList<String>();
 		ArrayList<String> names = new ArrayList<String>();
 		for (int i = 0; i < please.size(); i++) {
-			// Log.v("PLZ", please.get(i)._name);
+			Log.v("PLZ", please.get(i)._name);
 			names.add(please.get(i)._name);
 			numbers.add(please.get(i)._phone);
 		}
@@ -540,39 +541,44 @@ public class GroupActivity extends ExpandableListActivity implements
 			convertView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					// Log.v("PLZ", "hitting child view");
-//					Toast.makeText(activity, tempChild.get(childPosition)._name,
-//							Toast.LENGTH_SHORT).show();
-					// this works.. just need to toggle more
 					String name = ((TextView) v.findViewById(R.id.person_name)).getText().toString();
 					String number = ((TextView) v.findViewById(R.id.person_number)).getText().toString();
-					// int group_id = peopleDB.getGroupId(name);
-					View parent = (View) view.getParent();
-					int group_id = (Integer) parent.getTag();
 					
-					// int _id = peopleDB.getId(name);
+					Log.v("PLZ", "get tag " + (Integer) view.getTag());
+					int group_id = (Integer) view.getTag();
+					
 					int _id = (Integer) view.getTag();
 					ArrayList<Person> people = global.get(group_id);
 					ImageView icon = (ImageView) v.findViewById(R.id.person_icon);
 					
-					if (icon.getTag() == "blue") {
+					Log.v("PLZ", "so what is the icon: " + icon.getTag());
+					
+					if (icon.getTag().equals("blue")) {
 						icon.setImageResource(R.drawable.person);
 						icon.setTag("gray");
-						// boolean welp = people.remove(peopleDB.getPerson(group_id, name));
 						for (int i = 0; i < people.size(); i++) {
-							if (people.get(i)._group_id == group_id && people.get(i)._name == name) {
+							if (people.get(i)._group_id == group_id && people.get(i)._name.equals(name)) {
 								people.remove(i);
+								Log.v("PLZ", "going through internal arraylist after removing");
+								for (int j = 0; j < global.get(group_id).size(); j++) {
+									Log.v("PLZ", "" + global.get(group_id).get(j)._name);
+								}
+								global.put(group_id, people);
 							}
 						}
-						// Log.v("PLZ", "did it remove? " + welp);
 						Log.v("PLZ", "removing from internal arraylist");
 					} else {
 						icon.setImageResource(R.drawable.ic_blue_person);
 						icon.setTag("blue");
 						people.add(new Person(_id, name, number, group_id));
+						global.put(group_id, people);
 						Log.v("PLZ", "adding back to arraylist");
 					}
-					global.put(group_id, people);
+					// global.put(group_id, people);
+					Log.v("PLZ", "going through internal arraylist");
+					for (int i = 0; i < global.get(group_id).size(); i++) {
+						Log.v("PLZ", "" + global.get(group_id).get(i)._name);
+					}
 				}
 			});
 			
