@@ -98,6 +98,11 @@ public class GroupActivity extends ExpandableListActivity implements
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
+			
+			if (data.getBooleanExtra("CANCEL", false) == true) {
+				return;
+			}
+			
 			String _groupname = data.getStringExtra(GROUPNAME);
 			String _timelimit = data.getStringExtra(TIMELIMIT);
 			String _chargeamt = data.getStringExtra(CHARGEAMT);
@@ -543,15 +548,10 @@ public class GroupActivity extends ExpandableListActivity implements
 				public void onClick(View v) {
 					String name = ((TextView) v.findViewById(R.id.person_name)).getText().toString();
 					String number = ((TextView) v.findViewById(R.id.person_number)).getText().toString();
-					
-					Log.v("PLZ", "get tag " + (Integer) view.getTag());
 					int group_id = (Integer) view.getTag();
-					
 					int _id = (Integer) view.getTag();
 					ArrayList<Person> people = global.get(group_id);
 					ImageView icon = (ImageView) v.findViewById(R.id.person_icon);
-					
-					Log.v("PLZ", "so what is the icon: " + icon.getTag());
 					
 					if (icon.getTag().equals("blue")) {
 						icon.setImageResource(R.drawable.person);
@@ -559,29 +559,18 @@ public class GroupActivity extends ExpandableListActivity implements
 						for (int i = 0; i < people.size(); i++) {
 							if (people.get(i)._group_id == group_id && people.get(i)._name.equals(name)) {
 								people.remove(i);
-								Log.v("PLZ", "going through internal arraylist after removing");
-								for (int j = 0; j < global.get(group_id).size(); j++) {
-									Log.v("PLZ", "" + global.get(group_id).get(j)._name);
-								}
 								global.put(group_id, people);
 							}
 						}
-						Log.v("PLZ", "removing from internal arraylist");
 					} else {
 						icon.setImageResource(R.drawable.ic_blue_person);
 						icon.setTag("blue");
 						people.add(new Person(_id, name, number, group_id));
 						global.put(group_id, people);
-						Log.v("PLZ", "adding back to arraylist");
 					}
 					// global.put(group_id, people);
-					Log.v("PLZ", "going through internal arraylist");
-					for (int i = 0; i < global.get(group_id).size(); i++) {
-						Log.v("PLZ", "" + global.get(group_id).get(i)._name);
-					}
 				}
 			});
-			
 			return convertView;
 		}
 

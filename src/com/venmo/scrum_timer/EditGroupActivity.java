@@ -122,6 +122,7 @@ public class EditGroupActivity extends Activity {
 	
 	public void cancel(View view) {
 		Intent backIntent = new Intent(this, GroupActivity.class);
+		backIntent.putExtra("CANCEL", true);
 		setResult(RESULT_OK, backIntent);
 		finish();
 	}
