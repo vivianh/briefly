@@ -4,6 +4,6 @@
         android:id="@+id/menu_create_group"
         android:orderInCategory="100"
         android:showAsAction="always"
-        android:icon="@drawable/add_group" />
+        android:icon="@drawable/add_group_blue" />
 
 </menu>

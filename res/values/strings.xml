@@ -19,11 +19,13 @@
     <string name="person_name_hint">First Last</string>
     <string name="person_number_hint">1234567890</string>
     
-    <string name="confirm_delete">Confirm delete group?</string>
+    <string name="confirm_delete">Confirm delete</string>
     <string name="cancel_text">Cancel</string>
     <string name="delete_text">Delete</string>
+    <string name="add_contact">Add Contact</string>
     <string name="meeting_caption">It\'s meeting time!</string>
     <string name="secs">secs</string>
     <string name="people">people</string>
     <string name="sec_per_person">secs per person</string>
+    <string name="or">-- OR --</string>
 </resources>

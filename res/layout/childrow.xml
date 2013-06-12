@@ -7,7 +7,7 @@
     
     <ImageView
         android:id="@+id/person_icon"
-        android:src="@drawable/ic_blue_person"
+        android:src="@drawable/person_blue"
         android:layout_width="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"

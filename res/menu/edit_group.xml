@@ -4,5 +4,5 @@
         android:id="@+id/menu_add_person"
         android:orderInCategory="100"
         android:showAsAction="always"
-        android:icon="@drawable/add_person" />
+        android:icon="@drawable/add_person_blue" />
 </menu>

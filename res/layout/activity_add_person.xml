@@ -24,6 +24,15 @@
         android:inputType="phone" >        
     </EditText>
     
+    <TextView
+        android:text="@string/or"
+        android:textSize="20sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+    
     <Button
         android:id="@+id/browse_contacts_button"
         android:layout_width="match_parent"

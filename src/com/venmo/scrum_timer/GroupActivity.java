@@ -581,7 +581,7 @@ public class GroupActivity extends ExpandableListActivity implements
 					ImageView icon = (ImageView) v.findViewById(R.id.person_icon);
 					
 					if (icon.getTag().equals("blue")) {
-						icon.setImageResource(R.drawable.person);
+						icon.setImageResource(R.drawable.person_gray);
 						icon.setTag("gray");
 						// something goes wrong here
 						for (int i = 0; i < people.size(); i++) {
@@ -592,7 +592,7 @@ public class GroupActivity extends ExpandableListActivity implements
 							}
 						}
 					} else {
-						icon.setImageResource(R.drawable.ic_blue_person);
+						icon.setImageResource(R.drawable.person_blue);
 						icon.setTag("blue");
 						people.add(new Person(_id, name, number, group_id));
 						global.put(group_id, people);
