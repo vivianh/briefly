@@ -161,6 +161,15 @@ public class EditGroupActivity extends Activity {
 	public void deletePerson(View view) {
 		View parent = (View) view.getParent();
 		GroupActivity.peopleDB.removePerson((Integer)parent.getTag());
+		
+		for (int i = 0; i < yayPeople.size(); i++) {
+			if (yayPeople.get(i)._id == ((Integer) parent.getTag())) {
+				yayPeople.remove(i);
+			}
+		}
+		
+		listAdapter = new CustomAdapter(this, R.id.listView, yayPeople);
+		mainListView.setAdapter(listAdapter);
 	}
 	
 	public void startTimer(View view) {

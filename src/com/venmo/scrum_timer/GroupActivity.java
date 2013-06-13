@@ -268,6 +268,12 @@ public class GroupActivity extends ExpandableListActivity implements
 		updatePeople();
 		updateGroups();
 		setChildData();
+		
+		NewAdapter mNewAdapter = new NewAdapter(allGroups, allChildren);
+		mNewAdapter.setInflater((LayoutInflater)
+					getSystemService(Context.LAYOUT_INFLATER_SERVICE), this);
+		exp.setAdapter(mNewAdapter);
+		exp.setOnChildClickListener(this);
 	}
 	
 	public void deleteGroup(View view) {
