@@ -102,6 +102,20 @@ public class EditGroupActivity extends Activity {
 				newNumbers.add(number);
 			}
 		}
+		
+		if (newNames != null) {
+			for (int i = 0; i < newNames.size(); i++) {
+				Person p = new Person(newNames.get(i), newNumbers.get(i));
+				yayPeople.add(p);
+			}
+		}
+//		
+//		for (int i = 0; i < yayPeople.size(); i++) {
+//			Log.v("PLZ", "" + yayPeople.get(i)._name);
+//		}
+//		
+		listAdapter = new CustomAdapter(this, R.id.listView, yayPeople);
+		mainListView.setAdapter(listAdapter);
 	}
 	
 	private void setInfo() {
@@ -142,6 +156,11 @@ public class EditGroupActivity extends Activity {
 		backIntent.putExtra("CANCEL", true);
 		setResult(RESULT_OK, backIntent);
 		finish();
+	}
+	
+	public void deletePerson(View view) {
+		View parent = (View) view.getParent();
+		GroupActivity.peopleDB.removePerson((Integer)parent.getTag());
 	}
 	
 	public void startTimer(View view) {
@@ -194,9 +213,9 @@ public class EditGroupActivity extends Activity {
 			
 			final Person person = entries.get(position);
 			if (person != null) {
-				// holder.icon.setImageResource(R.drawable.ic_blue_person);
 				holder.name.setText(person._name);
 				holder.phone.setText(person._phone);
+				v.setTag(person._id);
 			}
 			return v;
 		}

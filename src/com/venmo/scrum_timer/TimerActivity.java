@@ -66,9 +66,14 @@ public class TimerActivity extends Activity {
 		
 //		String s = "";
 //		for (int i = 0; i < names.size(); i++) {
-//			s += " " + names.get(i);
+//			// s += " " + names.get(i);
+//			Log.v("PLZ", names.get(i));
 //		}
 //		usernames_view.setText(s);
+		
+		for (int i = 0; i < numbers.size(); i++) {
+			Log.v("PLZ", numbers.get(i));
+		}
 		
 		initialTime = Integer.parseInt(time_input);
 		timer = new MyTimer(initialTime*1000, 1000);
@@ -92,7 +97,7 @@ public class TimerActivity extends Activity {
 		public void onFinish() {
 			((TextView)findViewById(R.id.timer)).setText("0");
 			
-			Log.v("P2P", "?!?!!");
+			Log.v("PLZ", "?!?!!");
 			new CreateChargeTask().execute();
 			
 			Context context = getApplicationContext();
@@ -125,6 +130,7 @@ public class TimerActivity extends Activity {
 			String uname = "";
 			for (int i = 0; i < numbers.size(); i++) {
 				uname = numbers.get(i);
+				Log.v("PLZ", uname);
 				doTheCharge(uname);
 			}
 			return null;
@@ -142,7 +148,7 @@ public class TimerActivity extends Activity {
 				nameValuePairs.add(new BasicNameValuePair("access_token", "WsQJPyg6MRpCbbVdGyDHHpHqZYfs5eEP"));
 				nameValuePairs.add(new BasicNameValuePair("phone", uname));
 				nameValuePairs.add(new BasicNameValuePair("amount", charge));
-				Log.v("PLZ", "How much is this? " + charge);
+				// Log.v("PLZ", "How much is this? " + charge);
 				nameValuePairs.add(new BasicNameValuePair("note", "test welp"));
 				nameValuePairs.add(new BasicNameValuePair("audience", "private"));
 				

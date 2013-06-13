@@ -40,7 +40,7 @@ public class GroupActivity extends ExpandableListActivity implements
 	private final static int EDIT_GROUP_RESULT = 1;
 	private final static int DELETE_GROUP_RESULT = 3;
 	private static GroupDatabase groupDB;
-	private static PeopleDatabase peopleDB;
+	static PeopleDatabase peopleDB;
 	private static HashMap<Integer, ArrayList<Person>> global;
 	
 	public final static String GROUPNAME = "GROUPNAME";
@@ -66,8 +66,8 @@ public class GroupActivity extends ExpandableListActivity implements
 		groupDB = new GroupDatabase(this);
 		peopleDB = new PeopleDatabase(this);
 		global = new HashMap<Integer, ArrayList<Person>>();
-		updateGroups();
 		updatePeople();
+		updateGroups();
 		cache();
 		setChildData();
 		
@@ -79,7 +79,7 @@ public class GroupActivity extends ExpandableListActivity implements
 		NewAdapter mNewAdapter = new NewAdapter(allGroups, allChildren);
 		mNewAdapter.setInflater((LayoutInflater)
 					getSystemService(Context.LAYOUT_INFLATER_SERVICE), this);
-		getExpandableListView().setAdapter(mNewAdapter);
+		exp.setAdapter(mNewAdapter);
 		exp.setOnChildClickListener(this);
 	}
 
@@ -126,6 +126,7 @@ public class GroupActivity extends ExpandableListActivity implements
 			switch(requestCode) {
 			case ADD_GROUP_RESULT:
 				groupDB.addGroup(_groupname, _timelimit, _chargeamt);
+				_groupid = groupDB.max();
 				break;
 			case EDIT_GROUP_RESULT:
 				_chargeamt = _chargeamt.substring(0, _chargeamt.length()-3);
@@ -140,22 +141,41 @@ public class GroupActivity extends ExpandableListActivity implements
 			// do some error checking here if ^ are not generated
 			
 			if (newNames != null && newNumbers != null) {
-				_groupid = groupDB.max();
 				for (int i = 0 ; i < newNames.size(); i++) {
 					String name = newNames.get(i);
 					String number = newNumbers.get(i);
 					peopleDB.addPersonToDB(name, number, _groupid);
 				}
 			}
+			
+			// peopleDB.addPersonToDB("Oliver Huang", "7132488811", 3);
+			
 		}
-		updateGroups();
+		Log.v(":(", "checking update after result");
 		updatePeople();
+		updateGroups();
+		// ((BaseAdapter) exp.getAdapter()).notifyDataSetChanged();
 		setChildData();
-		((BaseAdapter) exp.getAdapter()).notifyDataSetChanged();
+		
+		NewAdapter mNewAdapter = new NewAdapter(allGroups, allChildren);
+		mNewAdapter.setInflater((LayoutInflater)
+					getSystemService(Context.LAYOUT_INFLATER_SERVICE), this);
+		exp.setAdapter(mNewAdapter);
+		exp.setOnChildClickListener(this);
 	}
 
 	public void updateGroups() {
 		allGroups = groupDB.getAllGroups();
+		for (int i = 0; i < allGroups.size(); i++) {
+			Group g = allGroups.get(i);
+			Log.v(":(", "group " + g._id + ": ");
+			for (int j = 0; j < allPeople.size(); j++) {
+				Person p = allPeople.get(j);
+				if (g._id == p._group_id) {
+					Log.v(":(", p._name);
+				}
+			}
+		}
 	}
 	
 	public void updatePeople() {
@@ -246,6 +266,7 @@ public class GroupActivity extends ExpandableListActivity implements
 		// peopleDB.removePerson(peopleDB.getId(name));
 		peopleDB.removePerson((Integer)parent.getTag());
 		updatePeople();
+		updateGroups();
 		setChildData();
 	}
 	
@@ -350,20 +371,6 @@ public class GroupActivity extends ExpandableListActivity implements
 			return gr;
 		}
 		
-//		public int getGroupId(String name) {
-//			SQLiteDatabase db = this.getReadableDatabase();
-//			String query = "SELECT " + COLUMN_ID + " AS " +  COLUMN_ID +
-//					" FROM " + TABLE_GROUPS + " WHERE " + COLUMN_GROUP_NAME +
-//					" = '" + name + "'";
-//			Cursor cursor = db.rawQuery(query, null);
-//			
-//			int id = -1;
-//			if (cursor.moveToFirst()) {
-//				id = cursor.getInt(0);
-//			}
-//			return id;
-//		}
-		
 		public int max() {
 			SQLiteDatabase db = this.getReadableDatabase();
 	        String query = "SELECT MAX(_id) AS _id FROM " + TABLE_GROUPS;
@@ -467,8 +474,8 @@ public class GroupActivity extends ExpandableListActivity implements
 	public void setChildData() {
 		ArrayList<Person> child;
 		int group_id = -1;
-		
-		ArrayList<Person> allPeople = peopleDB.getAllPeople();
+		allChildren.clear();
+		// ArrayList<Person> allPeople = peopleDB.getAllPeople();
 		
 		for (int i = 0; i < allGroups.size(); i++) {
 			child = new ArrayList<Person>();			
@@ -562,10 +569,10 @@ public class GroupActivity extends ExpandableListActivity implements
 					TextView textName = (TextView) v.findViewById(R.id.person_name);
 					TextView textNum = (TextView) v.findViewById(R.id.person_number);
 					
-					if (people == null) {
-						Log.v("PLZ", "group id "+group_id);
-						Log.v("PLZ", "ugh");
-					}
+//					if (people == null) {
+//						Log.v("PLZ", "group id "+group_id);
+//						Log.v("PLZ", "ugh");
+//					}
 					
 					if (icon.getTag().equals("blue")) {
 						icon.setImageResource(R.drawable.person_gray);
@@ -574,7 +581,8 @@ public class GroupActivity extends ExpandableListActivity implements
 						textNum.setTextColor(Color.parseColor("#A9A9A9"));
 						for (int i = 0; i < people.size(); i++) {
 							if (people.get(i)._group_id == group_id && people.get(i)._name.equals(name)) {
-								people.remove(i);
+								Log.v("PLZ", "removed " + people.get(i)._name);
+								people.remove(i);								
 								global.put(group_id, people);
 							}
 						}
@@ -583,12 +591,14 @@ public class GroupActivity extends ExpandableListActivity implements
 						icon.setTag("blue");
 						textName.setTextColor(Color.parseColor("#000000"));
 						textNum.setTextColor(Color.parseColor("#A9A9A9"));
+						Log.v("PLZ", "added " + name);
 						people.add(new Person(_id, name, number, group_id));
 						global.put(group_id, people);
 					}
 					// global.put(group_id, people);
 				}
 			});
+			
 			return convertView;
 		}
 
@@ -651,6 +661,11 @@ public class GroupActivity extends ExpandableListActivity implements
 			} else {
 				arrow.setImageResource(R.drawable.down);
 			}
+			
+//			ArrayList<Person> people1 = global.get(4);
+//			for (int i = 0; i < people1.size(); i++) {
+//				Log.v("PLZ", people1.get(i)._name);
+//			}
 			
 			return convertView;
 		}

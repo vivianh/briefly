@@ -64,13 +64,29 @@
 	            android:textSize="20sp"
 	            android:textColor="#019ECD" >
 	        </TextView>
-            
 	        <EditText
 	            android:id="@+id/edit_time_limit"
 	            android:layout_width="80dp"
 	            android:layout_height="wrap_content"
 	            android:inputType="phone" >
-	        </EditText>      
+	        </EditText>
+	        
+	        <!--
+	        <EditText
+	            android:id="@+id/time_people"
+	            android:layout_width="40dp"
+	            android:layout_height="wrap_content"
+	            android:inputType="phone" />
+	        <TextView
+	            android:text="people x "
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content" />
+	        <EditText
+	            android:id="@+id/time_secs"
+	            android:layout_width="40dp"
+	            android:layout_height="wrap_content"
+	            android:inputType="phone" />
+	        -->
 	    </LinearLayout>
 	    
         <View
