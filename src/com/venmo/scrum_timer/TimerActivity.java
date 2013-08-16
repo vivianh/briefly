@@ -14,6 +14,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -128,6 +129,7 @@ public class TimerActivity extends Activity {
 		@Override
 		protected Void doInBackground(Void... voids) {
 			String uname = "";
+			charge = "-" + charge;
 			for (int i = 0; i < numbers.size(); i++) {
 				uname = numbers.get(i);
 				Log.v("PLZ", uname);
@@ -137,31 +139,36 @@ public class TimerActivity extends Activity {
 		}
 		
 		protected void doTheCharge(String uname) {
-			// uname = "-" + uname;
-			charge = "-" + charge;
+			// charge = "-" + charge;
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpResponse response;
 			try {
+				Log.v("PLZ", "charge " + charge);
 				HttpPost thepost = new HttpPost("https://api.venmo.com/payments");
-				// does this 2 do anything? capacity?
 				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 				nameValuePairs.add(new BasicNameValuePair("access_token", "WsQJPyg6MRpCbbVdGyDHHpHqZYfs5eEP"));
 				nameValuePairs.add(new BasicNameValuePair("phone", uname));
 				nameValuePairs.add(new BasicNameValuePair("amount", charge));
-				// Log.v("PLZ", "How much is this? " + charge);
-				nameValuePairs.add(new BasicNameValuePair("note", "test welp"));
-				nameValuePairs.add(new BasicNameValuePair("audience", "private"));
+				nameValuePairs.add(new BasicNameValuePair("note", "scrum over time"));
+				nameValuePairs.add(new BasicNameValuePair("audience", "friends"));
 				
 				thepost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 				
 				response = httpclient.execute(thepost);
+				Log.v("PLZ", "" + response.getStatusLine());
 				
 				StatusLine statusLine = response.getStatusLine();
 				if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-					Log.v("P2P", "this is good. made charge");
+					Log.v("PLZ", "this is good. made charge");
 				} else {
 					response.getEntity().getContent().close();
-					Log.v("P2P", "this is bad. didn't make charge");
+					Log.v("PLZ", "this is bad. didn't make charge");
+					// Log.v("PLZ", "" + response.getEntity());
+					
+					String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+					Log.v("PLZ", "dkfj;alskdjf " + responseString);
+					
+					// Log.v("PLZ", statusLine.getReasonPhrase());
 					throw new IOException(statusLine.getReasonPhrase());
 				}
 			} catch (ClientProtocolException e) {
