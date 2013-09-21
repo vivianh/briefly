@@ -1,4 +1,4 @@
-package com.venmo.scrum_timer;
+package com.vivianhhuang.briefly;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+
+import com.vivianhhuang.briefly.R;
 
 public class DeleteGroupActivity extends Activity {
 	

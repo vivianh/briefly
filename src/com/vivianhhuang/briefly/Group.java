@@ -1,4 +1,4 @@
-package com.venmo.scrum_timer;
+package com.vivianhhuang.briefly;
 
 import android.os.Parcel;
 import android.os.Parcelable;

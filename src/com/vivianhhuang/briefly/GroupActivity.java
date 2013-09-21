@@ -1,4 +1,4 @@
-package com.venmo.scrum_timer;
+package com.vivianhhuang.briefly;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,14 +23,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckedTextView;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class GroupActivity extends ExpandableListActivity implements

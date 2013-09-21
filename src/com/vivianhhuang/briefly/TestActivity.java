@@ -1,4 +1,4 @@
-package com.venmo.scrum_timer;
+package com.vivianhhuang.briefly;
 
 import android.app.Activity;
 import android.os.Bundle;
