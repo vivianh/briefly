@@ -41,11 +41,27 @@
         android:onClick="pickContacts" >        
     </Button>
 
-    <Button
-        android:id="@+id/exit_add_person_button"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/exit_add_person_text"
-        android:onClick="exitAddPerson" />
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/cancel_add_person_button"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel_text"
+            android:onClick="cancelAddPerson" />
+
+        <Button
+            android:id="@+id/exit_add_person_button"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/exit_add_person_text"
+            android:onClick="exitAddPerson" />
+
+    </LinearLayout>
         
 </LinearLayout>
