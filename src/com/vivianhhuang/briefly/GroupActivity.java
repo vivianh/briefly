@@ -281,199 +281,6 @@ public class GroupActivity extends ExpandableListActivity implements
 		deleteGroupIntent.putExtra(GROUPID, (Integer)parent.getTag());
 		startActivityForResult(deleteGroupIntent, DELETE_GROUP_RESULT);
 	}
-	
-	public class GroupDatabase extends SQLiteOpenHelper {
-		public static final String TABLE_GROUPS = "groups";
-		public static final String COLUMN_ID = "_id";
-		public static final String COLUMN_GROUP_NAME = "group_name";
-		public static final String COLUMN_TIME = "time_limit";
-		public static final String COLUMN_AMOUNT = "charge_amt";
-		
-		private static final String DATABASE_NAME = "groups.db";
-		private static final int DATABASE_VERSION = 1;
-		
-		private static final String GROUPS_TABLE_CREATE =
-				"CREATE TABLE " + TABLE_GROUPS + " (" +
-				COLUMN_ID + " integer primary key autoincrement, " +
-				COLUMN_GROUP_NAME + " TEXT, " +
-				COLUMN_TIME + " TEXT, " + 
-				COLUMN_AMOUNT + " TEXT);";
-		
-		GroupDatabase(Context context) {
-			super(context, DATABASE_NAME, null, DATABASE_VERSION);
-		}
-		
-		@Override
-		public void onCreate(SQLiteDatabase db) {
-			db.execSQL(GROUPS_TABLE_CREATE);
-		}
-
-		@Override
-		public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
-		}
-		
-		public void addGroup(String name, String time, String amount) {
-			SQLiteDatabase db = this.getWritableDatabase();
-			
-			ContentValues values = new ContentValues();
-			values.put(COLUMN_GROUP_NAME, name);
-			values.put(COLUMN_TIME, time);
-			values.put(COLUMN_AMOUNT, amount);
-			
-			db.insert(TABLE_GROUPS, null, values);
-			db.close();
-		}
-		
-		public void updateGroup(Group group) {
-			SQLiteDatabase db = this.getWritableDatabase();
-			
-			ContentValues values = new ContentValues();
-			values.put(COLUMN_GROUP_NAME, group.getName());
-			values.put(COLUMN_TIME, group.getTime());
-			values.put(COLUMN_AMOUNT, group.getAmt());
-			
-			db.update(TABLE_GROUPS, values, COLUMN_ID + " = ?",
-					new String[] {String.valueOf(group.getId())});
-		}
-		
-		public void removeGroup(int id) {
-			SQLiteDatabase db = this.getWritableDatabase();			
-			db.delete(TABLE_GROUPS, COLUMN_ID + " = ?",
-					new String[] { String.valueOf(id) });
-			db.close();
-		}
-		
-		public ArrayList<Group> getAllGroups() {
-			ArrayList<Group> allGroups = new ArrayList<Group>();
-			String selectQuery = "SELECT * FROM " + TABLE_GROUPS;
-			SQLiteDatabase db = this.getReadableDatabase();
-			Cursor cursor = db.rawQuery(selectQuery, null);
-			if (cursor.moveToFirst()) {
-				do {
-					Group group = new Group(cursor.getInt(0),
-											cursor.getString(1),
-											cursor.getString(2),
-											cursor.getString(3));
-					allGroups.add(group);
-				} while (cursor.moveToNext());
-			}			
-			return allGroups;
-		}
-	
-		public Group getGroup(int id) {
-			SQLiteDatabase db = this.getReadableDatabase();
-			String query = "SELECT * FROM " + TABLE_GROUPS + " WHERE "
-					+ COLUMN_ID + " = " + id;
-			Group gr = new Group();
-			Cursor cursor = db.rawQuery(query, null);
-			if (cursor.moveToFirst()) {
-				gr = new Group(cursor.getInt(0),
-							   cursor.getString(1),
-							   cursor.getString(2),
-							   cursor.getString(3));
-			}
-			return gr;
-		}
-		
-		public int max() {
-			SQLiteDatabase db = this.getReadableDatabase();
-	        String query = "SELECT MAX(_id) AS _id FROM " + TABLE_GROUPS;
-	        Cursor cursor = db.rawQuery(query, null);
-	
-	        int id = 0;     
-	        if (cursor.moveToFirst())
-	        {
-	            do
-	            {           
-	                id = cursor.getInt(0);                  
-	            } while(cursor.moveToNext());           
-	        }
-	        return id;
-		}
-	}
-	
-	public class PeopleDatabase extends SQLiteOpenHelper {
-
-		public static final String TABLE_PEOPLE = "people";
-		public static final String COLUMN_ID = "_id";
-		public static final String COLUMN_NAME = "user_name";
-		public static final String COLUMN_PHONE = "phone_num";
-		public static final String COLUMN_GROUP_ID = "group_id";
-		
-		private static final String DATABASE_NAME = "people.db";
-		private static final int DATABASE_VERSION = 1;
-		
-		private static final String PEOPLE_TABLE_CREATE =
-				"CREATE TABLE " + TABLE_PEOPLE + " (" +
-				COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-				COLUMN_NAME + " TEXT, " + 
-				COLUMN_PHONE + " TEXT, " +
-				COLUMN_GROUP_ID + " TEXT);";
-		
-		public PeopleDatabase(Context context) {
-			super(context, DATABASE_NAME, null, DATABASE_VERSION);
-		}
-
-		@Override
-		public void onCreate(SQLiteDatabase db) {
-			db.execSQL(PEOPLE_TABLE_CREATE);			
-		}
-
-		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-		}
-		
-		public void addPersonToDB(String name, String phone, int group_id) {
-			SQLiteDatabase db = this.getWritableDatabase();
-			
-			ContentValues values = new ContentValues();
-			values.put(COLUMN_NAME, name);
-			values.put(COLUMN_PHONE, phone);
-			values.put(COLUMN_GROUP_ID, group_id);
-			
-			db.insert(TABLE_PEOPLE, null, values);
-			db.close();
-		}
-		
-		public void removePerson(int id) {
-			SQLiteDatabase db = this.getWritableDatabase();			
-			db.delete(TABLE_PEOPLE, COLUMN_ID + " = ?",
-					new String[] {String.valueOf(id)} );
-			db.close();
-		}
-		
-		public ArrayList<Person> getAllPeople() {
-			ArrayList<Person> allPeople = new ArrayList<Person>();
-			String selectQuery = "SELECT * FROM " + TABLE_PEOPLE;
-			SQLiteDatabase db = this.getReadableDatabase();
-			Cursor cursor = db.rawQuery(selectQuery, null);
-			if (cursor.moveToFirst()) {
-				do {
-					Person person = new Person(cursor.getInt(0),
-											   cursor.getString(1),
-											   cursor.getString(2),   
-											   cursor.getInt(3));
-					allPeople.add(person);
-				} while (cursor.moveToNext());
-			}
-			return allPeople;
-		}
-
-		public int getGroupID(int _id) {
-			SQLiteDatabase db = this.getReadableDatabase();
-			String query = "SELECT " + COLUMN_GROUP_ID + " AS " +
-					COLUMN_GROUP_ID + " FROM " + TABLE_PEOPLE + " WHERE " +
-					COLUMN_ID + " = '" + _id + "'";
-			Cursor cursor = db.rawQuery(query, null);
-			
-			int id = -1;
-			if (cursor.moveToFirst()) {
-				id = cursor.getInt(0);
-			}
-			return id;
-		}
-	}
 
 	public void setChildData() {
 		ArrayList<Person> child;
@@ -494,15 +301,10 @@ public class GroupActivity extends ExpandableListActivity implements
 		}
 	}
 	
-	// toggles y/n for person there or not
+	// toggles selection for person attendance
 	@Override
 	public boolean onChildClick(ExpandableListView parent, View v,
 			int groupPosition, int childPosition, long id) {
-		// Toast.makeText(this, "Clicked on Child", Toast.LENGTH_SHORT).show();
-		
-//		ImageView icon = (ImageView) v.findViewById(R.id.person_icon);
-//		icon.setImageResource(R.drawable.person);
-		
 		return true;
 	}
 
@@ -541,20 +343,17 @@ public class GroupActivity extends ExpandableListActivity implements
 				boolean isLastChild, View convertView, ViewGroup parent) {
 			
 			tempChild = (ArrayList<Person>) childItem.get(groupPosition);
-			
-			TextView textName = null;
-			TextView textNum = null;
-			
+
 			if (convertView == null) {
 				convertView = mInflater.inflate(R.layout.childrow, null);
 			}
 			
 			convertView.setTag((int)getChildId(groupPosition, childPosition));
 			
-			textName = (TextView) convertView.findViewById(R.id.person_name);
+			TextView textName = (TextView) convertView.findViewById(R.id.person_name);
 			textName.setText(tempChild.get(childPosition)._name);
 			
-			textNum = (TextView) convertView.findViewById(R.id.person_number);
+			TextView textNum = (TextView) convertView.findViewById(R.id.person_number);
 			textNum.setText(tempChild.get(childPosition)._phone);
 			
 			final View view = convertView;
@@ -572,35 +371,28 @@ public class GroupActivity extends ExpandableListActivity implements
 					ImageView icon = (ImageView) v.findViewById(R.id.person_icon);
 					TextView textName = (TextView) v.findViewById(R.id.person_name);
 					TextView textNum = (TextView) v.findViewById(R.id.person_number);
-					
-//					if (people == null) {
-//						Log.v("PLZ", "group id "+group_id);
-//						Log.v("PLZ", "ugh");
-//					}
-					
-					if (icon.getTag().equals("blue")) {
-						icon.setImageResource(R.drawable.person_gray);
-						icon.setTag("gray");
-						textName.setTextColor(Color.parseColor("#A9A9A9"));
-						textNum.setTextColor(Color.parseColor("#A9A9A9"));
-						for (int i = 0; i < people.size(); i++) {
-							if (people.get(i)._group_id == group_id && people.get(i)._name.equals(name)) {
-								Log.v("PLZ", "removed " + people.get(i)._name);
-								people.remove(i);								
-								global.put(group_id, people);
-							}
-						}
-					} else {
-						icon.setImageResource(R.drawable.person_blue);
-						icon.setTag("blue");
-						textName.setTextColor(Color.parseColor("#000000"));
-						textNum.setTextColor(Color.parseColor("#A9A9A9"));
-						Log.v("PLZ", "added " + name);
-						people.add(new Person(_id, name, number, group_id));
-						global.put(group_id, people);
-					}
-					// global.put(group_id, people);
-				}
+
+                    if (!icon.getTag().equals("selected")) {
+                        icon.setImageResource(R.drawable.person_blue);
+                        icon.setTag("selected");
+                        textName.setTextColor(Color.parseColor("#000000"));
+                        textNum.setTextColor(Color.parseColor("#A9A9A9"));
+                        people.add(new Person(_id, name, number, group_id));
+                        global.put(group_id, people);
+                    } else {
+                        icon.setImageResource(R.drawable.person_gray);
+                        icon.setTag("unselected");
+                        textName.setTextColor(Color.parseColor("#A9A9A9"));
+                        textNum.setTextColor(Color.parseColor("#A9A9A9"));
+                        for (int i = 0; i < people.size(); i++) {
+                            if (people.get(i)._group_id == group_id && people.get(i)._name.equals(name)) {
+                                // Log.v("PLZ", "removed " + people.get(i)._name);
+                                people.remove(i);
+                                global.put(group_id, people);
+                            }
+                        }
+                    }
+                }
 			});
 			
 			return convertView;
@@ -644,16 +436,15 @@ public class GroupActivity extends ExpandableListActivity implements
 			if (convertView == null) {
 				convertView = mInflater.inflate(R.layout.grouprow, null);				
 			}
-			
-			// Log.v("PLZ", "" + getGroupId(groupPosition));
+
 			convertView.setTag((int)getGroupId(groupPosition));
 			
 			CheckedTextView title = (CheckedTextView) (convertView.findViewById(R.id.group_name));
 			TextView charge = (TextView) (convertView.findViewById(R.id.charge_amt));
 			TextView time = (TextView) (convertView.findViewById(R.id.time_limit));
 			
-			((CheckedTextView) title).setText(groupItem.get(groupPosition)._name);
-			((CheckedTextView) title).setChecked(isExpanded);
+			title.setText(groupItem.get(groupPosition)._name);
+			title.setChecked(isExpanded);
 			String _charge = "$" + groupItem.get(groupPosition)._amt + ".00";
 			String _time = groupItem.get(groupPosition)._time + " secs";
 			charge.setText(_charge);
@@ -665,11 +456,6 @@ public class GroupActivity extends ExpandableListActivity implements
 			} else {
 				arrow.setImageResource(R.drawable.down);
 			}
-			
-//			ArrayList<Person> people1 = global.get(4);
-//			for (int i = 0; i < people1.size(); i++) {
-//				Log.v("PLZ", people1.get(i)._name);
-//			}
 			
 			return convertView;
 		}
