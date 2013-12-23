@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class EditGroupActivity extends Activity {
 
@@ -100,6 +101,11 @@ public class EditGroupActivity extends Activity {
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
+
+            if (data.getBooleanExtra("CANCEL", false) == true) {
+                return;
+            }
+
 			switch (requestCode) {
 			case ADD_PERSON_RESULT:
 				String name = data.getStringExtra(AddPersonActivity.NAME);
@@ -175,6 +181,14 @@ public class EditGroupActivity extends Activity {
 		getInfo();
 		Intent setTimerIntent = new Intent(this, TimerActivity.class);
         if (!validForm()) return;
+        if (numbersInGroup.size() == 0) {
+            Context context = getApplicationContext();
+            CharSequence text = "No members currently";
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+            return;
+        }
         setTimerIntent.putExtra(GroupActivity.GROUPNAME, new Group(-1, _name, _time, _amt));
 		setTimerIntent.putStringArrayListExtra(GroupActivity.ALL_NUMBERS, namesInGroup);
 		setTimerIntent.putStringArrayListExtra(GroupActivity.ALL_NAMES, numbersInGroup);
