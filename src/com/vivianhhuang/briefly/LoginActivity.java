@@ -2,6 +2,7 @@ package com.vivianhhuang.briefly;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,18 +30,23 @@ import java.util.List;
 
 public class LoginActivity extends Activity {
 
-    // CLIENT_SECRET & CLIENT_ID are specific to 'briefly'
     private static String CLIENT_SECRET = "nAjTudnDNpMs2rw5UPVdtKQptb5HYAn4";
     private static String CLIENT_ID = "1391";
     private static String CODE;
     private static String ACCESS_TOKEN;
+    private static final String PREFS = "PREFS";
+    private static final String AUTH_ACCESS_TOKEN = "AUTH_ACCESS_TOKEN";
     private static String AUTHORIZE_URL = "https://api.venmo.com/oauth/authorize?client_id=" +
             CLIENT_ID + "&scope=make_payments,access_profile&response_type=code";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        if (ACCESS_TOKEN == null) {
+
+        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS, 0);
+        ACCESS_TOKEN = settings.getString(AUTH_ACCESS_TOKEN, "");
+
+        if (ACCESS_TOKEN.length() == 0) {
             getAuthorizationCode();
         } else {
             startMainActivity();
@@ -87,6 +93,12 @@ public class LoginActivity extends Activity {
                 JSONObject JSONresponse = new JSONObject(tokener);
                 // Log.v("vivbriefly", "response dict " + JSONresponse.toString());
                 ACCESS_TOKEN = JSONresponse.get("access_token").toString();
+
+                // store access token in shared prefs
+                SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString(AUTH_ACCESS_TOKEN, ACCESS_TOKEN);
+                editor.commit();
                 startMainActivity();
             } catch (IOException e) {
 
