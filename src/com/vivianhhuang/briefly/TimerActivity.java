@@ -19,6 +19,7 @@ import org.apache.http.util.EntityUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -33,15 +34,20 @@ public class TimerActivity extends Activity {
 	private ArrayList<String> numbers;
 	private String charge;
 	private CountDownTimer timer;
-	
+    private String ACCESS_TOKEN;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_timer);
-		
+
+        SharedPreferences settings = getApplicationContext().getSharedPreferences(LoginActivity.PREFS, 0);
+        ACCESS_TOKEN = settings.getString(LoginActivity.AUTH_ACCESS_TOKEN, "");
+
 		Intent intent = getIntent();
-		String time_input = intent.getStringExtra(GroupActivity.TIMELIMIT);
-		charge = intent.getStringExtra(GroupActivity.CHARGEAMT);
+        Group group = intent.getParcelableExtra(GroupActivity.GROUPNAME);
+		String time_input = group.getTime();
+		charge = group.getAmt();
 		numbers = intent.getStringArrayListExtra(GroupActivity.ALL_NUMBERS);
         ArrayList<String> names = intent.getStringArrayListExtra(GroupActivity.ALL_NAMES);
 		
@@ -49,7 +55,15 @@ public class TimerActivity extends Activity {
 		initialTimer.setText(time_input);
 	
 		TextView money = (TextView)findViewById(R.id.money_text);
-		money.setText("$" + charge + ".00");
+        if (charge.contains(".")) {
+            if (charge.substring(charge.indexOf(".") + 1).length() == 1) {
+                money.setText("$" + charge + "0");
+            } else {
+                money.setText("$" + charge);
+            }
+        } else {
+		    money.setText("$" + charge + ".00");
+        }
 		
 		TextView info = (TextView) findViewById(R.id.info);
 		int num = names.size();
@@ -123,7 +137,7 @@ public class TimerActivity extends Activity {
 			try {
 				HttpPost httpPost = new HttpPost("https://api.venmo.com/payments");
 				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-				nameValuePairs.add(new BasicNameValuePair("access_token", "WsQJPyg6MRpCbbVdGyDHHpHqZYfs5eEP"));
+				nameValuePairs.add(new BasicNameValuePair("access_token", ACCESS_TOKEN));
 				nameValuePairs.add(new BasicNameValuePair("phone", phoneNum));
 				nameValuePairs.add(new BasicNameValuePair("amount", charge));
 				nameValuePairs.add(new BasicNameValuePair("note", "scrum over time"));
