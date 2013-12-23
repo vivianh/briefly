@@ -21,7 +21,8 @@ import android.widget.TextView;
 public class EditGroupActivity extends Activity {
 
 	private final static int ADD_PERSON_RESULT = 100;
-	
+
+    private static Group group;
 	private static String _name;
 	private static String _time;
 	private static String _amt;
@@ -30,41 +31,51 @@ public class EditGroupActivity extends Activity {
 	ArrayList<String> numbersInGroup;
 	ArrayList<String> newNames;
 	ArrayList<String> newNumbers;
-	ArrayList<Person> yayPeople;
+	ArrayList<Person> allPeople;
 	public static final String NEW_NAMES = "NEWNAMES";
 	public static final String NEW_NUMBERS = "NEWNUMBERS";
 	
 	private ListView mainListView;
 	private ArrayAdapter<Person> listAdapter;
+
+    private EditText editName;
+    private EditText editTime;
+    private EditText editAmt;
  	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_group);
-		
+
+        editName = (EditText) findViewById(R.id.edit_group_name);
+        editTime = (EditText) findViewById(R.id.edit_time_limit);
+        editAmt = (EditText) findViewById(R.id.edit_charge_amt);
+
 		namesInGroup = new ArrayList<String>();
 		numbersInGroup = new ArrayList<String>();
 		newNames = new ArrayList<String>();
 		newNumbers = new ArrayList<String>();
-		yayPeople = new ArrayList<Person>();
+		allPeople = new ArrayList<Person>();
 		Intent intent = getIntent();
 		
 		// intent is from edit bc it has group object
 		boolean toEdit = intent.getBooleanExtra("EDIT_GROUP", false);
 		if (toEdit) {
-			group_id = intent.getIntExtra(GroupActivity.GROUPID, -1);
-			_name    = intent.getStringExtra(GroupActivity.GROUPNAME);
-			_time    = intent.getStringExtra(GroupActivity.TIMELIMIT);
-			_amt     = intent.getStringExtra(GroupActivity.CHARGEAMT);
+            group = intent.getParcelableExtra(GroupActivity.GROUPNAME);
+            _name = group.getName();
+            _time = group.getTime();
+            _amt = group.getAmt();
+            group_id = group.getId();
+
 			namesInGroup = intent.getStringArrayListExtra(GroupActivity.ALL_NAMES);
 			numbersInGroup = intent.getStringArrayListExtra(GroupActivity.ALL_NUMBERS);
-			yayPeople = intent.getParcelableArrayListExtra(GroupActivity.PEOPLE);
+			allPeople = intent.getParcelableArrayListExtra(GroupActivity.PEOPLE);
 			setInfo();
 		} else {
 			group_id = intent.getIntExtra(GroupActivity.GROUPID, -1);
 		}
 		mainListView = (ListView) findViewById(R.id.listView);
-		listAdapter = new CustomAdapter(this, R.id.listView, yayPeople);
+		listAdapter = new CustomAdapter(this, R.id.listView, allPeople);
 		mainListView.setAdapter(listAdapter);
 	}
 
@@ -91,8 +102,6 @@ public class EditGroupActivity extends Activity {
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 			case ADD_PERSON_RESULT:
-				// does data already have intent or do I need getIntent()
-				//data = getIntent();
 				String name = data.getStringExtra(AddPersonActivity.NAME);
 				String number = data.getStringExtra(AddPersonActivity.NUMBER);
 				namesInGroup.add(name);
@@ -105,45 +114,36 @@ public class EditGroupActivity extends Activity {
 		if (newNames != null) {
 			for (int i = 0; i < newNames.size(); i++) {
 				Person p = new Person(newNames.get(i), newNumbers.get(i));
-				yayPeople.add(p);
+				allPeople.add(p);
 			}
 		}
-//		
-//		for (int i = 0; i < yayPeople.size(); i++) {
-//			Log.v("PLZ", "" + yayPeople.get(i)._name);
-//		}
-//		
-		listAdapter = new CustomAdapter(this, R.id.listView, yayPeople);
+
+		listAdapter = new CustomAdapter(this, R.id.listView, allPeople);
 		mainListView.setAdapter(listAdapter);
 	}
 	
 	private void setInfo() {
-		EditText editName = (EditText) findViewById(R.id.edit_group_name);
-		EditText editTime = (EditText) findViewById(R.id.edit_time_limit);
-		EditText editAmt = (EditText) findViewById(R.id.edit_charge_amt);
-
 		editName.setText(_name);
 		editTime.setText(_time);
 		editAmt.setText(_amt);
 	}
 	
 	private void getInfo() {
-		EditText editName = (EditText) findViewById(R.id.edit_group_name);
-		EditText editTime = (EditText) findViewById(R.id.edit_time_limit);
-		EditText editAmt = (EditText) findViewById(R.id.edit_charge_amt);
-		
 		_name = editName.getText().toString();
 		_time = editTime.getText().toString();
 		_amt = editAmt.getText().toString();
+        if (_amt.contains(".00")) {
+            int index = _amt.indexOf(".");
+            _amt = _amt.substring(0, index);
+        }
 	}
 	
 	public void saveGroup(View view) {
 		getInfo();
+        if (!validForm()) return;
 		Intent returnGroupIntent = new Intent(this, GroupActivity.class);
-		returnGroupIntent.putExtra(GroupActivity.GROUPNAME, _name);
-		returnGroupIntent.putExtra(GroupActivity.TIMELIMIT, _time);
-		returnGroupIntent.putExtra(GroupActivity.CHARGEAMT, _amt);
-		returnGroupIntent.putExtra(GroupActivity.GROUPID, group_id);
+        Group group = new Group(group_id, _name, _time, _amt);
+        returnGroupIntent.putExtra(GroupActivity.GROUPNAME, group);
 		returnGroupIntent.putStringArrayListExtra(NEW_NAMES, newNames);
 		returnGroupIntent.putStringArrayListExtra(NEW_NUMBERS, newNumbers);
 		setResult(RESULT_OK, returnGroupIntent);
@@ -161,31 +161,46 @@ public class EditGroupActivity extends Activity {
 		View parent = (View) view.getParent();
 		GroupActivity.peopleDB.removePerson((Integer)parent.getTag());
 		
-		for (int i = 0; i < yayPeople.size(); i++) {
-			if (yayPeople.get(i)._id == ((Integer) parent.getTag())) {
-				yayPeople.remove(i);
+		for (int i = 0; i < allPeople.size(); i++) {
+			if (allPeople.get(i)._id == ((Integer) parent.getTag())) {
+				allPeople.remove(i);
 			}
 		}
 		
-		listAdapter = new CustomAdapter(this, R.id.listView, yayPeople);
+		listAdapter = new CustomAdapter(this, R.id.listView, allPeople);
 		mainListView.setAdapter(listAdapter);
 	}
 	
 	public void startTimer(View view) {
 		getInfo();
 		Intent setTimerIntent = new Intent(this, TimerActivity.class);
-		if (_time.length() == 0) {
-			((EditText) findViewById(R.id.edit_time_limit)).setError("Enter time in seconds");
-			return;
-		}
-		setTimerIntent.putExtra(GroupActivity.GROUPNAME, _name);
-		setTimerIntent.putExtra(GroupActivity.TIMELIMIT, _time);
-		setTimerIntent.putExtra(GroupActivity.CHARGEAMT, _amt);
+        if (!validForm()) return;
+        setTimerIntent.putExtra(GroupActivity.GROUPNAME, new Group(-1, _name, _time, _amt));
 		setTimerIntent.putStringArrayListExtra(GroupActivity.ALL_NUMBERS, namesInGroup);
 		setTimerIntent.putStringArrayListExtra(GroupActivity.ALL_NAMES, numbersInGroup);
 		startActivity(setTimerIntent);
 	}
-	
+
+    private boolean validForm() {
+        if (_name.length() == 0) {
+            editName.setError("Enter group name");
+            return false;
+        }
+
+        if (_time.length() == 0) {
+            editTime.setError("Enter time in seconds");
+            return false;
+        }
+
+        if (_amt.length() == 0) {
+            editAmt.setError("Enter charge amount");
+            return false;
+        }
+
+        return true;
+    }
+
+
 	public static class ViewHolder {
 		public ImageView icon;
 		public TextView name;
@@ -197,27 +212,22 @@ public class EditGroupActivity extends Activity {
 		private ArrayList<Person> entries;
 		private Activity activity;
 		
-		public CustomAdapter(Activity a, int textViewResourceId, ArrayList<Person> entries) {
-			super(a, textViewResourceId, entries);
+		public CustomAdapter(Activity activity, int textViewResourceId, ArrayList<Person> entries) {
+			super(activity, textViewResourceId, entries);
 			this.entries = entries;
-			this.activity = a;
+			this.activity = activity;
 		}
 		
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = convertView;
 			ViewHolder holder;
-//			if (v == null) {
-				LayoutInflater vi = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(R.layout.childrow, null);
-				holder = new ViewHolder();
-				holder.icon = (ImageView) v.findViewById(R.id.person_icon);
-				holder.name = (TextView) v.findViewById(R.id.person_name);
-				holder.phone = (TextView) v.findViewById(R.id.person_number);
-				holder.trash = (ImageView) v.findViewById(R.id.trash1);
-//			} else {
-//				holder = (ViewHolder) v.getTag();
-//			}
+            LayoutInflater vi = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View v = vi.inflate(R.layout.childrow, null);
+            holder = new ViewHolder();
+            holder.icon = (ImageView) v.findViewById(R.id.person_icon);
+            holder.name = (TextView) v.findViewById(R.id.person_name);
+            holder.phone = (TextView) v.findViewById(R.id.person_number);
+            holder.trash = (ImageView) v.findViewById(R.id.trash1);
 			
 			final Person person = entries.get(position);
 			if (person != null) {
