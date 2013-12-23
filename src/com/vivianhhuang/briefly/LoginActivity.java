@@ -1,7 +1,7 @@
 package com.vivianhhuang.briefly;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +16,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -30,20 +29,25 @@ import java.util.List;
 
 public class LoginActivity extends Activity {
 
+    // CLIENT_SECRET & CLIENT_ID are specific to 'briefly'
     private static String CLIENT_SECRET = "nAjTudnDNpMs2rw5UPVdtKQptb5HYAn4";
     private static String CLIENT_ID = "1391";
     private static String CODE;
+    private static String ACCESS_TOKEN;
     private static String AUTHORIZE_URL = "https://api.venmo.com/oauth/authorize?client_id=" +
             CLIENT_ID + "&scope=make_payments,access_profile&response_type=code";
-    private JSONObject JSONresponse;
-    private static String ACCESS_TOKEN;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        if (ACCESS_TOKEN == null) {
+            getAuthorizationCode();
+        } else {
+            startMainActivity();
+        }
     }
 
-    public void getAuthorizationCode(View v) {
+    public void getAuthorizationCode() {
         setContentView(R.layout.activity_login_webview);
         WebView webView = (WebView) findViewById(R.id.webView);
         webView.setWebViewClient(new WebViewClient() {
@@ -79,10 +83,11 @@ public class LoginActivity extends Activity {
                 nameValuePairs.add(new BasicNameValuePair("code", CODE));
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 HttpResponse response = httpClient.execute(httpPost);
-                JSONTokener tokener = new JSONTokener(inputStreamToString(
-                        response.getEntity().getContent()).toString());
-                JSONresponse = new JSONObject(tokener);
+                JSONTokener tokener = new JSONTokener(inputStreamToString(response.getEntity().getContent()).toString());
+                JSONObject JSONresponse = new JSONObject(tokener);
+                // Log.v("vivbriefly", "response dict " + JSONresponse.toString());
                 ACCESS_TOKEN = JSONresponse.get("access_token").toString();
+                startMainActivity();
             } catch (IOException e) {
 
             } catch (JSONException e) {
@@ -91,6 +96,7 @@ public class LoginActivity extends Activity {
             return null;
         }
 
+        // converts from InputStream to StringBuilder
         private StringBuilder inputStreamToString(InputStream is) {
             String line;
             StringBuilder total = new StringBuilder();
@@ -109,4 +115,9 @@ public class LoginActivity extends Activity {
 
     }
 
+    // starts main app activity
+    private void startMainActivity() {
+        Intent i = new Intent(this, GroupActivity.class);
+        startActivity(i);
+    }
 }
