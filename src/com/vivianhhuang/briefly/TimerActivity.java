@@ -30,12 +30,9 @@ import android.widget.Toast;
 
 public class TimerActivity extends Activity {
 
-	private int initialTime;
-	private ArrayList<String> names;
 	private ArrayList<String> numbers;
 	private String charge;
-	private String time_input;
-	public CountDownTimer timer;
+	private CountDownTimer timer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +40,10 @@ public class TimerActivity extends Activity {
 		setContentView(R.layout.activity_timer);
 		
 		Intent intent = getIntent();
-		time_input = intent.getStringExtra(GroupActivity.TIMELIMIT);
+		String time_input = intent.getStringExtra(GroupActivity.TIMELIMIT);
 		charge = intent.getStringExtra(GroupActivity.CHARGEAMT);
 		numbers = intent.getStringArrayListExtra(GroupActivity.ALL_NUMBERS);
-		names = intent.getStringArrayListExtra(GroupActivity.ALL_NAMES);
+        ArrayList<String> names = intent.getStringArrayListExtra(GroupActivity.ALL_NAMES);
 		
 		TextView initialTimer = (TextView)findViewById(R.id.timer);
 		initialTimer.setText(time_input);
@@ -62,21 +59,8 @@ public class TimerActivity extends Activity {
 		} else {
 			info.setText(num + " people, " + Integer.parseInt(time_input)/num + " secs each");
 		}
-		// TextView usernames_view = (TextView)findViewById(R.id.usernames);
-		// Log.v("CONTACT", "" + names.size());
-		
-//		String s = "";
-//		for (int i = 0; i < names.size(); i++) {
-//			// s += " " + names.get(i);
-//			Log.v("PLZ", names.get(i));
-//		}
-//		usernames_view.setText(s);
-		
-		for (int i = 0; i < numbers.size(); i++) {
-			Log.v("PLZ", numbers.get(i));
-		}
-		
-		initialTime = Integer.parseInt(time_input);
+
+		int initialTime = Integer.parseInt(time_input);
 		timer = new MyTimer(initialTime*1000, 1000);
 		timer.start();
 	}
@@ -85,22 +69,19 @@ public class TimerActivity extends Activity {
 
 		public MyTimer(long millisInFuture, long countDownInterval) {
 			super(millisInFuture, countDownInterval);
-			// TODO Auto-generated constructor stub
+
 		}
 		
 		@Override
 		public void onTick(long timeLeft) {
-			Log.v("P2P", "anything???");
 			((TextView)findViewById(R.id.timer)).setText(String.valueOf(timeLeft/1000));
 		}
 		
 		@Override
 		public void onFinish() {
 			((TextView)findViewById(R.id.timer)).setText("0");
-			
-			Log.v("PLZ", "?!?!!");
 			new CreateChargeTask().execute();
-			
+
 			Context context = getApplicationContext();
 			CharSequence text = "over time welp";
 			int duration = Toast.LENGTH_SHORT;
@@ -116,7 +97,6 @@ public class TimerActivity extends Activity {
 	
 	public void stopTimer(View view) {
 		timer.cancel();
-		Log.v("P2P", "tried to cancel timer...");
 		
 		Context context = getApplicationContext();
 		CharSequence text = "no charge today!";
@@ -128,47 +108,34 @@ public class TimerActivity extends Activity {
 	private class CreateChargeTask extends AsyncTask<Void, Void, Void> {
 		@Override
 		protected Void doInBackground(Void... voids) {
-			String uname = "";
+            String phoneNum;
 			charge = "-" + charge;
 			for (int i = 0; i < numbers.size(); i++) {
-				uname = numbers.get(i);
-				Log.v("PLZ", uname);
-				doTheCharge(uname);
+				phoneNum = numbers.get(i);
+				doTheCharge(phoneNum);
 			}
 			return null;
 		}
 		
-		protected void doTheCharge(String uname) {
-			// charge = "-" + charge;
+		protected void doTheCharge(String phoneNum) {
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpResponse response;
 			try {
-				Log.v("PLZ", "charge " + charge);
-				HttpPost thepost = new HttpPost("https://api.venmo.com/payments");
+				HttpPost httpPost = new HttpPost("https://api.venmo.com/payments");
 				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 				nameValuePairs.add(new BasicNameValuePair("access_token", "WsQJPyg6MRpCbbVdGyDHHpHqZYfs5eEP"));
-				nameValuePairs.add(new BasicNameValuePair("phone", uname));
+				nameValuePairs.add(new BasicNameValuePair("phone", phoneNum));
 				nameValuePairs.add(new BasicNameValuePair("amount", charge));
 				nameValuePairs.add(new BasicNameValuePair("note", "scrum over time"));
 				nameValuePairs.add(new BasicNameValuePair("audience", "friends"));
 				
-				thepost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-				
-				response = httpclient.execute(thepost);
-				Log.v("PLZ", "" + response.getStatusLine());
+				httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+				response = httpclient.execute(httpPost);
 				
 				StatusLine statusLine = response.getStatusLine();
 				if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-					Log.v("PLZ", "this is good. made charge");
 				} else {
 					response.getEntity().getContent().close();
-					Log.v("PLZ", "this is bad. didn't make charge");
-					// Log.v("PLZ", "" + response.getEntity());
-					
-					String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-					Log.v("PLZ", "dkfj;alskdjf " + responseString);
-					
-					// Log.v("PLZ", statusLine.getReasonPhrase());
 					throw new IOException(statusLine.getReasonPhrase());
 				}
 			} catch (ClientProtocolException e) {
