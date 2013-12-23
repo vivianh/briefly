@@ -21,7 +21,6 @@ public class DeleteGroupActivity extends Activity {
 		setContentView(R.layout.activity_delete_group);
 		Intent intent = getIntent();
 		id = intent.getIntExtra(GroupActivity.GROUPID, -1);
-		Log.v("PLZ", "" + id);
 	}
 
 	@Override
@@ -39,7 +38,7 @@ public class DeleteGroupActivity extends Activity {
 	
 	public void cancel(View view) {
 		Intent cancelIntent = new Intent();
-		cancelIntent.putExtra(CANCEL, false);
+		cancelIntent.putExtra(CANCEL, true);
 		setResult(RESULT_OK, cancelIntent);
 		finish();
 	}
