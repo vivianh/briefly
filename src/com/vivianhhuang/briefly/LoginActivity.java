@@ -34,8 +34,8 @@ public class LoginActivity extends Activity {
     private static String CLIENT_ID = "1391";
     private static String CODE;
     private static String ACCESS_TOKEN;
-    private static final String PREFS = "PREFS";
-    private static final String AUTH_ACCESS_TOKEN = "AUTH_ACCESS_TOKEN";
+    public static final String PREFS = "PREFS";
+    public static final String AUTH_ACCESS_TOKEN = "AUTH_ACCESS_TOKEN";
     private static String AUTHORIZE_URL = "https://api.venmo.com/oauth/authorize?client_id=" +
             CLIENT_ID + "&scope=make_payments,access_profile&response_type=code";
 
