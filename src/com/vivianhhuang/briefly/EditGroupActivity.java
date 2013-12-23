@@ -23,7 +23,6 @@ public class EditGroupActivity extends Activity {
 
 	private final static int ADD_PERSON_RESULT = 100;
 
-    private static Group group;
 	private static String _name;
 	private static String _time;
 	private static String _amt;
@@ -62,7 +61,7 @@ public class EditGroupActivity extends Activity {
 		// intent is from edit bc it has group object
 		boolean toEdit = intent.getBooleanExtra("EDIT_GROUP", false);
 		if (toEdit) {
-            group = intent.getParcelableExtra(GroupActivity.GROUPNAME);
+            Group group = intent.getParcelableExtra(GroupActivity.GROUPNAME);
             _name = group.getName();
             _time = group.getTime();
             _amt = group.getAmt();
