@@ -29,8 +29,6 @@ public class AddPersonActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_person);
-		name = "";
-		number = "";
 	}
 
 	@Override
@@ -51,8 +49,8 @@ public class AddPersonActivity extends Activity {
 				Cursor cursor = null;
 				try {
 					Uri result = data.getData();
-					Log.v("CONTACT", "got a contact " + result.toString());
-					Log.v("CONTACT", "last segment " + result.getLastPathSegment());
+					// Log.v("CONTACT", "got a contact " + result.toString());
+					// Log.v("CONTACT", "last segment " + result.getLastPathSegment());
 					
 					String id = result.getLastPathSegment();
 					
@@ -64,9 +62,9 @@ public class AddPersonActivity extends Activity {
 					int phoneIdx = cursor.getColumnIndex(Phone.DATA);
 					if (cursor.moveToFirst()) {
 						number = cursor.getString(phoneIdx);
-						Log.v("CONTACT", "got # " + number);
+						// Log.v("CONTACT", "got # " + number);
 					} else {
-						Log.v("CONTACT", "didn't get #");
+						// Log.v("CONTACT", "didn't get #");
 					}
 					
 					// gets name
@@ -76,7 +74,7 @@ public class AddPersonActivity extends Activity {
 					}
 					
 				} catch (Exception e) {
-					Log.e("CONTACT", "failed to get email data", e);
+					// Log.e("CONTACT", "failed to get email data", e);
 				} finally {
 					if (cursor != null) {
 						cursor.close();
@@ -84,13 +82,11 @@ public class AddPersonActivity extends Activity {
 					if (number.matches("\\+1[0-9]{10}")) {
 						number = number.replace("+1", "");
 					}
-					// number = phone;
-					// name = "Vivian Huang";
 				}
 				break;
 			}
 		} else {
-			Log.v("CONTACT", "ughh");
+
 		}
 		
 		if (number.length() == 0) {
@@ -105,13 +101,10 @@ public class AddPersonActivity extends Activity {
 	}
 	
 	private void getInfo(String str, String num) {
-		EditText editName = (EditText) findViewById(R.id.add_person_name);
-		EditText editNumber = (EditText) findViewById(R.id.add_person_number);
+        EditText editName = (EditText) findViewById(R.id.add_person_name);
+        EditText editNumber = (EditText) findViewById(R.id.add_person_number);
 
-		Log.v("UGH", "" + editName.getText().toString().length());
-		Log.v("UGH", editName.getText().toString());
-		
-		if (editName.getText().toString().length() == 0) {
+        if (editName.getText().toString().length() == 0) {
 			editName.setText(str);
 			editNumber.setText(num);
 		}
@@ -127,17 +120,34 @@ public class AddPersonActivity extends Activity {
 		EditText _name = (EditText) parent.findViewById(R.id.add_person_name);
 		EditText _num = (EditText) parent.findViewById(R.id.add_person_number);
 		if (name.length() == 0) {
-			_name.setError("");
-			// some sort of error check here ugh
-		} else if (number.length() == 0) {
-			_num.setError("");
+			_name.setError("Enter a name");
+            return;
+		} else if (!validNumber(number)) {
+			_num.setError("Enter a valid number");
+            return;
 		}
 		Intent returnPersonIntent = new Intent();
 		returnPersonIntent.putExtra(NAME, name);
 		returnPersonIntent.putExtra(NUMBER, number);
-		Log.v("UGH", "name " + name);
-		Log.v("UGH", "number " + number);
+
 		setResult(RESULT_OK, returnPersonIntent);
 		finish();
 	}
+
+    public void cancelAddPerson(View view) {
+        Intent backIntent = new Intent();
+        backIntent.putExtra("CANCEL", true);
+        setResult(RESULT_OK, backIntent);
+        finish();
+    }
+
+    private boolean validNumber(String num) {
+        if (num.length() == 0) return false;
+
+        num = num.replaceAll("[^0-9]", "");
+        if (num.length() == 11 && num.substring(0, 1) == "1") return true;
+        if (num.length() == 10) return true;
+
+        return false;
+    }
 }
