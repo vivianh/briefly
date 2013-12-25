@@ -21,35 +21,30 @@ import android.widget.Toast;
 
 public class EditGroupActivity extends Activity {
 
-	private final static int ADD_PERSON_RESULT = 100;
+	private final int ADD_PERSON_RESULT = 100;
+    public static final String NEW_NAMES = "com.vivianhhuang.briefly.extras.NEW_NAMES";
+    public static final String NEW_NUMBERS = "com.vivianhhuang.briefly.extras.NEW_NUMBERS";
 
-	private static String _name;
-	private static String _time;
-	private static String _amt;
-	private static int group_id;
-	ArrayList<String> namesInGroup;
-	ArrayList<String> numbersInGroup;
-	ArrayList<String> newNames;
-	ArrayList<String> newNumbers;
-	ArrayList<Person> allPeople;
-	public static final String NEW_NAMES = "NEWNAMES";
-	public static final String NEW_NUMBERS = "NEWNUMBERS";
+	private String mName, mTime, mAmt;
+	private int mGroupId;
+	private ArrayList<String> namesInGroup, numbersInGroup, newNames, newNumbers;
+    private ArrayList<Person> allPeople;
 	
-	private ListView mainListView;
-	private ArrayAdapter<Person> listAdapter;
+	private ListView mListView;
+	private ArrayAdapter<Person> mListAdapter;
 
-    private EditText editName;
-    private EditText editTime;
-    private EditText editAmt;
+    private EditText mEditName;
+    private EditText mEditTime;
+    private EditText mEditAmt;
  	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_edit_group);
 
-        editName = (EditText) findViewById(R.id.edit_group_name);
-        editTime = (EditText) findViewById(R.id.edit_time_limit);
-        editAmt = (EditText) findViewById(R.id.edit_charge_amt);
+        mEditName = (EditText) findViewById(R.id.edit_group_name);
+        mEditTime = (EditText) findViewById(R.id.edit_time_limit);
+        mEditAmt = (EditText) findViewById(R.id.edit_charge_amt);
 
 		namesInGroup = new ArrayList<String>();
 		numbersInGroup = new ArrayList<String>();
@@ -59,24 +54,24 @@ public class EditGroupActivity extends Activity {
 		Intent intent = getIntent();
 		
 		// intent is from edit bc it has group object
-		boolean toEdit = intent.getBooleanExtra("EDIT_GROUP", false);
+		boolean toEdit = intent.getBooleanExtra(GroupActivity.EDIT_GROUP, false);
 		if (toEdit) {
-            Group group = intent.getParcelableExtra(GroupActivity.GROUPNAME);
-            _name = group.getName();
-            _time = group.getTime();
-            _amt = group.getAmt();
-            group_id = group.getId();
+            Group group = intent.getParcelableExtra(GroupActivity.GROUP);
+            mName = group.getName();
+            mTime = group.getTime();
+            mAmt = group.getAmt();
+            mGroupId = group.getId();
 
 			namesInGroup = intent.getStringArrayListExtra(GroupActivity.ALL_NAMES);
 			numbersInGroup = intent.getStringArrayListExtra(GroupActivity.ALL_NUMBERS);
 			allPeople = intent.getParcelableArrayListExtra(GroupActivity.PEOPLE);
 			setInfo();
 		} else {
-			group_id = intent.getIntExtra(GroupActivity.GROUPID, -1);
+			mGroupId = intent.getIntExtra(GroupActivity.GROUP_ID, -1);
 		}
-		mainListView = (ListView) findViewById(R.id.listView);
-		listAdapter = new CustomAdapter(this, R.id.listView, allPeople);
-		mainListView.setAdapter(listAdapter);
+		mListView = (ListView) findViewById(R.id.listView);
+		mListAdapter = new CustomAdapter(this, R.id.listView, allPeople);
+		mListView.setAdapter(mListAdapter);
 	}
 
 	@Override
@@ -101,7 +96,7 @@ public class EditGroupActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
 
-            if (data.getBooleanExtra("CANCEL", false) == true) {
+            if (data.getBooleanExtra(GroupActivity.CANCEL, false)) {
                 return;
             }
 
@@ -123,23 +118,23 @@ public class EditGroupActivity extends Activity {
 			}
 		}
 
-		listAdapter = new CustomAdapter(this, R.id.listView, allPeople);
-		mainListView.setAdapter(listAdapter);
+		mListAdapter = new CustomAdapter(this, R.id.listView, allPeople);
+		mListView.setAdapter(mListAdapter);
 	}
 	
 	private void setInfo() {
-		editName.setText(_name);
-		editTime.setText(_time);
-		editAmt.setText(_amt);
+		mEditName.setText(mName);
+		mEditTime.setText(mTime);
+		mEditAmt.setText(mAmt);
 	}
 	
 	private void getInfo() {
-		_name = editName.getText().toString();
-		_time = editTime.getText().toString();
-		_amt = editAmt.getText().toString();
-        if (_amt.contains(".00")) {
-            int index = _amt.indexOf(".");
-            _amt = _amt.substring(0, index);
+		mName = mEditName.getText().toString();
+		mTime = mEditTime.getText().toString();
+		mAmt = mEditAmt.getText().toString();
+        if (mAmt.contains(".00")) {
+            int index = mAmt.indexOf(".");
+            mAmt = mAmt.substring(0, index);
         }
 	}
 	
@@ -147,8 +142,8 @@ public class EditGroupActivity extends Activity {
 		getInfo();
         if (!validForm()) return;
 		Intent returnGroupIntent = new Intent(this, GroupActivity.class);
-        Group group = new Group(group_id, _name, _time, _amt);
-        returnGroupIntent.putExtra(GroupActivity.GROUPNAME, group);
+        Group group = new Group(mGroupId, mName, mTime, mAmt);
+        returnGroupIntent.putExtra(GroupActivity.GROUP, group);
 		returnGroupIntent.putStringArrayListExtra(NEW_NAMES, newNames);
 		returnGroupIntent.putStringArrayListExtra(NEW_NUMBERS, newNumbers);
 		setResult(RESULT_OK, returnGroupIntent);
@@ -157,7 +152,7 @@ public class EditGroupActivity extends Activity {
 	
 	public void cancel(View view) {
 		Intent backIntent = new Intent(this, GroupActivity.class);
-		backIntent.putExtra("CANCEL", true);
+		backIntent.putExtra(GroupActivity.CANCEL, true);
 		setResult(RESULT_OK, backIntent);
 		finish();
 	}
@@ -172,8 +167,8 @@ public class EditGroupActivity extends Activity {
 			}
 		}
 		
-		listAdapter = new CustomAdapter(this, R.id.listView, allPeople);
-		mainListView.setAdapter(listAdapter);
+		mListAdapter = new CustomAdapter(this, R.id.listView, allPeople);
+		mListView.setAdapter(mListAdapter);
 	}
 	
 	public void startTimer(View view) {
@@ -182,31 +177,30 @@ public class EditGroupActivity extends Activity {
         if (!validForm()) return;
         if (numbersInGroup.size() == 0) {
             Context context = getApplicationContext();
-            CharSequence text = "No members currently";
             int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, text, duration);
+            Toast toast = Toast.makeText(context, R.string.no_members, duration);
             toast.show();
             return;
         }
-        setTimerIntent.putExtra(GroupActivity.GROUPNAME, new Group(-1, _name, _time, _amt));
+        setTimerIntent.putExtra(GroupActivity.GROUP, new Group(-1, mName, mTime, mAmt));
 		setTimerIntent.putStringArrayListExtra(GroupActivity.ALL_NUMBERS, namesInGroup);
 		setTimerIntent.putStringArrayListExtra(GroupActivity.ALL_NAMES, numbersInGroup);
 		startActivity(setTimerIntent);
 	}
 
     private boolean validForm() {
-        if (_name.length() == 0) {
-            editName.setError("Enter group name");
+        if (mName.length() == 0) {
+            mEditName.setError("Enter group name");
             return false;
         }
 
-        if (_time.length() == 0) {
-            editTime.setError("Enter time in seconds");
+        if (mTime.length() == 0) {
+            mEditTime.setError("Enter time in seconds");
             return false;
         }
 
-        if (_amt.length() == 0) {
-            editAmt.setError("Enter charge amount");
+        if (mAmt.length() == 0) {
+            mEditAmt.setError("Enter charge amount");
             return false;
         }
 

@@ -30,12 +30,11 @@ import java.util.List;
 
 public class LoginActivity extends Activity {
 
-    private static String CLIENT_SECRET = "nAjTudnDNpMs2rw5UPVdtKQptb5HYAn4";
-    private static String CLIENT_ID = "1391";
-    private static String CODE;
-    private static String ACCESS_TOKEN;
-    public static final String PREFS = "PREFS";
-    public static final String AUTH_ACCESS_TOKEN = "AUTH_ACCESS_TOKEN";
+    private static final String CLIENT_SECRET = "nAjTudnDNpMs2rw5UPVdtKQptb5HYAn4";
+    private static final String CLIENT_ID = "1391";
+    private static String CODE, ACCESS_TOKEN;
+    public static final String PREFS = "com.vivianhhuang.briefly.PREFS";
+    public static final String AUTH_ACCESS_TOKEN = "com.vivianhhuang.briefly.prefs.AUTH_ACCESS_TOKEN";
     private static String AUTHORIZE_URL = "https://api.venmo.com/oauth/authorize?client_id=" +
             CLIENT_ID + "&scope=make_payments,access_profile&response_type=code";
 
@@ -112,7 +111,6 @@ public class LoginActivity extends Activity {
         private StringBuilder inputStreamToString(InputStream is) {
             String line;
             StringBuilder total = new StringBuilder();
-
             BufferedReader rd = new BufferedReader(new InputStreamReader(is));
             try {
                 while ((line = rd.readLine()) != null) {
@@ -124,7 +122,6 @@ public class LoginActivity extends Activity {
 
             return total;
         }
-
     }
 
     // starts main app activity

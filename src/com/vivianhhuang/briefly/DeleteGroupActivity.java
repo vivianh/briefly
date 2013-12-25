@@ -3,24 +3,19 @@ package com.vivianhhuang.briefly;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 
-import com.vivianhhuang.briefly.R;
-
 public class DeleteGroupActivity extends Activity {
-	
-	public static final String DELETE = "DELETE";
-	public static final String CANCEL = "CANCEL";
-	private static int id;
+
+	private int mId;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_delete_group);
 		Intent intent = getIntent();
-		id = intent.getIntExtra(GroupActivity.GROUPID, -1);
+		mId = intent.getIntExtra(GroupActivity.GROUP_ID, -1);
 	}
 
 	@Override
@@ -30,15 +25,15 @@ public class DeleteGroupActivity extends Activity {
 
 	public void delete(View view) {
 		Intent returnIntent = new Intent(this, GroupActivity.class);
-		returnIntent.putExtra(DELETE, true);
-		returnIntent.putExtra(GroupActivity.GROUPID, id);
+		returnIntent.putExtra(GroupActivity.DELETE, true);
+		returnIntent.putExtra(GroupActivity.GROUP_ID, mId);
 		setResult(RESULT_OK, returnIntent);
 		finish();
 	}
 	
 	public void cancel(View view) {
 		Intent cancelIntent = new Intent();
-		cancelIntent.putExtra(CANCEL, true);
+		cancelIntent.putExtra(GroupActivity.CANCEL, true);
 		setResult(RESULT_OK, cancelIntent);
 		finish();
 	}

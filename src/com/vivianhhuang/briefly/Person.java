@@ -14,12 +14,6 @@ public class Person implements Parcelable {
 		
 	}
 	
-	public Person(String name, String phone, int group_id) {
-		_name = name;
-		_phone = phone;
-		_group_id = group_id;
-	}
-	
 	public Person(int id, String name, String phone, int group_id) {
 		_id = id;
 		_name = name;

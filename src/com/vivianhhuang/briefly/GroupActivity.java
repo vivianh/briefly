@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,39 +38,47 @@ public class GroupActivity extends ExpandableListActivity implements
 	static PeopleDatabase peopleDB;
 	private static HashMap<Integer, ArrayList<Person>> global;
 	
-	public final static String GROUPNAME = "GROUPNAME";
-	public final static String GROUPID = "GROUPID";
-	public final static String ALL_NAMES = "NAMES";
-	public final static String ALL_NUMBERS = "NUMBERS";
-	public final static String PEOPLE = "PEOPLE";
+	public final static String GROUP = "com.vivianhhuang.briefly.extras.GROUP";
+	public final static String GROUP_ID = "com.vivianhhuang.briefly.extras.GROUP_ID";
+	public final static String ALL_NAMES = "com.vivianhhuang.briefly.extras.ALL_NAMES";
+	public final static String ALL_NUMBERS = "com.vivianhhuang.briefly.extras.ALL_NUMBERS";
+	public final static String PEOPLE = "com.vivianhhuang.briefly.extras.PEOPLE";
+    public final static String DELETE = "com.vivianhhuang.briefly.extras.DELETE";
+    public final static String CANCEL = "com.vivianhhuang.briefly.extras.CANCEL";
+    public final static String EDIT_GROUP = "com.vivianhhuang.briefly.extras.EDIT_GROUP";
 	
-	ArrayList<Group> allGroups = new ArrayList<Group>();
-	ArrayList<Object> allChildren = new ArrayList<Object>();
-	ArrayList<Person> allPeople = new ArrayList<Person>();
+	ArrayList<Group> allGroups;
+	ArrayList<Object> allChildren;
+	ArrayList<Person> allPeople;
 	
-	ExpandableListView exp;
+	ExpandableListView mListView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
+        allGroups = new ArrayList<Group>();
+        allChildren = new ArrayList<Object>();
+        allPeople = new ArrayList<Person>();
+
 		groupDB = new GroupDatabase(this);
 		peopleDB = new PeopleDatabase(this);
 		global = new HashMap<Integer, ArrayList<Person>>();
+
 		updatePeople();
 		updateGroups();
 		cache();
 		setChildData();
 		
-		exp = getExpandableListView();
-		exp.setDividerHeight(2);
-		exp.setGroupIndicator(null);
-		exp.setClickable(true);
+		mListView = getExpandableListView();
+		mListView.setDividerHeight(2);
+		mListView.setGroupIndicator(null);
+		mListView.setClickable(true);
 		
 		NewAdapter mNewAdapter = new NewAdapter(allGroups, allChildren);
 		mNewAdapter.setInflater((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE), this);
-		exp.setAdapter(mNewAdapter);
-		exp.setOnChildClickListener(this);
+		mListView.setAdapter(mNewAdapter);
+		mListView.setOnChildClickListener(this);
 	}
 
 	@Override
@@ -86,8 +93,7 @@ public class GroupActivity extends ExpandableListActivity implements
 		switch (item.getItemId()) {
 			case R.id.menu_create_group:
 				Intent createGroupIntent = new Intent(getApplicationContext(), EditGroupActivity.class);
-				createGroupIntent.putExtra(GROUPID, groupDB.max());
-				// Log.v("PLZ", "group ID on creation " + groupDB.max());
+				createGroupIntent.putExtra(GROUP_ID, groupDB.max());
 				startActivityForResult(createGroupIntent, ADD_GROUP_RESULT);
 				return true;
 			default:
@@ -98,17 +104,17 @@ public class GroupActivity extends ExpandableListActivity implements
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
 
-			if (data.getBooleanExtra("CANCEL", false) == true) {
+			if (data.getBooleanExtra(CANCEL, false)) {
 				return;
 			}
 
-            Group group = data.getParcelableExtra(GROUPNAME);
+            Group group = data.getParcelableExtra(GROUP);
             int gId = group.getId();
             String gName = group.getName();
             String gTime = group.getTime();
             String gAmt = group.getAmt();
 
-			if (data.getBooleanExtra(DeleteGroupActivity.DELETE, false) == true) {
+			if (data.getBooleanExtra(DELETE, false)) {
                 groupDB.removeGroup(gId);
 			}
 
@@ -119,7 +125,6 @@ public class GroupActivity extends ExpandableListActivity implements
 				gId = groupDB.max();
 				break;
 			case EDIT_GROUP_RESULT:
-				// _chargeamt = _chargeamt.substring(0, _chargeamt.length()-3);
                 groupDB.updateGroup(group);
 				break;
 			}
@@ -145,11 +150,10 @@ public class GroupActivity extends ExpandableListActivity implements
 		
 		NewAdapter mNewAdapter = new NewAdapter(allGroups, allChildren);
 		mNewAdapter.setInflater((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE), this);
-		exp.setAdapter(mNewAdapter);
-		exp.setOnChildClickListener(this);
+		mListView.setAdapter(mNewAdapter);
+		mListView.setOnChildClickListener(this);
 	}
 
-    // not clear what this does...
 	public void updateGroups() {
 		allGroups = groupDB.getAllGroups();
 		for (int i = 0; i < allGroups.size(); i++) {
@@ -166,26 +170,25 @@ public class GroupActivity extends ExpandableListActivity implements
 	
 	public void startTimer(View view) {
 		View parent = (View) view.getParent();
-        ArrayList<Person> please = global.get(parent.getTag());
-        if (please.size() == 0) {
+        ArrayList<Person> currentGroup = global.get(parent.getTag());
+        if (currentGroup.size() == 0) {
             Context context = getApplicationContext();
-            CharSequence text = "No members currently; edit the meeting group to add members.";
             int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, text, duration);
+            Toast toast = Toast.makeText(context, R.string.members_prompt, duration);
             toast.show();
             return;
         }
 
 		ArrayList<String> numbers = new ArrayList<String>();
 		ArrayList<String> names = new ArrayList<String>();
-		for (int i = 0; i < please.size(); i++) {
-			names.add(please.get(i)._name);
-			numbers.add(please.get(i)._phone);
+		for (int i = 0; i < currentGroup.size(); i++) {
+			names.add(currentGroup.get(i)._name);
+			numbers.add(currentGroup.get(i)._phone);
 		}
 		
 		Intent startTimerIntent = new Intent(this, TimerActivity.class);
 		Group g = groupDB.getGroup((Integer) parent.getTag());
-        startTimerIntent.putExtra(GROUPNAME, g);
+        startTimerIntent.putExtra(GROUP, g);
 		startTimerIntent.putStringArrayListExtra(ALL_NUMBERS, numbers);
 		startTimerIntent.putStringArrayListExtra(ALL_NAMES, names);
 		startActivity(startTimerIntent);
@@ -211,7 +214,6 @@ public class GroupActivity extends ExpandableListActivity implements
 		String name = ((CheckedTextView) parent.findViewById(R.id.group_name)).getText().toString();
 		String time = ((TextView) parent.findViewById(R.id.time_limit)).getText().toString();
 		String amt = ((TextView) parent.findViewById(R.id.charge_amt)).getText().toString();
-		// int group_id = groupDB.getGroupId(name);
 		int group_id = (Integer) parent.getTag();
 		time = time.split(" ")[0];
 		amt = amt.substring(1);
@@ -231,8 +233,8 @@ public class GroupActivity extends ExpandableListActivity implements
 			}
 		}
 		
-		editGroupIntent.putExtra("EDIT_GROUP", true);
-        editGroupIntent.putExtra(GROUPNAME, new Group(group_id, name, time, amt));
+		editGroupIntent.putExtra(EDIT_GROUP, true);
+        editGroupIntent.putExtra(GROUP, new Group(group_id, name, time, amt));
 		editGroupIntent.putStringArrayListExtra(ALL_NAMES, inGroupNames);
 		editGroupIntent.putStringArrayListExtra(ALL_NUMBERS, inGroupNumbers);
 		editGroupIntent.putExtra(PEOPLE, yayPeople);
@@ -248,14 +250,14 @@ public class GroupActivity extends ExpandableListActivity implements
 		
 		NewAdapter mNewAdapter = new NewAdapter(allGroups, allChildren);
 		mNewAdapter.setInflater((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE), this);
-		exp.setAdapter(mNewAdapter);
-		exp.setOnChildClickListener(this);
+		mListView.setAdapter(mNewAdapter);
+		mListView.setOnChildClickListener(this);
 	}
 	
 	public void deleteGroup(View view) {
 		Intent deleteGroupIntent = new Intent(this, DeleteGroupActivity.class);
 		View parent = (View) view.getParent();
-		deleteGroupIntent.putExtra(GROUPID, (Integer)parent.getTag());
+		deleteGroupIntent.putExtra(GROUP_ID, (Integer)parent.getTag());
 		startActivityForResult(deleteGroupIntent, DELETE_GROUP_RESULT);
 	}
 
@@ -346,21 +348,20 @@ public class GroupActivity extends ExpandableListActivity implements
 					TextView textName = (TextView) v.findViewById(R.id.person_name);
 					TextView textNum = (TextView) v.findViewById(R.id.person_number);
 
-                    if (!icon.getTag().equals("selected")) {
+                    if (!icon.getTag().equals(R.string.selected_tag)) {
                         icon.setImageResource(R.drawable.person_blue);
-                        icon.setTag("selected");
+                        icon.setTag(R.string.selected_tag);
                         textName.setTextColor(Color.parseColor("#000000"));
                         textNum.setTextColor(Color.parseColor("#A9A9A9"));
                         people.add(new Person(_id, name, number, group_id));
                         global.put(group_id, people);
                     } else {
                         icon.setImageResource(R.drawable.person_gray);
-                        icon.setTag("unselected");
+                        icon.setTag(R.string.unselected_tag);
                         textName.setTextColor(Color.parseColor("#A9A9A9"));
                         textNum.setTextColor(Color.parseColor("#A9A9A9"));
                         for (int i = 0; i < people.size(); i++) {
                             if (people.get(i)._group_id == group_id && people.get(i)._name.equals(name)) {
-                                // Log.v("PLZ", "removed " + people.get(i)._name);
                                 people.remove(i);
                                 global.put(group_id, people);
                             }

@@ -45,7 +45,7 @@ public class TimerActivity extends Activity {
         ACCESS_TOKEN = settings.getString(LoginActivity.AUTH_ACCESS_TOKEN, "");
 
 		Intent intent = getIntent();
-        Group group = intent.getParcelableExtra(GroupActivity.GROUPNAME);
+        Group group = intent.getParcelableExtra(GroupActivity.GROUP);
 		String time_input = group.getTime();
 		charge = group.getAmt();
 		numbers = intent.getStringArrayListExtra(GroupActivity.ALL_NUMBERS);

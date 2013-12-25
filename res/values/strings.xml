@@ -28,4 +28,12 @@
     <string name="money">$$$</string>
     <string name="sec_per_person">secs per person</string>
     <string name="or">-- OR --</string>
+
+    <string name="no_number_found">No # associated with contact</string>
+    <string name="name_prompt">Enter a name</string>
+    <string name="number_prompt">Enter a name</string>
+    <string name="members_prompt">No members currently; edit the meeting group to add members.</string>
+    <string name="no_members">No members currently</string>
+    <string name="selected_tag">selected</string>
+    <string name="unselected_tag">unselected</string>
 </resources>
