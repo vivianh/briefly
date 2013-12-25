@@ -159,7 +159,7 @@
 	        android:layout_height="wrap_content"
 	        android:onClick="cancel"
 	        android:text="Cancel"	
-	        android:background="#B9B9B9" 
+	        android:background="#B9B9B9"
 	        android:textColor="@android:color/white"
 	        android:layout_marginTop="10dp"
 	        android:layout_marginLeft="10dp"
